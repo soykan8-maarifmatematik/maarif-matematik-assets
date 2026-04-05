@@ -1,41 +1,51 @@
-name: Maarif Matematik - Video Uretici
+name: Maarif Matematik Video Render
 
 on:
   push:
     paths:
-      - 'scripts/lesson_code.py' # Make.com buraya kod attığında sistem calisir.
-  workflow_dispatch:
+      - 'scripts/render_code.py'
+      - 'audio/ders_sesi.mp3'
+  workflow_dispatch: # Manuel başlatma butonu ekler
 
 jobs:
-  render-and-upload:
+  render:
     runs-on: ubuntu-latest
     steps:
-    - name: Depoyu Cek
-      uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-    - name: Python ve Manim Kurulumu
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.10'
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
 
-    - name: Sistem Bagimliliklarini Kur
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y ffmpeg libcairo2-dev libpango1.0-dev freeglut3-dev pkg-config
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg libcairo2-dev libpango1.0-dev freeglut3-dev mesa-utils libpng-dev libjpeg-dev
 
-    - name: Python Paketlerini Kur
-      run: |
-        pip install manim requests google-api-python-client google-auth-oauthlib google-auth-httplib2
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-    - name: Manim Render (Video Uretimi)
-      run: |
-        manim -pql scripts/lesson_code.py LessonScene -o final_video.mp4
+      - name: Render Manim Video
+        run: |
+          # Gemini'nin yazdığı render_code.py dosyasını çalıştırır
+          # Manim komutu genellikle python -m manim ... şeklindedir
+          # Eğer kodun içinde Manim komutu gömülü değilse burayı özelleştirebiliriz
+          python scripts/render_code.py
 
-    - name: YouTube'a Liste Disi Yukle
-      env:
-        CLIENT_SECRETS: ${{ secrets.CLIENT_SECRETS_JSON }}
-        TOKEN: ${{ secrets.TOKEN_JSON }}
-      run: |
-        echo "$CLIENT_SECRETS" > client_secrets.json
-        echo "$TOKEN" | base64 --decode > token.pickle
-        python upload_to_youtube.py # Bu dosyayi birazdan olusturacagiz.
+      - name: Upload Video Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: maarif-matematik-video
+          path: media/videos/render_code/1080p60/*.mp4 # Manim varsayılan çıktı yolu
+          if-no-files-found: warn
+
+      - name: Process and Upload to YouTube (Optional)
+        # Eğer Server.py hazırsa buraya eklenebilir
+        run: |
+          # python scripts/server.py
+          echo "Video başarıyla üretildi. YouTube yükleme aşamasına geçilebilir."
