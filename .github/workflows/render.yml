@@ -5,7 +5,7 @@ on:
     paths:
       - 'scripts/render_code.py'
       - 'audio/ders_sesi.mp3'
-  workflow_dispatch: # Manuel başlatma butonu ekler
+  workflow_dispatch:
 
 jobs:
   render:
@@ -18,34 +18,29 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          cache: 'pip'
 
       - name: Install System Dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg libcairo2-dev libpango1.0-dev freeglut3-dev mesa-utils libpng-dev libjpeg-dev
 
-      - name: Install Python Dependencies
+      - name: Install Manim and Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          # Requirements dosyası olsa da olmasa da manim'i direkt kuruyoruz
+          python -m pip install manim numpy
 
       - name: Render Manim Video
         run: |
-          # Gemini'nin yazdığı render_code.py dosyasını çalıştırır
-          # Manim komutu genellikle python -m manim ... şeklindedir
-          # Eğer kodun içinde Manim komutu gömülü değilse burayı özelleştirebiliriz
-          python scripts/render_code.py
+          # Manim sahnelerini render etmek için en güvenli yol budur.
+          # -qm: Orta kalite (720p), -ql: Düşük kalite (480p) hızlı test için kullanılabilir.
+          # --all: Dosya içindeki tüm sahneleri render eder.
+          manim -qm scripts/render_code.py --all
 
       - name: Upload Video Artifact
         uses: actions/upload-artifact@v4
         with:
           name: maarif-matematik-video
-          path: media/videos/render_code/1080p60/*.mp4 # Manim varsayılan çıktı yolu
+          # Manim çıktıları genellikle media/videos/ klasörüne gider
+          path: media/videos/render_code/720p30/*.mp4
           if-no-files-found: warn
-
-      - name: Process and Upload to YouTube (Optional)
-        # Eğer Server.py hazırsa buraya eklenebilir
-        run: |
-          # python scripts/server.py
-          echo "Video başarıyla üretildi. YouTube yükleme aşamasına geçilebilir."
