@@ -1,0 +1,41 @@
+name: Maarif Matematik - Video Uretici
+
+on:
+  push:
+    paths:
+      - 'scripts/lesson_code.py' # Make.com buraya kod attığında sistem calisir.
+  workflow_dispatch:
+
+jobs:
+  render-and-upload:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Depoyu Cek
+      uses: actions/checkout@v4
+
+    - name: Python ve Manim Kurulumu
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Sistem Bagimliliklarini Kur
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ffmpeg libcairo2-dev libpango1.0-dev freeglut3-dev pkg-config
+
+    - name: Python Paketlerini Kur
+      run: |
+        pip install manim requests google-api-python-client google-auth-oauthlib google-auth-httplib2
+
+    - name: Manim Render (Video Uretimi)
+      run: |
+        manim -pql scripts/lesson_code.py LessonScene -o final_video.mp4
+
+    - name: YouTube'a Liste Disi Yukle
+      env:
+        CLIENT_SECRETS: ${{ secrets.CLIENT_SECRETS_JSON }}
+        TOKEN: ${{ secrets.TOKEN_JSON }}
+      run: |
+        echo "$CLIENT_SECRETS" > client_secrets.json
+        echo "$TOKEN" | base64 --decode > token.pickle
+        python upload_to_youtube.py # Bu dosyayi birazdan olusturacagiz.
