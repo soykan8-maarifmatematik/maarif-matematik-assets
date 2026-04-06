@@ -1,4 +1,4 @@
-name: Maarif Matematik Video Render
+name: Maarif Matematik Video Render ve Youtube
 
 on:
   push:
@@ -28,9 +28,10 @@ jobs:
           texlive-latex-recommended texlive-science texlive-fonts-recommended \
           tipa dvisvgm
 
-      - name: Install Manim and Dependencies
+      - name: Install Python Libraries
         run: |
           python -m pip install --upgrade pip
+          # Manim ve YouTube kütüphanelerini kuruyoruz
           python -m pip install manim numpy google-api-python-client google-auth-oauthlib google-auth-httplib2
 
       - name: Create Required Directories
@@ -43,7 +44,7 @@ jobs:
         run: |
           manim -qm --progress_bar display scripts/render_code.py -a
 
-      - name: Upload Video Artifact (Backup)
+      - name: Upload Video Artifact (Yedek)
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -52,9 +53,15 @@ jobs:
           if-no-files-found: warn
 
       - name: Upload to YouTube
+        if: success()
         env:
           YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
         run: |
-          # Eğer scripts klasöründe upload_to_youtube.py dosyanız varsa onu tetikleriz
-          # Not: Bu adım için GitHub Secrets kısmına YouTube API anahtarlarını eklemiş olmanız gerekir.
-          python scripts/upload_to_youtube.py
+          # Dosyanın varlığını kontrol et ve çalıştır
+          if [ -f "scripts/upload_to_youtube.py" ]; then
+            python scripts/upload_to_youtube.py
+          else
+            echo "HATA: scripts/upload_to_youtube.py dosyası bulunamadı!"
+            exit 1
+          fi
+
