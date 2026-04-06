@@ -41,12 +41,26 @@ jobs:
         run: |
           manim -qm --progress_bar display scripts/render_code.py -a
 
+      - name: Merge Audio and Video (SES FIX)
+        run: |
+          # Manim'in ürettiği sessiz videoyu bul
+          VIDEO_PATH=$(find media/videos -name "*.mp4" | head -n 1)
+          AUDIO_PATH="audio/ders_sesi.mp3"
+          
+          if [ -f "$VIDEO_PATH" ] && [ -f "$AUDIO_PATH" ]; then
+            echo "Ses ve görüntü birleştiriliyor..."
+            # Yeni bir geçici video dosyası oluştur
+            ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 -shortest media/videos/final_video.mp4
+            # Eski videoyu sil, yeni videoyu ana dosya yap
+            mv media/videos/final_video.mp4 "$VIDEO_PATH"
+          else
+            echo "HATA: Video veya Ses dosyası bulunamadı!"
+          fi
+
       - name: Upload to YouTube
         if: success()
         env:
-          # Sizin GitHub'daki isimlerinize (Secrets) göre güncelledim
           CLIENT_SECRETS_JSON: ${{ secrets.CLIENT_SECRETS_JSON }}
           TOKEN_JSON: ${{ secrets.TOKEN_JSON }}
         run: |
           python scripts/upload_to_youtube.py
-
