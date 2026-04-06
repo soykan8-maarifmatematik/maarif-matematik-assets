@@ -1,59 +1,71 @@
 from manim import *
 
+config.background_color = WHITE
+
 class KesirlerinMantigi(Scene):
     def construct(self):
-        # Arka plan rengini beyaz yapiyoruz
-        self.camera.background_color = WHITE
-        
-        # Baslik (Ana metin - Koyu Gri)
-        title = Text("Kesirlerin Mantığı", font="Montserrat", color=DARK_GRAY, weight=BOLD).scale(0.9).to_edge(UP)
+        def get_text(text, color=DARK_GRAY, size=36, font="Montserrat"):
+            return Text(text, color=color, font_size=size, font=font)
+
+        # Giriş
+        title = get_text("Kesirlerin Mantığı", color=BLUE, size=48)
         self.play(Write(title, run_time=2))
         self.wait(1)
+        self.play(title.animate.to_edge(UP))
 
-        # Cikolata (Butun - Koyu Gri)
-        whole = Rectangle(width=8, height=2, color=DARK_GRAY, stroke_width=4)
-        self.play(Create(whole, run_time=2))
+        # Şekil Çizimi (Bütün ve Parçalar)
+        whole = Rectangle(width=6, height=1.5, color=DARK_GRAY)
+        self.play(Create(whole, run_time=1.5))
+        self.wait(0.5)
+
+        lines = VGroup(
+            Line(whole.get_corner(UL) + RIGHT*1.5, whole.get_corner(DL) + RIGHT*1.5, color=DARK_GRAY),
+            Line(whole.get_corner(UL) + RIGHT*3.0, whole.get_corner(DL) + RIGHT*3.0, color=DARK_GRAY),
+            Line(whole.get_corner(UL) + RIGHT*4.5, whole.get_corner(DL) + RIGHT*4.5, color=DARK_GRAY)
+        )
+        self.play(Create(lines, run_time=1.5))
+        self.wait(0.5)
+
+        # 3 Parçayı Vurgulama
+        part1 = Rectangle(width=1.5, height=1.5, color=BLUE).set_fill(BLUE, opacity=0.6).move_to(whole.get_left() + RIGHT*0.75)
+        part2 = Rectangle(width=1.5, height=1.5, color=BLUE).set_fill(BLUE, opacity=0.6).move_to(whole.get_left() + RIGHT*2.25)
+        part3 = Rectangle(width=1.5, height=1.5, color=BLUE).set_fill(BLUE, opacity=0.6).move_to(whole.get_left() + RIGHT*3.75)
+        
+        self.play(FadeIn(part1, part2, part3, run_time=2))
         self.wait(1)
 
-        # 4 parcaya bolme (Payda - Kirmizi vurgu eklenecek)
-        lines = VGroup(
-            Line(whole.get_top() + LEFT*2, whole.get_bottom() + LEFT*2, color=DARK_GRAY, stroke_width=4),
-            Line(whole.get_top(), whole.get_bottom(), color=DARK_GRAY, stroke_width=4),
-            Line(whole.get_top() + RIGHT*2, whole.get_bottom() + RIGHT*2, color=DARK_GRAY, stroke_width=4)
-        )
-        self.play(Create(lines, run_time=2))
-        
-        # Payda aciklamasi (Dikkat/Kural - Kirmizi)
-        payda_text = Text("Payda = 4", font="Montserrat", color=RED, weight=BOLD).scale(0.7).next_to(whole, DOWN, buff=0.8)
-        payda_desc = Text("Bütünün kaç eşit parçaya bölündüğünü gösterir.", font="Montserrat", color=DARK_GRAY).scale(0.5).next_to(payda_text, DOWN)
-        self.play(Write(payda_text, run_time=1.5), Write(payda_desc, run_time=1.5))
-        self.wait(2)
-
-        # 3 parcasini boyama (Pay - Mavi vurgu)
-        part1 = Rectangle(width=1.95, height=1.95, color=BLUE, fill_color=BLUE, fill_opacity=0.6, stroke_width=0).move_to(whole.get_center() + LEFT*3)
-        part2 = Rectangle(width=1.95, height=1.95, color=BLUE, fill_color=BLUE, fill_opacity=0.6, stroke_width=0).move_to(whole.get_center() + LEFT*1)
-        part3 = Rectangle(width=1.95, height=1.95, color=BLUE, fill_color=BLUE, fill_opacity=0.6, stroke_width=0).move_to(whole.get_center() + RIGHT*1)
-        
-        self.play(FadeIn(part1), FadeIn(part2), FadeIn(part3), run_time=2)
-        
-        # Pay aciklamasi (Mavi)
-        pay_text = Text("Pay = 3", font="Montserrat", color=BLUE, weight=BOLD).scale(0.7).next_to(whole, UP, buff=0.8)
-        pay_desc = Text("Bu parçalardan kaç tanesinin alındığını gösterir.", font="Montserrat", color=DARK_GRAY).scale(0.5).next_to(pay_text, UP)
-        self.play(Write(pay_text, run_time=1.5), Write(pay_desc, run_time=1.5))
-        self.wait(2)
-
-        # Kesir olarak gosterme (Dogru/Sonuc - Yesil vurgu)
-        graphics_group = VGroup(whole, lines, part1, part2, part3)
-        self.play(
-            FadeOut(pay_desc), FadeOut(payda_desc), FadeOut(pay_text), FadeOut(payda_text),
-            graphics_group.animate.scale(0.7).shift(LEFT * 3),
-            run_time=2
-        )
-        
-        # Kesir cizimi
-        fraction = MathTex(r"\frac{3}{4}", color=GREEN).scale(2.5).move_to(RIGHT * 3)
-        sonuc_text = Text("Dörtte Üç", font="Montserrat", color=GREEN, weight=BOLD).scale(0.7).next_to(fraction, DOWN, buff=0.7)
-        
+        # Kesir Gösterimi
+        fraction = MathTex(r"\frac{3}{4}", color=GREEN, font_size=80)
+        fraction.next_to(whole, DOWN, buff=1)
         self.play(Write(fraction, run_time=1.5))
-        self.play(Write(sonuc_text, run_time=1.5))
+        self.wait(1)
+
+        # Okunuş Kuralları
+        read1 = get_text("\"Dörtte üç\"\n(Parça-Bütün)", size=24).next_to(fraction, LEFT, buff=1)
+        read2 = get_text("\"Üç bölü dört\"\n(İşlem)", size=24).next_to(fraction, RIGHT, buff=1)
+        
+        self.play(Write(read1, run_time=1.5))
+        self.wait(1)
+        self.play(Write(read2, run_time=1.5))
         self.wait(3)
+
+        # Temizlik ve Uyarı
+        self.play(FadeOut(whole, lines, part1, part2, part3, fraction, read1, read2))
+        
+        warning_title = get_text("Önemli Yazım Uyarısı", color=RED, size=40)
+        warning_title.next_to(title, DOWN, buff=1)
+        self.play(Write(warning_title, run_time=1.5))
+        self.wait(1)
+
+        rule1 = get_text("Okunuş: Dörtte biri  ->  Yazılış: 1/4'i", size=32)
+        rule2 = get_text("Okunuş: Bir bölü dördü  ->  Yazılış: 1/4'ü", size=32)
+        
+        rules = VGroup(rule1, rule2).arrange(DOWN, buff=0.8)
+        self.play(Write(rules, run_time=2))
+        self.wait(3)
+
+        # Kapanış
+        self.play(FadeOut(rules, warning_title, title))
+        outro = get_text("Maarif Matematik", color=BLUE, size=48)
+        self.play(Write(outro, run_time=2))
+        self.wait(2)
