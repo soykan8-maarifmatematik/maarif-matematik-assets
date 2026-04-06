@@ -22,7 +22,12 @@ jobs:
       - name: Install System Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y ffmpeg libcairo2-dev libpango1.0-dev freeglut3-dev mesa-utils libpng-dev libjpeg-dev
+          # Temel video kütüphaneleri + LaTeX Paketleri (Matematik için şart)
+          sudo apt-get install -y ffmpeg libcairo2-dev libpango1.0-dev freeglut3-dev \
+          mesa-utils libpng-dev libjpeg-dev \
+          texlive texlive-latex-extra texlive-fonts-extra \
+          texlive-latex-recommended texlive-science texlive-fonts-recommended \
+          tipa dvisvgm
 
       - name: Install Manim and Dependencies
         run: |
@@ -37,8 +42,7 @@ jobs:
 
       - name: Render Manim Video
         run: |
-          # --all yerine -a (veya --write_all) kullanıyoruz. 
-          # Bu, dosyadaki tüm sahneleri render etmesini sağlar.
+          # -a: Tüm sahneleri yazar, -qm: 720p kalite
           manim -qm --progress_bar display scripts/render_code.py -a
 
       - name: Upload Video Artifact
@@ -46,6 +50,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: maarif-matematik-video
-          # Çıktı yolunu daha geniş tutuyoruz ki her türlü yakalayalım
           path: media/videos/**/*.mp4
           if-no-files-found: warn
