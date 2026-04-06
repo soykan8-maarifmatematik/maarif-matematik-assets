@@ -1,24 +1,70 @@
-import os
-import json
-import glob
-import re
-from googleapiclient.discovery import build
-from google.oauth2.credentials import Credentials
-from googleapiclient.http import MediaFileUpload
+data = re.sub(r'\s+```$', '', data)
+    return data.strip()
 
-def clean_json_string(data):
-    if not data:
-        return None
-    # Markdown kod bloklarını (```json ... ```) temizle
-    data = data.strip()
-    if data.startswith("```"):
-        data = re.sub(r'^
-http://googleusercontent.com/immersive_entry_chip/1
+def upload_video():
+    # 1. Video dosyasını bul
+    video_files = glob.glob("media/videos/**/*.mp4", recursive=True)
+    if not video_files:
+        print("HATA: Yüklenecek video dosyası bulunamadı!")
+        return
+    
+    video_path = video_files[0]
+    print(f"Video bulundu: {video_path}")
 
-Hocam, hatanın sebebi scriptin JSON'u okumaya başlarken hiçbir karakter bulamamasıydı. Yukarıdaki yeni Python kodu (`scripts/upload_to_youtube.py`) veriyi okumadan önce temizlik yapacak şekilde tasarlandı. 
+    # 2. Ham verileri al ve temizle
+    raw_token = os.environ.get('TOKEN_JSON')
+    raw_client = os.environ.get('CLIENT_SECRETS_JSON')
 
-**Şimdi ne yapmalısın?**
-1. Canvas'taki yeni Python kodunu kopyala ve GitHub'daki `scripts/upload_to_youtube.py` dosyasını güncelle.
-2. GitHub'da `Actions` sekmesine gidip tekrar dene. 
+    if not raw_token or not raw_client:
+        print("HATA: GitHub Secrets (TOKEN_JSON veya CLIENT_SECRETS_JSON) boş!")
+        return
 
-Eğer her şey yolundaysa, bu sefer JSON hatası yerine "YouTube'a yükleme başlıyor..." yazısını göreceğiz. Bekliyorum! 🌿🔢✨
+    try:
+        # JSON ayrıştırma
+        token_str = clean_json_string(raw_token)
+        client_str = clean_json_string(raw_client)
+        
+        creds_info = json.loads(token_str)
+        client_info = json.loads(client_str)
+        
+        client_config = client_info.get('installed', client_info.get('web', {}))
+        
+        creds = Credentials(
+            token=creds_info.get('token'),
+            refresh_token=creds_info.get('refresh_token'),
+            token_uri="[https://oauth2.googleapis.com/token](https://oauth2.googleapis.com/token)",
+            client_id=client_config.get('client_id'),
+            client_secret=client_config.get('client_secret'),
+            scopes=['[https://www.googleapis.com/auth/youtube.upload](https://www.googleapis.com/auth/youtube.upload)']
+        )
+        
+        youtube = build("youtube", "v3", credentials=creds)
+
+        # Video başlığını dosya isminden al
+        title = os.path.basename(video_path).replace('.mp4', '')
+
+        request_body = {
+            "snippet": {
+                "title": f"Maarif Matematik - {title}",
+                "description": "Maarif Modeli'ne uygun, mantık odaklı matematik dersi.",
+                "categoryId": "27"
+            },
+            "status": {"privacyStatus": "unlisted"}
+        }
+
+        media = MediaFileUpload(video_path, chunksize=-1, resumable=True)
+        print("YouTube'a yükleme başlıyor...")
+        response = youtube.videos().insert(
+            part="snippet,status",
+            body=request_body,
+            media_body=media
+        ).execute()
+        
+        print(f"BAŞARILI! Video ID: {response.get('id')}")
+        print(f"Video Linki: [https://youtu.be/](https://youtu.be/){response.get('id')}")
+        
+    except Exception as e:
+        print(f"HATA OLUŞTU: {str(e)}")
+
+if __name__ == "__main__":
+    upload_video()
