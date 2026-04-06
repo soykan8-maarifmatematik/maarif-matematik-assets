@@ -35,22 +35,17 @@ jobs:
           mkdir -p scripts
           mkdir -p audio
 
-      - name: Check Files
-        run: |
-          echo "Mevcut dosyalar kontrol ediliyor..."
-          ls -R scripts/
-          ls -R audio/
-
       - name: Render Manim Video
         run: |
-          # Render komutunu daha detaylı çıktı verecek şekilde güncelledik
-          manim -qm --progress_bar display scripts/render_code.py --all
+          # --all yerine -a (veya --write_all) kullanıyoruz. 
+          # Bu, dosyadaki tüm sahneleri render etmesini sağlar.
+          manim -qm --progress_bar display scripts/render_code.py -a
 
       - name: Upload Video Artifact
-        if: always() # Hata alsa bile klasörleri yükle ki ne olduğunu görelim
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: maarif-matematik-video
-          path: |
-            media/videos/**/720p30/*.mp4
+          # Çıktı yolunu daha geniş tutuyoruz ki her türlü yakalayalım
+          path: media/videos/**/*.mp4
           if-no-files-found: warn
