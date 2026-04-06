@@ -1,77 +1,50 @@
-import os
-import json
-import glob
-from googleapiclient.discovery import build
-from google.oauth2.credentials import Credentials
-from googleapiclient.http import MediaFileUpload
+name: Maarif Matematik Video Render ve Youtube
 
-def upload_video():
-    # 1. Video dosyasını bul (Manim çıktısı)
-    video_files = glob.glob("media/videos/**/*.mp4", recursive=True)
-    if not video_files:
-        print("HATA: Yüklenecek video dosyası bulunamadı!")
-        return
-    
-    video_path = video_files[0]
-    print(f"Video bulundu: {video_path}")
+on:
+  push:
+    paths:
+      - 'scripts/render_code.py'
+      - 'audio/ders_sesi.mp3'
+  workflow_dispatch:
 
-    # 2. Kimlik Bilgilerini GitHub Secrets'tan Al
-    token_data = os.environ.get('TOKEN_JSON')
-    client_data = os.environ.get('CLIENT_SECRETS_JSON')
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-    if not token_data or not client_data:
-        print("HATA: GitHub Secrets (TOKEN_JSON veya CLIENT_SECRETS_JSON) eksik!")
-        return
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
-    # JSON verilerini yükle
-    try:
-        creds_info = json.loads(token_data)
-        client_info = json.loads(client_data)
-        
-        # Desktop app yapısında client_id ve secret 'installed' altındadır
-        client_config = client_info.get('installed', client_info.get('web', {}))
-        
-        creds = Credentials(
-            token=creds_info.get('token'),
-            refresh_token=creds_info.get('refresh_token'),
-            token_uri="https://oauth2.googleapis.com/token",
-            client_id=client_config.get('client_id'),
-            client_secret=client_config.get('client_secret'),
-            scopes=['https://www.googleapis.com/auth/youtube.upload']
-        )
-    except Exception as e:
-        print(f"JSON Ayrıştırma Hatası: {e}")
-        return
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg libcairo2-dev libpango1.0-dev freeglut3-dev \
+          mesa-utils libpng-dev libjpeg-dev \
+          texlive texlive-latex-extra texlive-fonts-extra \
+          texlive-latex-recommended texlive-science texlive-fonts-recommended \
+          tipa dvisvgm
 
-    # 3. YouTube API Bağlantısı
-    youtube = build("youtube", "v3", credentials=creds)
+      - name: Install Python Libraries
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install manim numpy google-api-python-client google-auth-oauthlib google-auth-httplib2
 
-    request_body = {
-        "snippet": {
-            "title": "Maarif Matematik - Yeni Ders (Otomatik)",
-            "description": "Bu video Maarif Matematik otomasyonu tarafından üretilmiştir.",
-            "categoryId": "27", # Education
-            "tags": ["matematik", "maarif", "lgs", "yks"]
-        },
-        "status": {
-            "privacyStatus": "unlisted",
-            "selfDeclaredMadeForKids": False
-        }
-    }
+      - name: Create Required Directories
+        run: |
+          mkdir -p media/videos scripts audio
 
-    media = MediaFileUpload(video_path, chunksize=-1, resumable=True)
-    
-    print("YouTube'a yükleme başlıyor...")
-    try:
-        response = youtube.videos().insert(
-            part="snippet,status",
-            body=request_body,
-            media_body=media
-        ).execute()
-        print(f"BAŞARILI! Video ID: {response.get('id')}")
-        print(f"Video Linki: https://youtu.be/{response.get('id')}")
-    except Exception as e:
-        print(f"Yükleme sırasında hata oluştu: {e}")
+      - name: Render Manim Video
+        run: |
+          manim -qm --progress_bar display scripts/render_code.py -a
 
-if __name__ == "__main__":
-    upload_video()
+      - name: Upload to YouTube
+        if: success()
+        env:
+          CLIENT_SECRETS_JSON: ${{ secrets.CLIENT_SECRETS_JSON }}
+          TOKEN_JSON: ${{ secrets.TOKEN_JSON }}
+        run: |
+          python scripts/upload_to_youtube.py
