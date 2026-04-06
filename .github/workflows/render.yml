@@ -1,5 +1,4 @@
-✅ 1. ADIM: Google Cloud - İzinler (Scopes) TanımlamakDURUM: TAMAMLANDI! 🚀YouTube'un senin adına video yüklemesine izin veren .../auth/youtube.upload kapsamı başarıyla eklendi.⏳ 2. ADIM: GitHub - render.yml Dosyasını GüncellemekDURUM: GÜNCELLENDİ 🛠️
-Aşağıdaki kod, hata ayıklama (debug) adımları eklenmiş en sağlam versiyondur. Lütfen GitHub'daki .github/workflows/render.yml dosyasını bu kodla tamamen değiştirin.name: Maarif Matematik Video Render ve Youtube
+name: Maarif Matematik Video Render ve Youtube
 
 on:
   push:
