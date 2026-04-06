@@ -22,7 +22,6 @@ jobs:
       - name: Install System Dependencies
         run: |
           sudo apt-get update
-          # Temel video kütüphaneleri + LaTeX Paketleri (Matematik için şart)
           sudo apt-get install -y ffmpeg libcairo2-dev libpango1.0-dev freeglut3-dev \
           mesa-utils libpng-dev libjpeg-dev \
           texlive texlive-latex-extra texlive-fonts-extra \
@@ -32,7 +31,7 @@ jobs:
       - name: Install Manim and Dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install manim numpy
+          python -m pip install manim numpy google-api-python-client google-auth-oauthlib google-auth-httplib2
 
       - name: Create Required Directories
         run: |
@@ -42,13 +41,20 @@ jobs:
 
       - name: Render Manim Video
         run: |
-          # -a: Tüm sahneleri yazar, -qm: 720p kalite
           manim -qm --progress_bar display scripts/render_code.py -a
 
-      - name: Upload Video Artifact
+      - name: Upload Video Artifact (Backup)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: maarif-matematik-video
           path: media/videos/**/*.mp4
           if-no-files-found: warn
+
+      - name: Upload to YouTube
+        env:
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+        run: |
+          # Eğer scripts klasöründe upload_to_youtube.py dosyanız varsa onu tetikleriz
+          # Not: Bu adım için GitHub Secrets kısmına YouTube API anahtarlarını eklemiş olmanız gerekir.
+          python scripts/upload_to_youtube.py
