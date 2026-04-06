@@ -1,8 +1,8 @@
-data = re.sub(r'\s+```$', '', data)
+data = re.sub(r'\s*```$', '', data)
     return data.strip()
 
 def upload_video():
-    # 1. Video dosyasını bul
+    # 1. Manim tarafından üretilen videoyu bul
     video_files = glob.glob("media/videos/**/*.mp4", recursive=True)
     if not video_files:
         print("HATA: Yüklenecek video dosyası bulunamadı!")
@@ -11,7 +11,7 @@ def upload_video():
     video_path = video_files[0]
     print(f"Video bulundu: {video_path}")
 
-    # 2. Ham verileri al ve temizle
+    # 2. GitHub Secrets'tan ham verileri al
     raw_token = os.environ.get('TOKEN_JSON')
     raw_client = os.environ.get('CLIENT_SECRETS_JSON')
 
@@ -20,13 +20,14 @@ def upload_video():
         return
 
     try:
-        # JSON ayrıştırma
+        # JSON verilerini temizleyip ayrıştır
         token_str = clean_json_string(raw_token)
         client_str = clean_json_string(raw_client)
         
         creds_info = json.loads(token_str)
         client_info = json.loads(client_str)
         
+        # Google Desktop App yapısına göre Client ID ve Secret 'installed' altındadır
         client_config = client_info.get('installed', client_info.get('web', {}))
         
         creds = Credentials(
@@ -40,28 +41,33 @@ def upload_video():
         
         youtube = build("youtube", "v3", credentials=creds)
 
-        # Video başlığını dosya isminden al
-        title = os.path.basename(video_path).replace('.mp4', '')
+        # Video başlığını dosya isminden temizleyerek al
+        video_title = os.path.basename(video_path).replace('.mp4', '')
 
         request_body = {
             "snippet": {
-                "title": f"Maarif Matematik - {title}",
-                "description": "Maarif Modeli'ne uygun, mantık odaklı matematik dersi.",
-                "categoryId": "27"
+                "title": f"Maarif Matematik - {video_title}",
+                "description": "Maarif Modeli'ne uygun, mantık odaklı ve sade anlatımlı matematik dersi.",
+                "categoryId": "27", # Eğitim kategorisi
+                "tags": ["matematik", "maarif", "lgs", "yks", "ibrahim soykan"]
             },
-            "status": {"privacyStatus": "unlisted"}
+            "status": {
+                "privacyStatus": "unlisted", # Test aşamasında liste dışı yüklemek en güvenlisidir
+                "selfDeclaredMadeForKids": False
+            }
         }
 
         media = MediaFileUpload(video_path, chunksize=-1, resumable=True)
-        print("YouTube'a yükleme başlıyor...")
+        print("YouTube'a yükleme işlemi başlatılıyor...")
+        
         response = youtube.videos().insert(
             part="snippet,status",
             body=request_body,
             media_body=media
         ).execute()
         
-        print(f"BAŞARILI! Video ID: {response.get('id')}")
-        print(f"Video Linki: [https://youtu.be/](https://youtu.be/){response.get('id')}")
+        print(f"TEBRİKLER! Video başarıyla yüklendi. ID: {response.get('id')}")
+        print(f"İzleme Linki: [https://youtu.be/](https://youtu.be/){response.get('id')}")
         
     except Exception as e:
         print(f"HATA OLUŞTU: {str(e)}")
