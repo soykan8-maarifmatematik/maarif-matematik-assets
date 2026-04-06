@@ -27,20 +27,30 @@ jobs:
       - name: Install Manim and Dependencies
         run: |
           python -m pip install --upgrade pip
-          # Requirements dosyası olsa da olmasa da manim'i direkt kuruyoruz
           python -m pip install manim numpy
+
+      - name: Create Required Directories
+        run: |
+          mkdir -p media/videos
+          mkdir -p scripts
+          mkdir -p audio
+
+      - name: Check Files
+        run: |
+          echo "Mevcut dosyalar kontrol ediliyor..."
+          ls -R scripts/
+          ls -R audio/
 
       - name: Render Manim Video
         run: |
-          # Manim sahnelerini render etmek için en güvenli yol budur.
-          # -qm: Orta kalite (720p), -ql: Düşük kalite (480p) hızlı test için kullanılabilir.
-          # --all: Dosya içindeki tüm sahneleri render eder.
-          manim -qm scripts/render_code.py --all
+          # Render komutunu daha detaylı çıktı verecek şekilde güncelledik
+          manim -qm --progress_bar display scripts/render_code.py --all
 
       - name: Upload Video Artifact
+        if: always() # Hata alsa bile klasörleri yükle ki ne olduğunu görelim
         uses: actions/upload-artifact@v4
         with:
           name: maarif-matematik-video
-          # Manim çıktıları genellikle media/videos/ klasörüne gider
-          path: media/videos/render_code/720p30/*.mp4
+          path: |
+            media/videos/**/720p30/*.mp4
           if-no-files-found: warn
