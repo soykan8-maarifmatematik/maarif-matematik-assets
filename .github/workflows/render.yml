@@ -3,9 +3,8 @@ name: Maarif Matematik Video Render ve Youtube
 on:
   push:
     paths:
-      - 'scripts/render_code.py'
-      - 'audio/ders_sesi.mp3'
-  workflow_dispatch:
+      - 'metadata.json' # Sadece bu dosya değişince render başlar, çift video sorunu biter.
+  workflow_dispatch: # Manuel çalıştırma hakkını saklı tutarız.
 
 jobs:
   render:
@@ -48,13 +47,13 @@ jobs:
           AUDIO_PATH="audio/ders_sesi.mp3"
           
           if [ -f "$VIDEO_PATH" ] && [ -f "$AUDIO_PATH" ]; then
-            echo "Ses ve görüntü birleştiriliyor..."
-            # Yeni bir geçici video dosyası oluştur
-            ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 -shortest media/videos/final_video.mp4
-            # Eski videoyu sil, yeni videoyu ana dosya yap
+            echo "Maarif Matematik: Ses ve görüntü birleştiriliyor..."
+            # -shortest parametresini kaldırdım ki ses kesilmesin, video ses bitene kadar devam etsin
+            ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 media/videos/final_video.mp4
             mv media/videos/final_video.mp4 "$VIDEO_PATH"
           else
             echo "HATA: Video veya Ses dosyası bulunamadı!"
+            exit 1
           fi
 
       - name: Upload to YouTube
