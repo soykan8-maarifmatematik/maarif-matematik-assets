@@ -40,19 +40,26 @@ jobs:
 
       - name: Render Manim Video
         run: |
-          manim -qm --progress_bar display scripts/render_code.py -a
+          # Render komutunu ve çıktı dizinini sabitledik
+          manim -qm --media_dir ./media scripts/render_code.py -a
 
-      - name: Merge Audio and Video (SES FIX)
+      - name: Merge Audio and Video (GÜÇLENDİRİLMİŞ YOL)
         run: |
-          VIDEO_PATH=$(find media/videos -name "*.mp4" | head -n 1)
+          # Derindeki tüm mp4 dosyalarını tara ve en güncelini al
+          VIDEO_PATH=$(find media -name "*.mp4" | head -n 1)
           AUDIO_PATH="audio/ders_sesi.mp3"
           
-          if [ -f "$VIDEO_PATH" ] && [ -f "$AUDIO_PATH" ]; then
-            echo "Maarif Matematik: Ses ve görüntü birleştiriliyor..."
-            ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 media/videos/final_video.mp4
-            mv media/videos/final_video.mp4 "$VIDEO_PATH"
+          echo "Aranan Video Yolu: $VIDEO_PATH"
+          echo "Aranan Ses Yolu: $AUDIO_PATH"
+          
+          if [ -n "$VIDEO_PATH" ] && [ -f "$AUDIO_PATH" ]; then
+            echo "Maarif Matematik: Dosyalar bulundu, birleştiriliyor..."
+            ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 final_video_output.mp4
+            # upload_to_youtube.py dosyasının beklediği yere taşı
+            mkdir -p media/videos
+            mv final_video_output.mp4 media/videos/final_output.mp4
           else
-            echo "HATA: Video veya Ses dosyası bulunamadı!"
+            echo "HATA: Video ($VIDEO_PATH) veya Ses ($AUDIO_PATH) bulunamadı!"
             exit 1
           fi
 
