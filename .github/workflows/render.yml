@@ -3,8 +3,10 @@ name: Maarif Matematik Video Render ve Youtube
 on:
   push:
     paths:
-      - 'metadata.json' # Sadece bu dosya değişince render başlar, çift video sorunu biter.
-  workflow_dispatch: # Manuel çalıştırma hakkını saklı tutarız.
+      - 'metadata.json'
+      - 'scripts/render_code.py'
+      - 'audio/ders_sesi.mp3'
+  workflow_dispatch:
 
 jobs:
   render:
@@ -42,13 +44,11 @@ jobs:
 
       - name: Merge Audio and Video (SES FIX)
         run: |
-          # Manim'in ürettiği sessiz videoyu bul
           VIDEO_PATH=$(find media/videos -name "*.mp4" | head -n 1)
           AUDIO_PATH="audio/ders_sesi.mp3"
           
           if [ -f "$VIDEO_PATH" ] && [ -f "$AUDIO_PATH" ]; then
             echo "Maarif Matematik: Ses ve görüntü birleştiriliyor..."
-            # -shortest parametresini kaldırdım ki ses kesilmesin, video ses bitene kadar devam etsin
             ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 media/videos/final_video.mp4
             mv media/videos/final_video.mp4 "$VIDEO_PATH"
           else
