@@ -38,7 +38,7 @@ jobs:
 
       - name: Render Manim Video
         run: |
-          # Manim kodunu render et
+          # Manim kodunu render et (Medium Quality)
           manim -qm --media_dir ./media scripts/render_code.py -a
 
       - name: Merge Audio and Video (KUSURSUZ SENKRON)
@@ -54,7 +54,7 @@ jobs:
             echo "Maarif Matematik: Senkronize birleştirme başlıyor..."
             # -fflags +genpts: Senkron kaymasını (lag) önlemek için zaman damgalarını yeniden oluşturur.
             # -shortest: Ses bittiği an işlemi durdurur.
-            # -t 600: Güvenlik sigortası (10 dakika).
+            # -t 600: RAM hatasını önlemek için 10 dakikada kesin keser (Güvenlik sigortası)
             ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -fflags +genpts -shortest -t 600 -c:v libx264 -c:a aac -map 0:v:0 -map 1:a:0 -y final_video_output.mp4
             
             # Son çıktıyı YouTube modülünün beklediği yere taşı
