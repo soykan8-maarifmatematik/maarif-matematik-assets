@@ -1,98 +1,74 @@
-import os
-import json
-import time
-from google.oauth2.credentials import Credentials
-from googleapiclient.discovery import build
-from googleapiclient.http import MediaFileUpload
+name: Maarif Matematik Video Render ve Youtube
 
-def upload_video():
-    # Kimlik Bilgilerini Yükle
-    try:
-        client_secrets = json.loads(os.environ.get('CLIENT_SECRETS_JSON'))
-        token_data = json.loads(os.environ.get('TOKEN_JSON'))
-        creds = Credentials.from_authorized_user_info(token_data)
-        youtube = build('youtube', 'v3', credentials=creds)
-    except Exception as e:
-        print(f"HATA: Yetkilendirme başarısız: {e}")
-        return
+on:
+  push:
+    paths:
+      - 'metadata.json'  # Sadece metadata güncellendiğinde çalışarak "çift video" sorununu önler.
+  workflow_dispatch:
 
-    # --- YEDEK DEĞERLER (İSİM TAMAMEN SİLİNDİ) ---
-    video_title = "Birim Kesirler Mantığı | Maarif Matematik"
-    video_description = "Maarif Modeli'ne uygun, mantık odaklı matematik dersleri."
-    video_tags = ["matematik", "ders", "maarif"]
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-    # metadata.json DOSYASINI HER YERDE ARA (Kritik Alan)
-    # Hocam 'file path' dediğiniz yer tam olarak burasıdır:
-    possible_paths = [
-        'metadata.json', 
-        './metadata.json', 
-        'scripts/metadata.json', 
-        '/home/runner/work/maarif-matematik-assets/maarif-matematik-assets/metadata.json'
-    ]
-    
-    metadata_found = False
-    for path in possible_paths:
-        print(f"Kontrol ediliyor: {path}") # Loglarda yolu görmek için
-        if os.path.exists(path):
-            try:
-                with open(path, 'r', encoding='utf-8') as f:
-                    metadata = json.load(f)
-                    # Hem düz hem iç içe yapıyı kontrol et
-                    t = metadata.get('title') or metadata.get('metadata', {}).get('title')
-                    d = metadata.get('description') or metadata.get('metadata', {}).get('description')
-                    tg = metadata.get('tags') or metadata.get('metadata', {}).get('tags')
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
-                    if t: video_title = t
-                    if d: video_description = d
-                    if tg: video_tags = tg
-                    metadata_found = True
-                    print(f"✅ BAŞARILI: Metadata şurada bulundu ve okundu: {path}")
-                    break
-            except Exception as e:
-                print(f"⚠️ Dosya bulundu ama okunamadı ({path}): {e}")
-                continue
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg libcairo2-dev libpango1.0-dev freeglut3-dev \
+          mesa-utils libpng-dev libjpeg-dev \
+          texlive texlive-latex-extra texlive-fonts-extra \
+          texlive-latex-recommended texlive-science texlive-fonts-recommended \
+          tipa dvisvgm
 
-    if not metadata_found:
-        print("❌ UYARI: metadata.json hiçbir yerde bulunamadı. Yedek (isimsiz) başlık kullanılıyor.")
+      - name: Install Python Libraries
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install manim numpy google-api-python-client google-auth-oauthlib google-auth-httplib2
 
-    # Video Dosyasını Kontrol Et
-    video_file = "media/videos/final_output.mp4"
-    if not os.path.exists(video_file):
-        print("HATA: Video dosyası bulunamadı! Yol: " + video_file)
-        return
+      - name: Create Required Directories
+        run: |
+          mkdir -p media/videos scripts audio
 
-    # Yükleme Başlıyor
-    print(f"🚀 YouTube'a Gönderiliyor: {video_title}")
-    request_body = {
-        'snippet': {
-            'title': video_title,
-            'description': video_description,
-            'tags': video_tags,
-            'categoryId': '27' # Eğitim
-        },
-        'status': {
-            'privacyStatus': 'public',
-            'selfDeclaredMadeForKids': False
-        }
-    }
+      - name: Render Manim Video
+        run: |
+          # Manim kodunu render et
+          manim -qm --media_dir ./media scripts/render_code.py -a
 
-    try:
-        media = MediaFileUpload(video_file, chunksize=-1, resumable=True)
-        response = youtube.videos().insert(part='snippet,status', body=request_body, media_body=media).execute()
-        video_id = response.get('id')
-        print(f"🎉 VİDEO YÜKLENDİ! ID: {video_id}")
-
-        # KAPAK YÜKLEME (s.png)
-        if os.path.exists("s.png"):
-            print("📸 Kapak fotoğrafı yükleniyor (s.png)...")
-            time.sleep(15) # YouTube'un videoyu işlemesi için süre tanı
-            youtube.thumbnails().set(videoId=video_id, media_body=MediaFileUpload("s.png")).execute()
-            print("✅ Kapak başarıyla eklendi!")
-        else:
-            print("ℹ️ Bilgi: s.png bulunamadı, kapak eklenemedi.")
+      - name: Merge Audio and Video (KUSURSUZ SENKRON)
+        run: |
+          # Render edilen mp4 dosyasını ve ses dosyasını bul
+          VIDEO_PATH=$(find media -name "*.mp4" | head -n 1)
+          AUDIO_PATH="audio/ders_sesi.mp3"
+          
+          echo "Render Edilen Video: $VIDEO_PATH"
+          echo "Ders Sesi: $AUDIO_PATH"
+          
+          if [ -n "$VIDEO_PATH" ] && [ -f "$AUDIO_PATH" ]; then
+            echo "Maarif Matematik: Senkronize birleştirme başlıyor..."
+            # -fflags +genpts: Senkron kaymasını (lag) önlemek için zaman damgalarını yeniden oluşturur.
+            # -shortest: Ses bittiği an işlemi durdurur.
+            # -t 600: Güvenlik sigortası (10 dakika).
+            ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -fflags +genpts -shortest -t 600 -c:v libx264 -c:a aac -map 0:v:0 -map 1:a:0 -y final_video_output.mp4
             
-    except Exception as e:
-        print(f"HATA: Yükleme sırasında bir sorun oluştu: {e}")
+            # Son çıktıyı YouTube modülünün beklediği yere taşı
+            mkdir -p media/videos
+            mv final_video_output.mp4 media/videos/final_output.mp4
+          else
+            echo "HATA: Gerekli dosyalar bulunamadı!"
+            exit 1
+          fi
 
-if __name__ == "__main__":
-    upload_video()
+      - name: Upload to YouTube
+        if: success()
+        env:
+          CLIENT_SECRETS_JSON: ${{ secrets.CLIENT_SECRETS_JSON }}
+          TOKEN_JSON: ${{ secrets.TOKEN_JSON }}
+        run: |
+          python scripts/upload_to_youtube.py
