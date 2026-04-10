@@ -13,20 +13,33 @@ def upload_video():
     creds = Credentials.from_authorized_user_info(token_data)
     youtube = build('youtube', 'v3', credentials=creds)
 
-    # Metadata.json Dosyasını Oku (Hata Payını Sıfırlayan Okuma)
+    # --- VARSAYILAN YEDEK DEĞERLER (FALLBACK) ---
     video_title = "Maarif Matematik - Yeni Ders"
     video_description = "Maarif Modeli'ne uygun, mantık odaklı matematik içeriği."
     video_tags = ["matematik", "maarif"]
 
+    # metadata.json Dosyasını Dinamik Olarak Oku
     try:
-        with open('metadata.json', 'r', encoding='utf-8') as f:
-            metadata = json.load(f)
-            # Eğer JSON yapısı nested (iç içe) ise veya düz ise her iki durumu da kontrol et
-            video_title = metadata.get('title', metadata.get('metadata', {}).get('title', video_title))
-            video_description = metadata.get('description', metadata.get('metadata', {}).get('description', video_description))
-            video_tags = metadata.get('tags', metadata.get('metadata', {}).get('tags', video_tags))
+        if os.path.exists('metadata.json'):
+            with open('metadata.json', 'r', encoding='utf-8') as f:
+                content = f.read()
+                print(f"DEBUG: Okunan ham metadata: {content[:100]}...") # Loglarda kontrol için
+                metadata = json.loads(content)
+                
+                # Hem düz hem de iç içe (nested) JSON yapılarını kontrol et
+                new_title = metadata.get('title', metadata.get('metadata', {}).get('title'))
+                new_desc = metadata.get('description', metadata.get('metadata', {}).get('description'))
+                new_tags = metadata.get('tags', metadata.get('metadata', {}).get('tags'))
+
+                if new_title: video_title = new_title
+                if new_desc: video_description = new_desc
+                if new_tags: video_tags = new_tags
+                
+                print(f"BAŞARILI: Dinamik başlık alındı -> {video_title}")
+        else:
+            print("UYARI: metadata.json bulunamadı, varsayılan başlık kullanılıyor.")
     except Exception as e:
-        print(f"Metadata okuma hatası: {e}. Varsayılan başlık kullanılıyor.")
+        print(f"HATA: Metadata işlenirken sorun oluştu: {e}")
 
     # Video Dosyasını Bul
     video_file = "media/videos/final_output.mp4"
@@ -34,7 +47,7 @@ def upload_video():
         print("HATA: Video dosyası bulunamadı!")
         return
 
-    print(f"YouTube'a yükleniyor: {video_title}")
+    print(f"YouTube'a yükleme işlemi başlıyor: {video_title}")
 
     # Video Yükleme İsteği
     request_body = {
@@ -42,10 +55,10 @@ def upload_video():
             'title': video_title,
             'description': video_description,
             'tags': video_tags,
-            'categoryId': '27' # Eğitim kategorisi
+            'categoryId': '27' # Eğitim
         },
         'status': {
-            'privacyStatus': 'public', # 'private' veya 'unlisted' yapabilirsin test için
+            'privacyStatus': 'public', 
             'selfDeclaredMadeForKids': False
         }
     }
@@ -66,8 +79,8 @@ def upload_video():
     if os.path.exists(thumbnail_file):
         print(f"Kapak fotoğrafı yükleniyor: {thumbnail_file}")
         try:
-            # YouTube bazen video işlenmeden kapağı kabul etmez, kısa bir bekleme
-            time.sleep(5)
+            # YouTube API senkronizasyonu için kısa bekleme
+            time.sleep(7)
             youtube.thumbnails().set(
                 videoId=video_id,
                 media_body=MediaFileUpload(thumbnail_file)
@@ -76,7 +89,7 @@ def upload_video():
         except Exception as e:
             print(f"Kapak fotoğrafı yüklenirken hata oluştu: {e}")
     else:
-        print("Uyarı: s.png bulunamadı, özel kapak yüklenemedi.")
+        print("BİLGİ: s.png bulunamadı, özel kapak yüklenemedi.")
 
 if __name__ == "__main__":
     upload_video()
