@@ -1,74 +1,74 @@
-name: Maarif Matematik Video Render ve Youtube
+import os
+import json
+import time
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload
 
-on:
-  push:
-    paths:
-      - 'metadata.json'  # Sadece metadata güncellendiğinde çalışarak "çift video" sorununu önler.
-  workflow_dispatch:
+def upload_video():
+    # Kimlik Bilgilerini Yükle
+    try:
+        client_secrets = json.loads(os.environ.get('CLIENT_SECRETS_JSON'))
+        token_data = json.loads(os.environ.get('TOKEN_JSON'))
+        creds = Credentials.from_authorized_user_info(token_data)
+        youtube = build('youtube', 'v3', credentials=creds)
+    except Exception as e:
+        print(f"HATA: Yetkilendirme başarısız: {e}")
+        return
 
-jobs:
-  render:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+    # --- VARSAYILAN DEĞERLER (Yedek) ---
+    video_title = "Birim Kesirler Mantığı | Maarif Matematik"
+    video_description = "Maarif Modeli'ne uygun, mantık odaklı matematik dersleri."
+    video_tags = ["matematik", "ders", "maarif"]
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+    # --- METADATA BULUCU (MUTLAK YOL) ---
+    # Script scripts/ içinde olduğu için bir üst klasöre (root) bakıyoruz
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    root_dir = os.path.dirname(current_dir)
+    metadata_path = os.path.join(root_dir, 'metadata.json')
 
-      - name: Install System Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg libcairo2-dev libpango1.0-dev freeglut3-dev \
-          mesa-utils libpng-dev libjpeg-dev \
-          texlive texlive-latex-extra texlive-fonts-extra \
-          texlive-latex-recommended texlive-science texlive-fonts-recommended \
-          tipa dvisvgm
+    print(f"BİLGİ: Dosya şu adreste aranıyor: {metadata_path}")
 
-      - name: Install Python Libraries
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install manim numpy google-api-python-client google-auth-oauthlib google-auth-httplib2
+    if os.path.exists(metadata_path):
+        try:
+            with open(metadata_path, 'r', encoding='utf-8') as f:
+                metadata = json.load(f)
+                # Make.com'dan gelen nested (iç içe) yapıyı destekler
+                m = metadata.get('metadata', metadata) 
+                video_title = m.get('title', video_title)
+                video_description = m.get('description', video_description)
+                video_tags = m.get('tags', video_tags)
+                print(f"✅ BAŞARILI: {metadata_path} okundu. Başlık: {video_title}")
+        except Exception as e:
+            print(f"⚠️ Dosya bulundu ama okunamadı: {e}")
+    else:
+        print(f"❌ HATA: {metadata_path} bulunamadı! Mevcut dosyalar: {os.listdir(root_dir)}")
 
-      - name: Create Required Directories
-        run: |
-          mkdir -p media/videos scripts audio
+    # Video Dosyası Kontrolü
+    video_file = os.path.join(root_dir, "media/videos/final_output.mp4")
+    if not os.path.exists(video_file):
+        print(f"HATA: Video bulunamadı: {video_file}")
+        return
 
-      - name: Render Manim Video
-        run: |
-          # Manim kodunu render et
-          manim -qm --media_dir ./media scripts/render_code.py -a
+    # Yükleme Başlıyor
+    request_body = {
+        'snippet': {'title': video_title, 'description': video_description, 'tags': video_tags, 'categoryId': '27'},
+        'status': {'privacyStatus': 'public', 'selfDeclaredMadeForKids': False}
+    }
 
-      - name: Merge Audio and Video (KUSURSUZ SENKRON)
-        run: |
-          # Render edilen mp4 dosyasını ve ses dosyasını bul
-          VIDEO_PATH=$(find media -name "*.mp4" | head -n 1)
-          AUDIO_PATH="audio/ders_sesi.mp3"
-          
-          echo "Render Edilen Video: $VIDEO_PATH"
-          echo "Ders Sesi: $AUDIO_PATH"
-          
-          if [ -n "$VIDEO_PATH" ] && [ -f "$AUDIO_PATH" ]; then
-            echo "Maarif Matematik: Senkronize birleştirme başlıyor..."
-            # -fflags +genpts: Senkron kaymasını (lag) önlemek için zaman damgalarını yeniden oluşturur.
-            # -shortest: Ses bittiği an işlemi durdurur.
-            # -t 600: Güvenlik sigortası (10 dakika).
-            ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -fflags +genpts -shortest -t 600 -c:v libx264 -c:a aac -map 0:v:0 -map 1:a:0 -y final_video_output.mp4
-            
-            # Son çıktıyı YouTube modülünün beklediği yere taşı
-            mkdir -p media/videos
-            mv final_video_output.mp4 media/videos/final_output.mp4
-          else
-            echo "HATA: Gerekli dosyalar bulunamadı!"
-            exit 1
-          fi
+    media = MediaFileUpload(video_file, chunksize=-1, resumable=True)
+    response = youtube.videos().insert(part='snippet,status', body=request_body, media_body=media).execute()
+    video_id = response.get('id')
+    print(f"🎉 VİDEO YÜKLENDİ! ID: {video_id}")
 
-      - name: Upload to YouTube
-        if: success()
-        env:
-          CLIENT_SECRETS_JSON: ${{ secrets.CLIENT_SECRETS_JSON }}
-          TOKEN_JSON: ${{ secrets.TOKEN_JSON }}
-        run: |
-          python scripts/upload_to_youtube.py
+    # Kapak (s.png)
+    thumbnail = os.path.join(root_dir, "s.png")
+    if os.path.exists(thumbnail):
+        time.sleep(15) # YouTube'un videoyu işlemesi için bekle
+        try:
+            youtube.thumbnails().set(videoId=video_id, media_body=MediaFileUpload(thumbnail)).execute()
+            print("✅ Kapak eklendi!")
+        except: print("⚠️ Kapak eklenemedi.")
+
+if __name__ == "__main__":
+    upload_video()
