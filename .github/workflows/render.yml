@@ -43,7 +43,7 @@ jobs:
           # Manim kodunu render et
           manim -qm --media_dir ./media scripts/render_code.py -a
 
-      - name: Merge Audio and Video (GÜVENLİ SÜRE SİSTEMİ)
+      - name: Merge Audio and Video (DÖNGÜSÜZ - SENKRONİZE)
         run: |
           # Render edilen mp4 dosyasını ve ses dosyasını bul
           VIDEO_PATH=$(find media -name "*.mp4" | head -n 1)
@@ -53,11 +53,11 @@ jobs:
           echo "Ders Sesi: $AUDIO_PATH"
           
           if [ -n "$VIDEO_PATH" ] && [ -f "$AUDIO_PATH" ]; then
-            echo "Maarif Matematik: Ses bitene kadar videoyu döngüye sokarak birleştiriliyor..."
-            # -stream_loop -1: Video ses bitene kadar tekrar eder
-            # -shortest: Ses bittiği an işlemi durdurur
+            echo "Maarif Matematik: Video ve Ses senkronize birleştiriliyor..."
+            # -stream_loop -1 kaldırıldı. Video ses bittiğinde duracak.
+            # -shortest: Ses bittiği an işlemi durdurur.
             # -t 600: RAM hatasını önlemek için 10 dakikada kesin keser (Güvenlik sigortası)
-            ffmpeg -stream_loop -1 -i "$VIDEO_PATH" -i "$AUDIO_PATH" -shortest -t 600 -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 -y final_video_output.mp4
+            ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -shortest -t 600 -c:v libx264 -c:a aac -map 0:v:0 -map 1:a:0 -y final_video_output.mp4
             
             # Son çıktıyı YouTube modülünün beklediği yere taşı
             mkdir -p media/videos
