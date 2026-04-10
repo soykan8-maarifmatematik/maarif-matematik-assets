@@ -3,7 +3,7 @@ name: Maarif Matematik Video Render ve Youtube
 on:
   push:
     paths:
-      - 'metadata.json'  # Sadece en son bu dosya geldiğinde çalışarak "çift video" sorununu önler
+      - 'metadata.json'  # Sadece metadata güncellendiğinde çalışarak "çift video" sorununu önler.
   workflow_dispatch:
 
 jobs:
@@ -51,10 +51,10 @@ jobs:
           echo "Ders Sesi: $AUDIO_PATH"
           
           if [ -n "$VIDEO_PATH" ] && [ -f "$AUDIO_PATH" ]; then
-            echo "Maarif Matematik: Video ve Ses senkronize birleştiriliyor..."
+            echo "Maarif Matematik: Senkronize birleştirme başlıyor..."
             # -fflags +genpts: Senkron kaymasını (lag) önlemek için zaman damgalarını yeniden oluşturur.
             # -shortest: Ses bittiği an işlemi durdurur.
-            # -t 600: RAM hatasını önlemek için 10 dakikada kesin keser.
+            # -t 600: Güvenlik sigortası (10 dakika).
             ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -fflags +genpts -shortest -t 600 -c:v libx264 -c:a aac -map 0:v:0 -map 1:a:0 -y final_video_output.mp4
             
             # Son çıktıyı YouTube modülünün beklediği yere taşı
