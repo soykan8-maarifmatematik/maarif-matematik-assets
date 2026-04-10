@@ -3,9 +3,7 @@ name: Maarif Matematik Video Render ve Youtube
 on:
   push:
     paths:
-      - 'metadata.json'  # Sadece bu dosya değiştiğinde çalış emri
-      - 'scripts/render_code.py'
-      - 'audio/ders_sesi.mp3'
+      - 'metadata.json'  # Sadece en son bu dosya geldiğinde çalışarak "çift video" sorununu önler
   workflow_dispatch:
 
 jobs:
@@ -43,7 +41,7 @@ jobs:
           # Manim kodunu render et
           manim -qm --media_dir ./media scripts/render_code.py -a
 
-      - name: Merge Audio and Video (DÖNGÜSÜZ - SENKRONİZE)
+      - name: Merge Audio and Video (KUSURSUZ SENKRON)
         run: |
           # Render edilen mp4 dosyasını ve ses dosyasını bul
           VIDEO_PATH=$(find media -name "*.mp4" | head -n 1)
@@ -54,10 +52,10 @@ jobs:
           
           if [ -n "$VIDEO_PATH" ] && [ -f "$AUDIO_PATH" ]; then
             echo "Maarif Matematik: Video ve Ses senkronize birleştiriliyor..."
-            # -stream_loop -1 kaldırıldı. Video ses bittiğinde duracak.
+            # -fflags +genpts: Senkron kaymasını (lag) önlemek için zaman damgalarını yeniden oluşturur.
             # -shortest: Ses bittiği an işlemi durdurur.
-            # -t 600: RAM hatasını önlemek için 10 dakikada kesin keser (Güvenlik sigortası)
-            ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -shortest -t 600 -c:v libx264 -c:a aac -map 0:v:0 -map 1:a:0 -y final_video_output.mp4
+            # -t 600: RAM hatasını önlemek için 10 dakikada kesin keser.
+            ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -fflags +genpts -shortest -t 600 -c:v libx264 -c:a aac -map 0:v:0 -map 1:a:0 -y final_video_output.mp4
             
             # Son çıktıyı YouTube modülünün beklediği yere taşı
             mkdir -p media/videos
