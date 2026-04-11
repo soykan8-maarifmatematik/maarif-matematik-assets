@@ -6,69 +6,117 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
 def upload_video():
-    # Kimlik Bilgilerini Yükle
+    # 1. Kimlik Bilgilerini Yükle
     try:
-        client_secrets = json.loads(os.environ.get('CLIENT_SECRETS_JSON'))
-        token_data = json.loads(os.environ.get('TOKEN_JSON'))
+        client_secrets_raw = os.environ.get('CLIENT_SECRETS_JSON')
+        token_data_raw = os.environ.get('TOKEN_JSON')
+        
+        if not client_secrets_raw or not token_data_raw:
+            print("HATA: YouTube API anahtarları GitHub Secrets içinde bulunamadı!")
+            return
+
+        client_secrets = json.loads(client_secrets_raw)
+        token_data = json.loads(token_data_raw)
+        
         creds = Credentials.from_authorized_user_info(token_data)
         youtube = build('youtube', 'v3', credentials=creds)
     except Exception as e:
-        print(f"HATA: Yetkilendirme başarısız: {e}")
+        print(f"HATA: Yetkilendirme veya JSON yükleme hatası: {e}")
         return
 
-    # --- VARSAYILAN DEĞERLER (Yedek) ---
+    # 2. Varsayılan (Yedek) Değerler - İsimsiz
     video_title = "Birim Kesirler Mantığı | Maarif Matematik"
-    video_description = "Maarif Modeli'ne uygun, mantık odaklı matematik dersleri."
+    video_description = "Maarif Modeli'ne uygun, mantık odaklı matematik dersleri. Ezberden uzak, keşfederek öğrenme."
     video_tags = ["matematik", "ders", "maarif"]
 
-    # --- METADATA BULUCU (MUTLAK YOL) ---
-    # Script scripts/ içinde olduğu için bir üst klasöre (root) bakıyoruz
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    root_dir = os.path.dirname(current_dir)
-    metadata_path = os.path.join(root_dir, 'metadata.json')
+    # 3. metadata.json Dosyasını Bul ve Oku
+    # GitHub Actions ortamında dosya nerede olursa olsun bulmaya çalışır.
+    possible_paths = [
+        'metadata.json', 
+        './metadata.json', 
+        'scripts/metadata.json',
+        os.path.join(os.getcwd(), 'metadata.json')
+    ]
+    
+    metadata_found = False
+    for path in possible_paths:
+        if os.path.exists(path):
+            try:
+                with open(path, 'r', encoding='utf-8') as f:
+                    content = f.read().strip()
+                    if content:
+                        metadata = json.loads(content)
+                        # Make.com'dan gelen 'metadata' objesini veya doğrudan anahtarları kontrol et
+                        m = metadata.get('metadata', metadata)
+                        
+                        t = m.get('title')
+                        d = m.get('description')
+                        tg = m.get('tags')
 
-    print(f"BİLGİ: Dosya şu adreste aranıyor: {metadata_path}")
+                        if t: video_title = t
+                        if d: video_description = d
+                        if tg: video_tags = tg
+                        metadata_found = True
+                        print(f"✅ BAŞARILI: Metadata şu yoldan okundu: {path}")
+                        break
+            except Exception as e:
+                print(f"⚠️ Dosya bulundu ama okunamadı ({path}): {e}")
+                continue
 
-    if os.path.exists(metadata_path):
-        try:
-            with open(metadata_path, 'r', encoding='utf-8') as f:
-                metadata = json.load(f)
-                # Make.com'dan gelen nested (iç içe) yapıyı destekler
-                m = metadata.get('metadata', metadata) 
-                video_title = m.get('title', video_title)
-                video_description = m.get('description', video_description)
-                video_tags = m.get('tags', video_tags)
-                print(f"✅ BAŞARILI: {metadata_path} okundu. Başlık: {video_title}")
-        except Exception as e:
-            print(f"⚠️ Dosya bulundu ama okunamadı: {e}")
-    else:
-        print(f"❌ HATA: {metadata_path} bulunamadı! Mevcut dosyalar: {os.listdir(root_dir)}")
+    if not metadata_found:
+        print("❌ UYARI: metadata.json dosyası bulunamadı! İsimsiz yedek başlık kullanılıyor.")
 
-    # Video Dosyası Kontrolü
-    video_file = os.path.join(root_dir, "media/videos/final_output.mp4")
+    # 4. Video Dosyasını Kontrol Et
+    video_file = "media/videos/final_output.mp4"
     if not os.path.exists(video_file):
-        print(f"HATA: Video bulunamadı: {video_file}")
+        print(f"HATA: Video dosyası bulunamadı! Yol: {video_file}")
         return
 
-    # Yükleme Başlıyor
+    # 5. YouTube Yükleme İşlemi
+    print(f"🚀 YouTube'a Yükleme Başlıyor: {video_title}")
     request_body = {
-        'snippet': {'title': video_title, 'description': video_description, 'tags': video_tags, 'categoryId': '27'},
-        'status': {'privacyStatus': 'public', 'selfDeclaredMadeForKids': False}
+        'snippet': {
+            'title': video_title,
+            'description': video_description,
+            'tags': video_tags,
+            'categoryId': '27' # Eğitim
+        },
+        'status': {
+            'privacyStatus': 'public', 
+            'selfDeclaredMadeForKids': False
+        }
     }
 
-    media = MediaFileUpload(video_file, chunksize=-1, resumable=True)
-    response = youtube.videos().insert(part='snippet,status', body=request_body, media_body=media).execute()
-    video_id = response.get('id')
-    print(f"🎉 VİDEO YÜKLENDİ! ID: {video_id}")
+    try:
+        media = MediaFileUpload(video_file, chunksize=-1, resumable=True)
+        response_upload = youtube.videos().insert(
+            part='snippet,status',
+            body=request_body,
+            media_body=media
+        ).execute()
 
-    # Kapak (s.png)
-    thumbnail = os.path.join(root_dir, "s.png")
-    if os.path.exists(thumbnail):
-        time.sleep(15) # YouTube'un videoyu işlemesi için bekle
-        try:
-            youtube.thumbnails().set(videoId=video_id, media_body=MediaFileUpload(thumbnail)).execute()
-            print("✅ Kapak eklendi!")
-        except: print("⚠️ Kapak eklenemedi.")
+        video_id = response_upload.get('id')
+        print(f"🎉 VİDEO BAŞARIYLA YÜKLENDİ! Video ID: {video_id}")
+
+        # 6. Özel Kapak (s.png) Yükleme
+        thumbnail_file = "s.png"
+        if os.path.exists(thumbnail_file):
+            print(f"📸 Kapak fotoğrafı yükleniyor: {thumbnail_file}")
+            # YouTube API senkronizasyonu için bekleme (Önemli!)
+            time.sleep(15) 
+            try:
+                youtube.thumbnails().set(
+                    videoId=video_id,
+                    media_body=MediaFileUpload(thumbnail_file)
+                ).execute()
+                print("✅ Kapak fotoğrafı başarıyla güncellendi!")
+            except Exception as e:
+                print(f"⚠️ Kapak fotoğrafı yüklenirken hata oluştu: {e}")
+        else:
+            print("ℹ️ BİLGİ: s.png (kapak) bulunamadı.")
+
+    except Exception as e:
+        print(f"HATA: YouTube yükleme sırasında bir sorun oluştu: {e}")
 
 if __name__ == "__main__":
     upload_video()
