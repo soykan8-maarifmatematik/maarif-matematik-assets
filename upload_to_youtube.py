@@ -6,7 +6,7 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from google.auth.transport.requests import Request
 
-# ⚠️ BU ADRESİN SONUNDA BOŞLUK OLMAMALI
+# ⚠️ YETKİ ADRESİ (Scope)
 SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl']
 
 def upload_video():
@@ -18,23 +18,19 @@ def upload_video():
             print("❌ HATA: TOKEN_JSON GitHub Secret bulunamadı!")
             return
 
-        # JSON verisini yükle
         token_data = json.loads(t_json)
-        
         # 🛡️ YETKİ TAMİRİ: Token içindeki yetkiyi kodla aynı yapmaya zorluyoruz
         token_data['scopes'] = SCOPES 
         
         creds = Credentials.from_authorized_user_info(token_data, SCOPES)
         
-        # Anahtarın süresi dolmuşsa yenile
         if creds and creds.expired and creds.refresh_token:
-            print("🔄 Anahtar süresi dolmuş, YouTube'dan taze onay alınıyor...")
+            print("🔄 Anahtar süresi dolmuş, yenileniyor...")
             creds.refresh(Request())
             
         youtube = build('youtube', 'v3', credentials=creds)
         print("✅ YouTube bağlantısı başarıyla kuruldu.")
         
-        # Dosya ve Metadata Ayarları
         video_path = "media/videos/final_output.mp4"
         title = "Birim Kesirler Mantığı | Maarif Matematik"
         
@@ -51,11 +47,10 @@ def upload_video():
         print(f"🚀 Video yükleniyor: {title}")
         media = MediaFileUpload(video_path, chunksize=-1, resumable=True)
         response = youtube.videos().insert(part='snippet,status', body=body, media_body=media).execute()
-        print(f"🎉 BAŞARI! Video YouTube'da yayında. ID: {response.get('id')}")
+        print(f"🎉 BAŞARI! Video yüklendi. ID: {response.get('id')}")
 
     except Exception as e:
-        print(f"❌ KRİTİK HATA: {e}")
-        print("İpucu: Eğer 'invalid_scope' diyorsa, lütfen anahtar.py ile yeni kod alırken kutucuğu işaretleyin.")
+        print(f"❌ HATA: {e}")
 
 if __name__ == "__main__":
     upload_video()
