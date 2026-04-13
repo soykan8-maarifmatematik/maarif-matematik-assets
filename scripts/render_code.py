@@ -1,76 +1,83 @@
+```python
 from manim import *
 
 class UnitFractionLogic(Scene):
     def construct(self):
-        # --- AYARLAR ---
-        # Maarif Matematik Estetiği: Beyaz Arka Plan
+        # --- TASARIM STANDARTLARI ---
         self.camera.background_color = "#FFFFFF"
         dark_grey = "#333333"
-        maarif_blue = "#87CEEB" # Görseldeki yumuşak mavi tonu
+        maarif_blue = "#87CEEB"
+        
+        # 1. MERKEZ NOKTASI (Tüm objeler buraya kilitlenecek)
+        main_center = DOWN * 0.5 
 
-        # 1. Başlık Oluşturma
-        title = Text("Birim Kesir Mantığı", font="Oswald", color=dark_grey).scale(1.2)
-        title.to_edge(UP, buff=0.5)
+        # 2. Başlık
+        title = Text("Birim Kesir Mantığı", font="Oswald", color=dark_grey).scale(1.1)
+        title.to_edge(UP, buff=0.7)
 
-        # 2. Bütün Daireyi Oluşturma
-        whole_circle = Circle(radius=2, color=dark_grey, stroke_width=2)
-        whole_circle.shift(DOWN * 0.5)
+        # 3. Ana Daire
+        # arc_center kullanarak merkezi en baştan tanımlıyoruz
+        whole_circle = Circle(radius=2.2, color=dark_grey, stroke_width=2)
+        whole_circle.move_to(main_center)
 
-        # 3. Bölme Çizgileri (4 eş parça için)
-        horizontal_line = Line(
+        # 4. Eşit Bölme Çizgileri
+        # Çizgilerin merkezini dairenin merkezine göre hesaplıyoruz
+        h_line = Line(
             whole_circle.get_left(), whole_circle.get_right(), 
             color=dark_grey, stroke_width=2
         )
-        vertical_line = Line(
+        v_line = Line(
             whole_circle.get_top(), whole_circle.get_bottom(), 
             color=dark_grey, stroke_width=2
         )
-        lines = VGroup(horizontal_line, vertical_line)
+        lines = VGroup(h_line, v_line)
 
-        # 4. Birim Kesir Dilimi (Hata Buradaydı: Tam Hizalama)
-        # Sector kullanarak tam merkezi ve açıyı belirliyoruz
+        # 5. Birim Kesir Dilimi (KRİTİK DÜZELTME)
+        # arc_center=main_center diyerek dilimin "sivri ucunu" dairenin merkezine çiviliyoruz
         unit_slice = Sector(
+            arc_center=main_center, # Tam merkezde olması için kilit nokta
             inner_radius=0,
-            outer_radius=2,
-            angle=90 * DEGREES,      # 4'te 1 olduğu için 90 derece
-            start_angle=90 * DEGREES, # Sol üst kadrana yerleştir (90'dan başla)
+            outer_radius=2.2,
+            angle=90 * DEGREES,
+            start_angle=90 * DEGREES, # Sol üst kadran
             color=maarif_blue,
             fill_opacity=0.8,
-            stroke_width=0
+            stroke_width=1,
+            stroke_color=dark_grey
         )
-        unit_slice.move_to(whole_circle.get_center(), aligned_edge=ORIGIN)
-        # Not: move_to ve aligned_edge kullanımı dilimin ucunun tam merkezde kalmasını sağlar.
 
-        # 5. Alt Bilgi Metni (Altyazı Kutusu)
+        # 6. Altyazı Kutusu ve Metni
         subtitle_box = Rectangle(
-            width=8, height=1, 
-            fill_color=dark_grey, fill_opacity=0.7, 
+            width=8.5, height=1, 
+            fill_color=dark_grey, fill_opacity=0.8, 
             stroke_width=0
-        ).to_edge(DOWN, buff=1)
+        ).to_edge(DOWN, buff=0.8)
         
-        subtitle_text = Text(
-            "Bir bütünü eş parçalara ayırdığımızda\no parçalardan sadece bir tanesine...",
+        caption = Text(
+            "Bir pastayı kaç eş parçaya bölerseniz\nbölün o parçalardan sadece bir tanesine...",
             font="Montserrat", color=WHITE
-        ).scale(0.5)
-        subtitle_text.move_to(subtitle_box.get_center())
-        
-        caption_group = VGroup(subtitle_box, subtitle_text)
+        ).scale(0.45)
+        caption.move_to(subtitle_box.get_center())
 
-        # --- ANİMASYON AKIŞI ---
+        # --- ANİMASYON ---
         self.play(Write(title))
+        self.wait(0.3)
+        
+        self.play(Create(whole_circle), Create(lines))
         self.wait(0.5)
+
+        # Dilimin merkezden dışarı doğru zarifçe gelmesi
+        self.play(FadeIn(unit_slice, shift=RIGHT*0.2 + DOWN*0.2)) 
+        self.wait(0.2)
         
-        self.play(Create(whole_circle))
-        self.play(Create(lines))
+        # Altyazı
+        self.play(FadeIn(subtitle_box, shift=UP), Write(caption))
+        self.wait(4)
+
+        # Temizlik
+        self.play(
+            FadeOut(VGroup(whole_circle, lines, unit_slice, title, subtitle_box, caption))
+        )
         self.wait(1)
 
-        # Dilimin belirmesi (Tam yerine oturacak şekilde)
-        self.play(FadeIn(unit_slice, scale=0.5))
-        self.play(unit_slice.animate.set_stroke(dark_grey, 1))
-        
-        self.play(FadeIn(caption_group, shift=UP))
-        self.wait(3)
-
-        # Kapanış
-        self.play(FadeOut(VGroup(title, whole_circle, lines, unit_slice, caption_group)))
-        self.wait(1)
+```
