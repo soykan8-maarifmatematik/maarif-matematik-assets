@@ -6,7 +6,7 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from google.auth.transport.requests import Request
 
-# ⚠️ DİKKAT: Sadece tırnak içindeki adresi kullanın, link formatı olmamalı!
+# ⚠️ DİKKAT: Sadece tırnak içindeki adresi kullanın!
 SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl']
 
 def upload_video():
@@ -19,7 +19,7 @@ def upload_video():
             return
 
         token_data = json.loads(t_json)
-        # Eğer token içinde eski/yanlış scope kalmışsa temizleyip doğrusunu yazıyoruz
+        # 🛡️ YETKİ ZIRHI: Token içindeki scope'u kodla aynı yapıyoruz
         token_data['scopes'] = SCOPES 
         
         creds = Credentials.from_authorized_user_info(token_data, SCOPES)
@@ -31,13 +31,9 @@ def upload_video():
         youtube = build('youtube', 'v3', credentials=creds)
         print("✅ YouTube bağlantısı kuruldu.")
         
-        # Video ve Metadata Kontrolü
         video_path = "media/videos/final_output.mp4"
-        if not os.path.exists(video_path):
-            print("❌ HATA: Video dosyası bulunamadı!")
-            return
-
         title = "Birim Kesirler Mantığı | Maarif Matematik"
+        
         if os.path.exists('metadata.json'):
             with open('metadata.json', 'r', encoding='utf-8') as f:
                 m = json.load(f)
@@ -45,7 +41,7 @@ def upload_video():
 
         body = {
             'snippet': {'title': title, 'categoryId': '27'},
-            'status': {'privacyStatus': 'public', 'selfDeclaredMadeForKids': False}
+            'status': {'privacyStatus': 'public', 'setDeclaredMadeForKids': False}
         }
 
         media = MediaFileUpload(video_path, chunksize=-1, resumable=True)
