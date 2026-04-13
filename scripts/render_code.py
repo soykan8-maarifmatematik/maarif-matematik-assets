@@ -67,5 +67,3 @@ class UnitFractionLogic(Scene):
         self.wait(4)
         self.play(FadeOut(VGroup(whole_circle, lines, unit_slice, title, subtitle_box, caption)))
         self.wait(1)
-
-```
