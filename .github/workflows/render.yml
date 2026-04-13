@@ -9,6 +9,7 @@ on:
 jobs:
   render:
     runs-on: ubuntu-latest
+    # 🚀 ÖNEMLİ: Hazır kütüphane yüklü konteyner kullanımı
     container:
       image: manimcommunity/manim:v0.18.0
     
