@@ -1,4 +1,4 @@
-name: Maarif Matematik Video Render
+name: Maarif Matematik Video Render ve Youtube
 
 on:
   push:
@@ -26,30 +26,45 @@ jobs:
           texlive-latex-base texlive-latex-recommended texlive-fonts-recommended dvisvgm
 
       - name: Install Python Libraries
-        run: pip install manim numpy google-api-python-client google-auth-oauthlib google-auth-httplib2
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install manim numpy google-api-python-client google-auth-oauthlib google-auth-httplib2
 
-      - name: Create Directories
-        run: mkdir -p media/videos audio
+      - name: Create Required Directories
+        run: |
+          # Klasör çakışmalarını önlemek için temiz kurulum
+          mkdir -p media/videos audio scripts
 
       - name: Render Manim Video
         run: |
-          # '-a' parametresi ile dosyadaki TÜM sahneleri otomatik render eder
-          manim -qm --media_dir ./media scripts/render_code.py -a
+          # 'MaarifScene' ismini özellikle arıyoruz
+          if [ -f "scripts/render_code.py" ]; then
+            manim -qm --media_dir ./media scripts/render_code.py MaarifScene
+          else
+            echo "❌ HATA: render_code.py dosyası bulunamadı!"
+            exit 1
+          fi
 
-      - name: Merge Audio and Video
+      - name: Merge Audio and Video (KUSURSUZ SENKRON)
         run: |
-          # En son üretilen video ve ses dosyasını bul
+          # Render edilen videoyu ve Make.com'dan gelen sesi bulalım
           VIDEO_PATH=$(find media -name "*.mp4" | head -n 1)
           AUDIO_PATH=$(find . -name "*.mp3" | head -n 1)
           
+          echo "📽️ Video Yolu: $VIDEO_PATH"
+          echo "🎵 Ses Yolu: $AUDIO_PATH"
+          
           if [ -n "$VIDEO_PATH" ] && [ -n "$AUDIO_PATH" ]; then
-            ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -c:v libx264 -c:a aac -map 0:v:0 -map 1:a:0 -y media/videos/final_output.mp4
+            ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -fflags +genpts -shortest -c:v libx264 -c:a aac -map 0:v:0 -map 1:a:0 -y media/videos/final_output.mp4
           else
-            echo "❌ HATA: Video veya Ses dosyası bulunamadı!"
+            echo "❌ HATA: Video veya Ses dosyası eksik!"
+            ls -R
             exit 1
           fi
 
       - name: Upload to YouTube
+        if: success()
         env:
           TOKEN_JSON: ${{ secrets.TOKEN_JSON }}
-        run: python scripts/upload_to_youtube.py
+        run: |
+          python scripts/upload_to_youtube.py
