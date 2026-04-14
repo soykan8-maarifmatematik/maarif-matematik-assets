@@ -18,30 +18,27 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install System Dependencies (HIZLI)
+      - name: Install System Dependencies
         run: |
           sudo apt-get update
-          # Sadece gerekli olan temel paketleri kuruyoruz (Hız için --no-install-recommends ekledik)
           sudo apt-get install -y --no-install-recommends \
-          ffmpeg \
-          libcairo2-dev \
-          libpango1.0-dev \
-          freeglut3-dev \
-          texlive-latex-base \
-          texlive-latex-recommended \
-          texlive-fonts-recommended \
-          dvisvgm
+          ffmpeg libcairo2-dev libpango1.0-dev freeglut3-dev \
+          texlive-latex-base texlive-latex-recommended texlive-fonts-recommended dvisvgm
 
       - name: Install Python Libraries
         run: pip install manim numpy google-api-python-client google-auth-oauthlib google-auth-httplib2
 
+      - name: Create Directories
+        run: mkdir -p media/videos audio
+
       - name: Render Manim Video
         run: |
-          # Sınıf ismini MaarifScene olarak bekliyoruz
-          manim -qm --media_dir ./media scripts/render_code.py MaarifScene
+          # '-a' parametresi ile dosyadaki TÜM sahneleri otomatik render eder
+          manim -qm --media_dir ./media scripts/render_code.py -a
 
       - name: Merge Audio and Video
         run: |
+          # En son üretilen video ve ses dosyasını bul
           VIDEO_PATH=$(find media -name "*.mp4" | head -n 1)
           AUDIO_PATH=$(find . -name "*.mp3" | head -n 1)
           
