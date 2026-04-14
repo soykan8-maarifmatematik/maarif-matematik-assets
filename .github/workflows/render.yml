@@ -3,8 +3,8 @@ name: Maarif Matematik Video Render ve Youtube
 on:
   push:
     paths:
-      - 'metadata.json'
-  workflow_dispatch:
+      - 'metadata.json' # Sadece mühür basıldığında (metadata gelince) çalışır
+  workflow_dispatch: # Manuel başlatma izni
 
 jobs:
   render:
@@ -19,6 +19,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install System Dependencies
+        # DEBIAN_FRONTEND=noninteractive ve --no-install-recommends sayesinde 43 dakikalık takılmaları önler
         run: |
           sudo apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -38,13 +39,12 @@ jobs:
           python -m pip install manim numpy google-api-python-client google-auth-oauthlib google-auth-httplib2
 
       - name: Create Required Directories
-        run: |
-          mkdir -p media/videos audio scripts
+        run: mkdir -p media/videos audio scripts
 
       - name: Render Manim Video
         run: |
+          # Sınıf ismi (MaarifScene vb.) belirtmedik; dosyadaki her şeyi render eder (Hata riskini sıfırlar)
           if [ -f "scripts/render_code.py" ]; then
-            # 'MaarifScene' zorunluluğunu kaldırdık, dosyadaki her şeyi render eder
             manim -qm --media_dir ./media scripts/render_code.py
           else
             echo "❌ HATA: render_code.py bulunamadı!"
@@ -53,17 +53,18 @@ jobs:
 
       - name: Merge Audio and Video (KUSURSUZ SENKRON)
         run: |
-          # Video bulma mantığını derinleştirdik
-          VIDEO_PATH=$(find media -name "*.mp4" | head -n 1)
+          # Derin arama ile üretilen videoyu ve sesi bulur
+          VIDEO_PATH=$(find media -name "*.mp4" | grep -v "final_output" | head -n 1)
           AUDIO_PATH=$(find . -name "*.mp3" | head -n 1)
           
           echo "📽️ Bulunan Video: $VIDEO_PATH"
           echo "🎵 Bulunan Ses: $AUDIO_PATH"
           
           if [ -n "$VIDEO_PATH" ] && [ -n "$AUDIO_PATH" ]; then
+            # -fflags +genpts sayesinde ses kayması (lag) yaşanmaz
             ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -fflags +genpts -shortest -c:v libx264 -c:a aac -map 0:v:0 -map 1:a:0 -y media/videos/final_output.mp4
           else
-            echo "❌ HATA: Dosya eksik! Mevcut dosyalar listeleniyor:"
+            echo "❌ HATA: Video veya Ses dosyası bulunamadı!"
             ls -R
             exit 1
           fi
@@ -72,5 +73,4 @@ jobs:
         if: success()
         env:
           TOKEN_JSON: ${{ secrets.TOKEN_JSON }}
-        run: |
-          python scripts/upload_to_youtube.py
+        run: python scripts/upload_to_youtube.py
