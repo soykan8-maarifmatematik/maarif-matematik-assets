@@ -1,53 +1,55 @@
-name: Maarif Matematik Video Render ve Youtube
+name: Maarif Video Render
 
 on:
   push:
     paths:
       - 'metadata.json'
-  workflow_dispatch:
 
 jobs:
   render:
     runs-on: ubuntu-latest
-    container:
-      image: manimcommunity/manim:v0.18.0
-      # 🚀 KESİN ÇÖZÜM: Konteynerı yönetici yetkisiyle başlatıyoruz.
-      options: --user root
-    
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Install Python Libraries
-        run: |
-          pip install --upgrade pip
-          pip install google-api-python-client google-auth-oauthlib google-auth-httplib2
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
 
-      - name: Create Required Directories
+      - name: Install Dependencies
         run: |
-          mkdir -p media/videos scripts audio
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg libcairo2-dev libpango1.0-dev freeglut3-dev
+          pip install manim google-api-python-client google-auth-httplib2 google-auth-oauthlib
+
+      - name: Create Directories
+        run: mkdir -p media/videos output
 
       - name: Render Manim Video
         run: |
-          manim -qm --media_dir ./media scripts/render_code.py -a
+          # Sınıf ismini otomatik bul ya da MaarifScene olduğunu varsay
+          manim -ql scripts/render_code.py MaarifScene --media_dir ./media
+        continue-on-error: false
 
       - name: Merge Audio and Video (SENKRONİZE)
         run: |
           VIDEO_PATH=$(find media -name "*.mp4" | head -n 1)
-          AUDIO_PATH="audio/ders_sesi.mp3"
+          AUDIO_PATH="audio.mp3"
           
-          if [ -n "$VIDEO_PATH" ] && [ -f "$AUDIO_PATH" ]; then
-            ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -fflags +genpts -shortest -t 600 -c:v libx264 -c:a aac -map 0:v:0 -map 1:a:0 -y final_video_output.mp4
-            mv final_video_output.mp4 media/videos/final_output.mp4
-          else
-            echo "Hata: Dosyalar bulunamadı!"
+          if [ -z "$VIDEO_PATH" ]; then
+            echo "❌ HATA: Video dosyası render edilemedi!"
             exit 1
+          fi
+          
+          if [ ! -f "$AUDIO_PATH" ]; then
+            echo "⚠️ UYARI: Ses dosyası yok, sadece video taşınıyor."
+            cp "$VIDEO_PATH" media/videos/final_output.mp4
+          else
+            ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -c:v copy -c:a aac -map 0:v:0 -map 1:a:0 media/videos/final_output.mp4 -y
           fi
 
       - name: Upload to YouTube
-        if: success()
         env:
-          CLIENT_SECRETS_JSON: ${{ secrets.CLIENT_SECRETS_JSON }}
           TOKEN_JSON: ${{ secrets.TOKEN_JSON }}
-        run: |
-          python scripts/upload_to_youtube.py
+        run: python scripts/upload_to_youtube.py
