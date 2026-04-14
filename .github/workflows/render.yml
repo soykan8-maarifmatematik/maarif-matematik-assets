@@ -21,9 +21,16 @@ jobs:
       - name: Install System Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-          ffmpeg libcairo2-dev libpango1.0-dev freeglut3-dev \
-          texlive-latex-base texlive-latex-recommended texlive-fonts-recommended dvisvgm
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            ffmpeg \
+            libcairo2-dev \
+            libpango1.0-dev \
+            freeglut3-dev \
+            texlive-latex-base \
+            texlive-latex-recommended \
+            texlive-fonts-recommended \
+            dvisvgm \
+            ghostscript
 
       - name: Install Python Libraries
         run: |
@@ -32,33 +39,29 @@ jobs:
 
       - name: Create Required Directories
         run: |
-          # Klasör çakışmalarını önlemek için temiz kurulum
           mkdir -p media/videos audio scripts
 
       - name: Render Manim Video
         run: |
-          # 'MaarifScene' ismini özellikle arıyoruz
           if [ -f "scripts/render_code.py" ]; then
             manim -qm --media_dir ./media scripts/render_code.py MaarifScene
           else
-            echo "❌ HATA: render_code.py dosyası bulunamadı!"
+            echo "❌ HATA: render_code.py bulunamadı!"
             exit 1
           fi
 
       - name: Merge Audio and Video (KUSURSUZ SENKRON)
         run: |
-          # Render edilen videoyu ve Make.com'dan gelen sesi bulalım
           VIDEO_PATH=$(find media -name "*.mp4" | head -n 1)
           AUDIO_PATH=$(find . -name "*.mp3" | head -n 1)
           
-          echo "📽️ Video Yolu: $VIDEO_PATH"
-          echo "🎵 Ses Yolu: $AUDIO_PATH"
+          echo "📽️ Video: $VIDEO_PATH"
+          echo "🎵 Ses: $AUDIO_PATH"
           
           if [ -n "$VIDEO_PATH" ] && [ -n "$AUDIO_PATH" ]; then
             ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -fflags +genpts -shortest -c:v libx264 -c:a aac -map 0:v:0 -map 1:a:0 -y media/videos/final_output.mp4
           else
             echo "❌ HATA: Video veya Ses dosyası eksik!"
-            ls -R
             exit 1
           fi
 
