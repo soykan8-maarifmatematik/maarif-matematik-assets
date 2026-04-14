@@ -18,36 +18,37 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install System Dependencies
+      - name: Install System Dependencies (HIZLI)
         run: |
           sudo apt-get update
-          sudo apt-get install -y ffmpeg libcairo2-dev libpango1.0-dev freeglut3-dev \
-          texlive texlive-latex-extra texlive-fonts-extra \
-          texlive-latex-recommended texlive-science texlive-fonts-recommended
+          # Sadece gerekli olan temel paketleri kuruyoruz (Hız için --no-install-recommends ekledik)
+          sudo apt-get install -y --no-install-recommends \
+          ffmpeg \
+          libcairo2-dev \
+          libpango1.0-dev \
+          freeglut3-dev \
+          texlive-latex-base \
+          texlive-latex-recommended \
+          texlive-fonts-recommended \
+          dvisvgm
 
       - name: Install Python Libraries
         run: pip install manim numpy google-api-python-client google-auth-oauthlib google-auth-httplib2
 
       - name: Render Manim Video
         run: |
-          # Hangi sahneler olduğunu kontrol et ve render et
-          manim -qm --media_dir ./media scripts/render_code.py -a
+          # Sınıf ismini MaarifScene olarak bekliyoruz
+          manim -qm --media_dir ./media scripts/render_code.py MaarifScene
 
       - name: Merge Audio and Video
         run: |
-          # Dosyaları bulalım
           VIDEO_PATH=$(find media -name "*.mp4" | head -n 1)
           AUDIO_PATH=$(find . -name "*.mp3" | head -n 1)
-          
-          echo "📽️ Bulunan Video: $VIDEO_PATH"
-          echo "🎵 Bulunan Ses: $AUDIO_PATH"
           
           if [ -n "$VIDEO_PATH" ] && [ -n "$AUDIO_PATH" ]; then
             ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -c:v libx264 -c:a aac -map 0:v:0 -map 1:a:0 -y media/videos/final_output.mp4
           else
-            echo "❌ HATA: Video veya Ses dosyası eksik!"
-            echo "Mevcut dosyalar:"
-            find . -maxdepth 3 -not -path '*/.*'
+            echo "❌ HATA: Video veya Ses dosyası bulunamadı!"
             exit 1
           fi
 
