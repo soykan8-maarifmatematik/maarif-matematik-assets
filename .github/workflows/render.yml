@@ -3,8 +3,8 @@ name: Maarif Matematik Video Render ve Youtube
 on:
   push:
     paths:
-      - 'metadata.json' # Sadece mühür basıldığında (metadata gelince) çalışır
-  workflow_dispatch: # Manuel başlatma izni
+      - 'metadata.json' # Sadece mühür basıldığında tetiklenir
+  workflow_dispatch: # Elinle başlatma izni verir
 
 jobs:
   render:
@@ -19,7 +19,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install System Dependencies
-        # DEBIAN_FRONTEND=noninteractive ve --no-install-recommends sayesinde 43 dakikalık takılmaları önler
+        # Bu kısım 43 dakikalık takılmaları önleyen "sessiz kurulum" modundadır.
         run: |
           sudo apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -43,7 +43,8 @@ jobs:
 
       - name: Render Manim Video
         run: |
-          # Sınıf ismi (MaarifScene vb.) belirtmedik; dosyadaki her şeyi render eder (Hata riskini sıfırlar)
+          # Sınıf ismi (MaarifScene vb.) belirtmedik; bu sayede Gemini sınıf ismini 
+          # ne koyarsa koysun Manim onu bulur ve videoyu üretir.
           if [ -f "scripts/render_code.py" ]; then
             manim -qm --media_dir ./media scripts/render_code.py
           else
@@ -53,7 +54,7 @@ jobs:
 
       - name: Merge Audio and Video (KUSURSUZ SENKRON)
         run: |
-          # Derin arama ile üretilen videoyu ve sesi bulur
+          # Manim'in ürettiği videoyu derinlemesine arar (isim ne olursa olsun bulur)
           VIDEO_PATH=$(find media -name "*.mp4" | grep -v "final_output" | head -n 1)
           AUDIO_PATH=$(find . -name "*.mp3" | head -n 1)
           
@@ -61,10 +62,10 @@ jobs:
           echo "🎵 Bulunan Ses: $AUDIO_PATH"
           
           if [ -n "$VIDEO_PATH" ] && [ -n "$AUDIO_PATH" ]; then
-            # -fflags +genpts sayesinde ses kayması (lag) yaşanmaz
+            # -fflags +genpts: Ses ve görüntü arasındaki kaymayı (lag) önler.
             ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -fflags +genpts -shortest -c:v libx264 -c:a aac -map 0:v:0 -map 1:a:0 -y media/videos/final_output.mp4
           else
-            echo "❌ HATA: Video veya Ses dosyası bulunamadı!"
+            echo "❌ HATA: Video veya Ses dosyası eksik!"
             ls -R
             exit 1
           fi
