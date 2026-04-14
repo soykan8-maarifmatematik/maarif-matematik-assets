@@ -44,7 +44,8 @@ jobs:
       - name: Render Manim Video
         run: |
           if [ -f "scripts/render_code.py" ]; then
-            manim -qm --media_dir ./media scripts/render_code.py MaarifScene
+            # 'MaarifScene' zorunluluğunu kaldırdık, dosyadaki her şeyi render eder
+            manim -qm --media_dir ./media scripts/render_code.py
           else
             echo "❌ HATA: render_code.py bulunamadı!"
             exit 1
@@ -52,16 +53,18 @@ jobs:
 
       - name: Merge Audio and Video (KUSURSUZ SENKRON)
         run: |
+          # Video bulma mantığını derinleştirdik
           VIDEO_PATH=$(find media -name "*.mp4" | head -n 1)
           AUDIO_PATH=$(find . -name "*.mp3" | head -n 1)
           
-          echo "📽️ Video: $VIDEO_PATH"
-          echo "🎵 Ses: $AUDIO_PATH"
+          echo "📽️ Bulunan Video: $VIDEO_PATH"
+          echo "🎵 Bulunan Ses: $AUDIO_PATH"
           
           if [ -n "$VIDEO_PATH" ] && [ -n "$AUDIO_PATH" ]; then
             ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -fflags +genpts -shortest -c:v libx264 -c:a aac -map 0:v:0 -map 1:a:0 -y media/videos/final_output.mp4
           else
-            echo "❌ HATA: Video veya Ses dosyası eksik!"
+            echo "❌ HATA: Dosya eksik! Mevcut dosyalar listeleniyor:"
+            ls -R
             exit 1
           fi
 
