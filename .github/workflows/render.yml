@@ -3,8 +3,9 @@ name: Maarif Matematik Video Render ve Youtube
 on:
   push:
     paths:
-      - 'metadata.json' # Sadece mühür basıldığında tetiklenir
-  workflow_dispatch: # Elinle başlatma izni verir
+      - 'metadata.json'
+      - 'scripts/render_code.py'
+  workflow_dispatch:
 
 jobs:
   render:
@@ -19,19 +20,11 @@ jobs:
           python-version: '3.11'
 
       - name: Install System Dependencies
-        # Bu kısım 43 dakikalık takılmaları önleyen "sessiz kurulum" modundadır.
         run: |
           sudo apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-            ffmpeg \
-            libcairo2-dev \
-            libpango1.0-dev \
-            freeglut3-dev \
-            texlive-latex-base \
-            texlive-latex-recommended \
-            texlive-fonts-recommended \
-            dvisvgm \
-            ghostscript
+            ffmpeg libcairo2-dev libpango1.0-dev freeglut3-dev \
+            texlive-latex-base texlive-latex-recommended texlive-fonts-recommended dvisvgm ghostscript
 
       - name: Install Python Libraries
         run: |
@@ -43,29 +36,22 @@ jobs:
 
       - name: Render Manim Video
         run: |
-          # Sınıf ismi (MaarifScene vb.) belirtmedik; bu sayede Gemini sınıf ismini 
-          # ne koyarsa koysun Manim onu bulur ve videoyu üretir.
-          if [ -f "scripts/render_code.py" ]; then
-            manim -qm --media_dir ./media scripts/render_code.py
-          else
-            echo "❌ HATA: render_code.py bulunamadı!"
-            exit 1
-          fi
-
+          # Render işlemini başlat ve detaylı log al
+          manim -qm --media_dir ./media scripts/render_code.py MaarifScene
+          
       - name: Merge Audio and Video (KUSURSUZ SENKRON)
         run: |
-          # Manim'in ürettiği videoyu derinlemesine arar (isim ne olursa olsun bulur)
-          VIDEO_PATH=$(find media -name "*.mp4" | grep -v "final_output" | head -n 1)
+          # Video dosyasını daha geniş bir tarama ile bul
+          VIDEO_PATH=$(find media/videos -name "*.mp4" | head -n 1)
           AUDIO_PATH=$(find . -name "*.mp3" | head -n 1)
           
           echo "📽️ Bulunan Video: $VIDEO_PATH"
           echo "🎵 Bulunan Ses: $AUDIO_PATH"
           
           if [ -n "$VIDEO_PATH" ] && [ -n "$AUDIO_PATH" ]; then
-            # -fflags +genpts: Ses ve görüntü arasındaki kaymayı (lag) önler.
             ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -fflags +genpts -shortest -c:v libx264 -c:a aac -map 0:v:0 -map 1:a:0 -y media/videos/final_output.mp4
           else
-            echo "❌ HATA: Video veya Ses dosyası eksik!"
+            echo "❌ HATA: Dosya eksik! Sistem içeriği:"
             ls -R
             exit 1
           fi
