@@ -1,10 +1,8 @@
 name: Maarif Matematik Video Render ve Youtube
-
 on:
   push:
     paths:
       - 'metadata.json'
-      - 'scripts/render_code.py'
   workflow_dispatch:
 
 jobs:
@@ -19,45 +17,29 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install System Dependencies
+      - name: Install System Dependencies (HIZLI MOD)
         run: |
           sudo apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
             ffmpeg libcairo2-dev libpango1.0-dev freeglut3-dev \
-            texlive-latex-base texlive-latex-recommended texlive-fonts-recommended dvisvgm ghostscript
+            texlive-latex-base texlive-latex-recommended dvisvgm ghostscript
 
       - name: Install Python Libraries
         run: |
           python -m pip install --upgrade pip
           python -m pip install manim numpy google-api-python-client google-auth-oauthlib google-auth-httplib2
 
-      - name: Create Required Directories
-        run: mkdir -p media/videos audio scripts
-
-      - name: Render Manim Video
+      - name: Render ve Merge
         run: |
-          # Render işlemini başlat ve detaylı log al
-          manim -qm --media_dir ./media scripts/render_code.py MaarifScene
-          
-      - name: Merge Audio and Video (KUSURSUZ SENKRON)
-        run: |
-          # Video dosyasını daha geniş bir tarama ile bul
-          VIDEO_PATH=$(find media/videos -name "*.mp4" | head -n 1)
+          mkdir -p media/videos
+          manim -qm --media_dir ./media scripts/render_code.py
+          VIDEO_PATH=$(find media -name "*.mp4" | grep -v "final_output" | head -n 1)
           AUDIO_PATH=$(find . -name "*.mp3" | head -n 1)
-          
-          echo "📽️ Bulunan Video: $VIDEO_PATH"
-          echo "🎵 Bulunan Ses: $AUDIO_PATH"
-          
           if [ -n "$VIDEO_PATH" ] && [ -n "$AUDIO_PATH" ]; then
-            ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -fflags +genpts -shortest -c:v libx264 -c:a aac -map 0:v:0 -map 1:a:0 -y media/videos/final_output.mp4
-          else
-            echo "❌ HATA: Dosya eksik! Sistem içeriği:"
-            ls -R
-            exit 1
+            ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -c:v libx264 -c:a aac -shortest -y media/videos/final_output.mp4
           fi
 
       - name: Upload to YouTube
-        if: success()
         env:
           TOKEN_JSON: ${{ secrets.TOKEN_JSON }}
         run: python scripts/upload_to_youtube.py
