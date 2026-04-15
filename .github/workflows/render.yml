@@ -1,83 +1,50 @@
-import os
-import json
-import time
-from google.oauth2.credentials import Credentials
-from googleapiclient.discovery import build
-from googleapiclient.http import MediaFileUpload
-from google.auth.transport.requests import Request
+name: Maarif Matematik Video Render ve Youtube
+on:
+  push:
+    paths:
+      - 'metadata.json'
+  workflow_dispatch:
 
-# ⚠️ YETKİ KAPSAMI
-SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl']
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-def upload_video():
-    try:
-        # 1. GitHub Secrets Verilerini Çek
-        t_json = os.environ.get('TOKEN_JSON')
-        if not t_json:
-            print("❌ HATA: TOKEN_JSON bulunamadı!")
-            return
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
-        token_data = json.loads(t_json)
-        token_data['scopes'] = SCOPES 
-        creds = Credentials.from_authorized_user_info(token_data, SCOPES)
-        
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-            
-        youtube = build('youtube', 'v3', credentials=creds)
-        print("✅ YouTube bağlantısı kuruldu.")
-        
-        # 2. Varsayılan Bilgiler
-        video_path = "media/videos/final_output.mp4"
-        title = "Maarif Matematik - Yeni Ders"
-        description = "Mantık odaklı matematik anlatımı."
-        tags = ["matematik", "maarif matematik", "eğitim"]
-        
-        # 3. Metadata Okuma (Dinamik Başlık ve Açıklama)
-        if os.path.exists('metadata.json'):
-            try:
-                with open('metadata.json', 'r', encoding='utf-8') as f:
-                    m = json.load(f)
-                    title = m.get('title', title)
-                    description = m.get('description', description)
-                    tags = m.get('tags', tags)
-                    print(f"📄 Dinamik Başlık Alındı: {title}")
-            except Exception as e:
-                print(f"⚠️ metadata.json okuma hatası: {e}")
+      - name: Install System Dependencies (HIZLI MOD)
+        run: |
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            ffmpeg libcairo2-dev libpango1.0-dev freeglut3-dev \
+            texlive-latex-base texlive-latex-recommended dvisvgm ghostscript
 
-        # 4. Yükleme Ayarları (GİZLİLİK: UNLISTED)
-        body = {
-            'snippet': {
-                'title': title,
-                'description': description,
-                'tags': tags,
-                'categoryId': '27' # Eğitim Kategorisi
-            },
-            'status': {
-                'privacyStatus': 'unlisted',  # ✅ ARTIK LİSTE DIŞI YÜKLENECEK
-                'selfDeclaredMadeForKids': False
-            }
-        }
+      - name: Install Python Libraries
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install manim numpy google-api-python-client google-auth-oauthlib google-auth-httplib2
 
-        print(f"🚀 Video yükleniyor (Gizlilik: Liste Dışı)...")
-        media = MediaFileUpload(video_path, chunksize=-1, resumable=True)
-        request = youtube.videos().insert(part='snippet,status', body=body, media_body=media)
-        response = request.execute()
-        
-        video_id = response.get('id')
-        print(f"🎉 BAŞARI! Video ID: {video_id}")
+      - name: Render ve Merge
+        run: |
+          mkdir -p media/videos
+          # Manim kodunu çalıştır
+          manim -qm --media_dir ./media scripts/render_code.py BirimKesirFix || manim -qm --media_dir ./media scripts/render_code.py MaarifScene
+          
+          # Video ve Ses dosyalarını bul
+          VIDEO_PATH=$(find media -name "*.mp4" | grep -v "final_output" | head -n 1)
+          AUDIO_PATH=$(find . -name "*.mp3" | head -n 1)
+          
+          # Birleştir
+          if [ -n "$VIDEO_PATH" ] && [ -n "$AUDIO_PATH" ]; then
+            ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -fflags +genpts -shortest -c:v libx264 -c:a aac -map 0:v:0 -map 1:a:0 -y media/videos/final_output.mp4
+          fi
 
-        # 5. Kapak Fotoğrafı (s.png)
-        if os.path.exists("s.png"):
-            time.sleep(5)
-            youtube.thumbnails().set(
-                videoId=video_id,
-                media_body=MediaFileUpload("s.png")
-            ).execute()
-            print("✅ Kapak fotoğrafı eklendi!")
-
-    except Exception as e:
-        print(f"❌ KRİTİK HATA: {e}")
-
-if __name__ == "__main__":
-    upload_video()
+      - name: Upload to YouTube
+        env:
+          TOKEN_JSON: ${{ secrets.TOKEN_JSON }}
+        run: python scripts/upload_to_youtube.py
