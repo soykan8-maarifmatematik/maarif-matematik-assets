@@ -1,24 +1,69 @@
-{
-  "script": "Bu animasyonda kesirlerin temel mantığını, pay ve payda kavramlarını ve kesirlerin nasıl okunduğunu öğreniyoruz. İlk olarak bir bütünün eş parçalara bölünmesini görselleştiriyoruz. Bütünün kaç eş parçaya bölündüğünü ifade eden 'Payda' kavramını ve bu parçalardan kaç tanesinin alındığını gösteren 'Pay' kavramını renk kodlamalarıyla (Pay için yeşil, Payda için kırmızı) açıklıyoruz. Ardından kesirlerin iki farklı okunuş kuralını (yukarıdan aşağıya 'a bölü b' ve aşağıdan yukarıya 'b'de a') ekrana yansıtarak konuyu pekiştiriyoruz.",
-  "manim_code": "from manim import *\nimport numpy as np\n\nclass MaarifScene(Scene):\n    def construct(self):\n        # 2. Ekran Düzeni ve Koordinatlar\n        self.camera.background_color = \"#FFFFFF\"\n        main_center = DOWN * 0.5\n        \n        # 3. Renk Paleti\n        dark_gray = \"#333333\"\n        maarif_blue = \"#87CEEB\"\n        green = \"#2ECC71\"\n        red = \"#E74C3C\"\n\n        # Başlık\n        title = Text(\"Kesirler: Pay, Payda ve Okunuş\", font=\"Sans\", color=dark_gray).scale(0.8)\n        title.to_edge(UP, buff=0.7)\n        self.play(Write(title))\n\n        # Altyazı Kutusu\n        subtitle = Text(\"\", font=\"Sans\", color=dark_gray).scale(0.45)\n        subtitle_box = VGroup(subtitle)\n        subtitle_box.to_edge(DOWN, buff=0.8)\n        self.add(subtitle_box)\n        \n        def update_subtitle(text_str):\n            new_sub = Text(text_str, font=\"Sans\", color=dark_gray).scale(0.45)\n            new_sub.move_to(subtitle_box)\n            self.play(Transform(subtitle, new_sub), run_time=0.5)\n\n        # Objeleri hazırlama\n        rects = VGroup(*[Rectangle(width=1.2, height=1.2, color=dark_gray, fill_opacity=0.1) for _ in range(4)])\n        rects.arrange(RIGHT, buff=0)\n        \n        num = Text(\"3\", font=\"Sans\", color=green).scale(1.2)\n        line = Line(LEFT, RIGHT, color=dark_gray).scale(0.5)\n        den = Text(\"4\", font=\"Sans\", color=red).scale(1.2)\n        frac_group = VGroup(num, line, den).arrange(DOWN, buff=0.2)\n        \n        pay_label = Text(\"Pay\", font=\"Sans\", color=green).scale(0.5).next_to(num, LEFT, buff=0.5)\n        payda_label = Text(\"Payda\", font=\"Sans\", color=red).scale(0.5).next_to(den, LEFT, buff=0.5)\n        cizgi_label = Text(\"Kesir Çizgisi\", font=\"Sans\", color=maarif_blue).scale(0.5).next_to(line, LEFT, buff=0.5)\n        labels_group = VGroup(pay_label, payda_label, cizgi_label)\n        \n        read1_title = Text(\"a bölü b:\", font=\"Sans\", color=dark_gray).scale(0.5)\n        read1 = Text(\"Üç bölü dört\", font=\"Sans\", color=green).scale(0.6)\n        read1_group = VGroup(read1_title, read1).arrange(RIGHT, buff=0.2)\n        \n        read2_title = Text(\"b'de a:\", font=\"Sans\", color=dark_gray).scale(0.5)\n        read2 = Text(\"Dörtte üç\", font=\"Sans\", color=red).scale(0.6)\n        read2_group = VGroup(read2_title, read2).arrange(RIGHT, buff=0.2)\n        \n        reads_group = VGroup(read1_group, read2_group).arrange(DOWN, buff=0.3)\n        \n        # Düzenleme ve Sabitleme (Tüm objeler main_center'a kilitlenir)\n        content_group = VGroup(rects, VGroup(labels_group, frac_group).arrange(RIGHT, buff=0.5), reads_group)\n        content_group.arrange(DOWN, buff=0.6)\n        content_group.move_to(main_center)\n        \n        # Animasyonlar\n        update_subtitle(\"Kesir, bir bütünün eş parçalarını gösterir.\")\n        self.play(Create(rects))\n        self.wait(2)\n        \n        update_subtitle(\"Bütünü 4 eş parçaya böldük. Bu bizim 'Payda'mızdır.\")\n        self.play(Write(den), Write(payda_label))\n        self.wait(2)\n        \n        update_subtitle(\"Araya kesir çizgimizi ekliyoruz.\")\n        self.play(Create(line), Write(cizgi_label))\n        self.wait(2)\n        \n        update_subtitle(\"Şimdi bu parçalardan 3 tanesini seçelim.\")\n        for i in range(3):\n            self.play(rects[i].animate.set_fill(maarif_blue, opacity=0.8), run_time=0.4)\n        self.wait(1)\n        \n        update_subtitle(\"Seçtiğimiz parça sayısı 'Pay'dır.\")\n        self.play(Write(num), Write(pay_label))\n        self.wait(2)\n        \n        update_subtitle(\"Peki bu kesri nasıl okuruz? İki farklı yolu vardır.\")\n        self.wait(2)\n        \n        update_subtitle(\"Birincisi, yukarıdan aşağıya doğru: 'Üç bölü dört'\")\n        self.play(Write(read1_group))\n        self.wait(2)\n        \n        update_subtitle(\"İkincisi, aşağıdan yukarıya doğru: 'Dörtte üç'\")\n        self.play(Write(read2_group))\n        self.wait(2)\n        \n        update_subtitle(\"Pay, payda ve okunuşlar işte bu kadar kolay!\")\n        self.wait(3)\n        \n        self.play(FadeOut(Group(*self.mobjects)))",
-  "metadata": {
-    "description": "Bu eğitim içeriği, matematikte temel bir kavram olan kesirler konusunu detaylı ve görsel olarak ele almaktadır. Kesir nedir, pay ve payda arasında nasıl bir ilişki vardır gibi temel soruların cevaplarını bu animasyonda bulabilirsiniz. Bir bütünün eş parçalara bölünmesini ifade eden kesirlerde, payda bütünün kaç eş parçaya ayrıldığını gösterirken, pay bu parçalardan kaç tanesinin alındığını veya tarandığını belirtir. Görselleştirilmiş örnekler üzerinden kesir çizgisinin işlevini ve kesri oluşturan elemanların konumlarını net bir şekilde öğreneceksiniz. Ayrıca, kesirlerin doğru okunması matematiksel iletişim için çok önemlidir. Bu videoda kesirlerin iki farklı okunuş yöntemini de (örneğin 'a bölü b' şeklindeki yukarıdan aşağıya okunuş ve 'b'de a' şeklindeki aşağıdan yukarıya okunuş) uygulamalı olarak göreceksiniz. İlkokul ve ortaokul matematik müfredatına uygun olarak hazırlanan bu içerik, öğrencilerin kesirler konusunu ezberlemeden, mantığını kavrayarak öğrenmesini sağlamak amacıyla tasarlanmıştır. Görsel hafızayı destekleyen renk kodlamaları (pay için yeşil, payda için kırmızı) sayesinde kavram yanılgılarının önüne geçilmesi hedeflenmiştir. Öğrenciler, bu animasyon sayesinde kesirlerin sadece sayılardan ibaret olmadığını, günlük hayatta karşılaştığımız bölme ve paylaşma işlemlerinin matematiksel bir temsili olduğunu fark edecekler. Eğitim teknolojilerinin gücüyle zenginleştirilmiş bu materyal, sınıf içi etkinliklerde veya bireysel çalışmalarda rahatlıkla kullanılabilir.",
-    "tags": [
-      "kesirler",
-      "pay nedir",
-      "payda nedir",
-      "kesir çizgisi",
-      "kesirlerin okunuşu",
-      "matematik animasyonu",
-      "eğitim videosu",
-      "ilkokul matematik",
-      "ortaokul matematik",
-      "a bölü b",
-      "b'de a",
-      "kesir kavramı",
-      "görsel matematik",
-      "manim",
-      "matematik temel kavramlar"
-    ]
-  }
-}
+from manim import *
+import numpy as np
+
+class MaarifScene(Scene):
+    def construct(self):
+        # Arka plan rengi
+        self.camera.background_color = "#FFFFFF"
+        
+        # Ana merkez noktasi
+        main_center = DOWN * 0.5
+        
+        # Baslik
+        title = Text("Kesir Nedir?", font="Sans", color="#333333").scale(1.2)
+        title.to_edge(UP, buff=0.7)
+        self.play(Write(title))
+        
+        # Altyazi Kutusu
+        subtitle_box = Rectangle(width=12, height=1.2, color="#333333", fill_color="#FFFFFF", fill_opacity=1)
+        subtitle_box.to_edge(DOWN, buff=0.8)
+        self.add(subtitle_box)
+        
+        # Kesir Elemanlari
+        num = Text("3", font="Sans", color="#E74C3C").scale(1.5)
+        line = Line(LEFT, RIGHT, color="#333333").scale(0.6)
+        den = Text("4", font="Sans", color="#2ECC71").scale(1.5)
+        frac = VGroup(num, line, den).arrange(DOWN, buff=0.2)
+        
+        pay_label = Text("Pay (Alinan Parca)", font="Sans", color="#E74C3C").scale(0.6)
+        pay_label.next_to(num, RIGHT, buff=0.5)
+        cizgi_label = Text("Kesir Cizgisi", font="Sans", color="#333333").scale(0.6)
+        cizgi_label.next_to(line, RIGHT, buff=0.5)
+        payda_label = Text("Payda (Butun)", font="Sans", color="#2ECC71").scale(0.6)
+        payda_label.next_to(den, RIGHT, buff=0.5)
+        
+        frac_group = VGroup(frac, pay_label, cizgi_label, payda_label)
+        
+        # Gorsel Elemanlar (4 es parca)
+        rects = VGroup(*[Rectangle(height=1, width=1, stroke_color="#333333", stroke_width=2) for _ in range(4)])
+        rects.arrange(RIGHT, buff=0)
+        
+        # Okunus Elemanlari
+        read1 = Text("Okunusu 1: Uc bolu Dort", font="Sans", color="#333333").scale(0.7)
+        read2 = Text("Okunusu 2: Dortte Uc", font="Sans", color="#333333").scale(0.7)
+        read_group = VGroup(read1, read2).arrange(DOWN, buff=0.3)
+        
+        # Tum icerigi ana merkeze gore hizalama ve sabitleme
+        all_content = VGroup(frac_group, rects, read_group).arrange(DOWN, buff=0.7)
+        all_content.move_to(main_center)
+        
+        # Animasyonlar
+        self.play(Write(frac))
+        self.wait(1)
+        
+        # Payda aciklamasi
+        self.play(Write(payda_label))
+        self.play(Create(rects))
+        self.wait(1)
+        
+        # Pay aciklamasi
+        self.play(Write(pay_label), Write(cizgi_label))
+        fills = VGroup(*[Rectangle(height=1, width=1, fill_color="#87CEEB", fill_opacity=1, stroke_width=0).move_to(rects[i]) for i in range(3)])
+        self.play(FadeIn(fills))
+        self.wait(1)
+        
+        # Okunuslar
+        self.play(Write(read1))
+        self.wait(1)
+        self.play(Write(read2))
+        self.wait(2)
