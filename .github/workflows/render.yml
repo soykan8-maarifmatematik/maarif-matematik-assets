@@ -2,8 +2,8 @@ name: Maarif Matematik Video Render ve Youtube
 on:
   push:
     paths:
-      - 'metadata.json' # Sadece bu dosya değiştiğinde çalışarak çift video yüklenmesini engeller
-  workflow_dispatch: # Manuel başlatma yetkisi verir
+      - 'metadata.json' # Sadece bu dosya değiştiğinde fırın çalışır
+  workflow_dispatch:
 
 jobs:
   render:
@@ -18,7 +18,6 @@ jobs:
           python-version: '3.11'
 
       - name: Install System Dependencies (HIZLI MOD)
-        # Sadece gerekli paketleri kurarak süreyi %70 kısaltır
         run: |
           sudo apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -33,17 +32,14 @@ jobs:
       - name: Render ve Merge (KUSURSUZ SENKRON)
         run: |
           mkdir -p media/videos
-          
-          # 1. Manim Animasyonunu Çiz (Hata durumunda MaarifScene'e geri döner)
+          # Sırasıyla olası sahne isimlerini dener
           manim -qm --media_dir ./media scripts/render_code.py BirimKesirFix || \
           manim -qm --media_dir ./media scripts/render_code.py MaarifScene || \
           manim -qm --media_dir ./media scripts/render_code.py BirimKesirMihlanmis
           
-          # 2. Üretilen Video ve Ses Dosyalarını Bul
           VIDEO_PATH=$(find media -name "*.mp4" | grep -v "final_output" | head -n 1)
           AUDIO_PATH=$(find . -name "*.mp3" | head -n 1)
           
-          # 3. Ses ve Görüntüyü Kayma Olmadan Birleştir (+genpts senkron kilidi)
           if [ -n "$VIDEO_PATH" ] && [ -n "$AUDIO_PATH" ]; then
             ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -fflags +genpts -shortest \
             -c:v libx264 -c:a aac -map 0:v:0 -map 1:a:0 -y media/videos/final_output.mp4
