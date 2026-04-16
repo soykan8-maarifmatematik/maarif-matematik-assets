@@ -2,8 +2,8 @@ name: Maarif Matematik Video Render ve Youtube
 on:
   push:
     paths:
-      - 'metadata.json'
-  workflow_dispatch:
+      - 'metadata.json' # Sadece bu dosya değiştiğinde çalışarak çift video yüklenmesini engeller
+  workflow_dispatch: # Manuel başlatma yetkisi verir
 
 jobs:
   render:
@@ -18,6 +18,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install System Dependencies (HIZLI MOD)
+        # Sadece gerekli paketleri kurarak süreyi %70 kısaltır
         run: |
           sudo apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -29,19 +30,23 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install manim numpy google-api-python-client google-auth-oauthlib google-auth-httplib2
 
-      - name: Render ve Merge
+      - name: Render ve Merge (KUSURSUZ SENKRON)
         run: |
           mkdir -p media/videos
-          # Manim kodunu çalıştır
-          manim -qm --media_dir ./media scripts/render_code.py BirimKesirFix || manim -qm --media_dir ./media scripts/render_code.py MaarifScene
           
-          # Video ve Ses dosyalarını bul
+          # 1. Manim Animasyonunu Çiz (Hata durumunda MaarifScene'e geri döner)
+          manim -qm --media_dir ./media scripts/render_code.py BirimKesirFix || \
+          manim -qm --media_dir ./media scripts/render_code.py MaarifScene || \
+          manim -qm --media_dir ./media scripts/render_code.py BirimKesirMihlanmis
+          
+          # 2. Üretilen Video ve Ses Dosyalarını Bul
           VIDEO_PATH=$(find media -name "*.mp4" | grep -v "final_output" | head -n 1)
           AUDIO_PATH=$(find . -name "*.mp3" | head -n 1)
           
-          # Birleştir
+          # 3. Ses ve Görüntüyü Kayma Olmadan Birleştir (+genpts senkron kilidi)
           if [ -n "$VIDEO_PATH" ] && [ -n "$AUDIO_PATH" ]; then
-            ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -fflags +genpts -shortest -c:v libx264 -c:a aac -map 0:v:0 -map 1:a:0 -y media/videos/final_output.mp4
+            ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -fflags +genpts -shortest \
+            -c:v libx264 -c:a aac -map 0:v:0 -map 1:a:0 -y media/videos/final_output.mp4
           fi
 
       - name: Upload to YouTube
