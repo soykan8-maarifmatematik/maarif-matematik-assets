@@ -5,43 +5,44 @@ class MaarifScene(Scene):
         self.camera.background_color = "#FFFFFF"
         main_center = DOWN * 0.5
 
-        text_color = BLACK
-        num_color = BLUE
-        den_color = RED
+        title = Text("Kesirler: Pay, Payda ve Okunuş", color=BLACK, font_size=40)
+        title.to_edge(UP)
+        self.play(Write(title))
 
-        # Kesir oluşturma
-        fraction = MathTex(r"\frac{3}{4}", color=text_color).scale(3)
-        fraction[0][0].set_color(num_color)  # Pay (3)
-        fraction[0][2].set_color(den_color)  # Payda (4)
+        numerator = Text("3", color=BLUE, font_size=64)
+        line = Line(LEFT, RIGHT, color=BLACK).scale(0.5)
+        denominator = Text("4", color=RED, font_size=64)
+
+        numerator.next_to(line, UP, buff=0.2)
+        denominator.next_to(line, DOWN, buff=0.2)
         
-        # Konumlandırma kuralı
-        fraction.move_to(main_center)
+        fraction = VGroup(numerator, line, denominator)
 
-        self.play(Write(fraction))
-        self.wait(1)
+        pay_label = Text("<- Pay (Alınan Parça)", color=BLUE, font_size=24)
+        pay_label.next_to(numerator, RIGHT, buff=0.3)
 
-        # Etiketler
-        pay_label = Text("Pay (Alınan Parça)", color=num_color, font_size=24).next_to(fraction, UP, buff=0.5)
-        payda_label = Text("Payda (Toplam Eş Parça)", color=den_color, font_size=24).next_to(fraction, DOWN, buff=0.5)
-        cizgi_label = Text("Kesir Çizgisi", color=text_color, font_size=24).next_to(fraction, RIGHT, buff=1)
+        payda_label = Text("<- Payda (Toplam Parça)", color=RED, font_size=24)
+        payda_label.next_to(denominator, RIGHT, buff=0.3)
 
-        self.play(Write(payda_label))
-        self.wait(1)
-        self.play(Write(pay_label))
-        self.wait(1)
-        self.play(Write(cizgi_label))
-        self.wait(1)
+        read_1 = Text("Dörtte Üç", color=DARK_GRAY, font_size=32)
+        read_2 = Text("Üç Bölü Dört", color=DARK_GRAY, font_size=32)
+        
+        read_group = VGroup(read_1, read_2).arrange(DOWN, buff=0.5)
+        read_group.next_to(fraction, LEFT, buff=1.5)
 
-        # Okunuşlar
-        read1 = Text("1. Okunuş: 3 bölü 4", color=text_color, font_size=24)
-        read2 = Text("2. Okunuş: 4'te 3", color=text_color, font_size=24)
-        read_group = VGroup(read1, read2).arrange(DOWN, aligned_edge=LEFT).next_to(fraction, LEFT, buff=1)
+        content_group = VGroup(fraction, pay_label, payda_label, read_group)
+        content_group.move_to(main_center)
 
-        self.play(Write(read_group[0]))
+        self.play(Write(line))
+        self.play(Write(denominator), Write(payda_label))
         self.wait(1)
-        self.play(Write(read_group[1]))
+        self.play(Write(numerator), Write(pay_label))
+        self.wait(2)
+        
+        self.play(Write(read_1))
+        self.wait(2)
+        self.play(Write(read_2))
         self.wait(2)
 
-        # Kapanış
-        self.play(FadeOut(VGroup(fraction, pay_label, payda_label, cizgi_label, read_group)))
+        self.play(FadeOut(Group(*self.mobjects)))
         self.wait(1)
