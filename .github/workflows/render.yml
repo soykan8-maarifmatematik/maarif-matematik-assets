@@ -2,7 +2,7 @@ name: Maarif Matematik Video Render ve Youtube
 on:
   push:
     paths:
-      - 'metadata.json' # Sadece bu dosya değiştiğinde fırın çalışır
+      - 'metadata.json'
   workflow_dispatch:
 
 jobs:
@@ -17,24 +17,25 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install System Dependencies (HIZLI MOD)
+      - name: Install System Dependencies (TAM SÜRÜM)
         run: |
           sudo apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
             ffmpeg libcairo2-dev libpango1.0-dev freeglut3-dev \
-            texlive-latex-base texlive-latex-recommended dvisvgm ghostscript
+            texlive-latex-base texlive-latex-recommended texlive-latex-extra \
+            texlive-fonts-recommended texlive-fonts-extra dvisvgm ghostscript
 
       - name: Install Python Libraries
         run: |
           python -m pip install --upgrade pip
           python -m pip install manim numpy google-api-python-client google-auth-oauthlib google-auth-httplib2
 
-      - name: Render ve Merge (KUSURSUZ SENKRON)
+      - name: Render ve Merge
         run: |
           mkdir -p media/videos
           # Sırasıyla olası sahne isimlerini dener
-          manim -qm --media_dir ./media scripts/render_code.py BirimKesirFix || \
           manim -qm --media_dir ./media scripts/render_code.py MaarifScene || \
+          manim -qm --media_dir ./media scripts/render_code.py BirimKesirFix || \
           manim -qm --media_dir ./media scripts/render_code.py BirimKesirMihlanmis
           
           VIDEO_PATH=$(find media -name "*.mp4" | grep -v "final_output" | head -n 1)
