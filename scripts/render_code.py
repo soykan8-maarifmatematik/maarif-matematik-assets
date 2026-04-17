@@ -6,93 +6,79 @@ class MaarifScene(Scene):
         self.camera.background_color = "#FFFFFF"
         main_center = DOWN * 0.5
 
-        title = Text("Kesirler: Pay ve Payda", font="Sans", color="#333333").scale(0.9)
+        title = Text("Kesir Nedir?", font="Sans", color="#333333", font_size=48)
         title.to_edge(UP, buff=0.7)
         self.play(Write(title))
 
-        subtitle_box = Rectangle(width=13, height=1.2, color="#87CEEB", fill_opacity=0.2, stroke_width=2)
+        subtitle_box = Text("Merhaba! Bugün kesirleri öğreneceğiz.", font="Sans", color="#333333", font_size=24)
         subtitle_box.to_edge(DOWN, buff=0.8)
-        
-        def update_subtitle(text):
-            new_text = Text(text, font="Sans", color="#333333").scale(0.45)
-            new_text.move_to(subtitle_box.get_center())
-            return new_text
+        self.play(FadeIn(subtitle_box))
 
-        subtitle_text = update_subtitle("Merhaba! Bugün kesirlerin ne olduğunu ve nasıl okunduğunu öğreneceğiz.")
-        self.play(FadeIn(subtitle_box), Write(subtitle_text))
-        self.wait(2)
+        def update_subtitle(text):
+            new_sub = Text(text, font="Sans", color="#333333", font_size=24).to_edge(DOWN, buff=0.8)
+            self.play(Transform(subtitle_box, new_sub))
 
         circle = Circle(radius=1.5, color="#333333", stroke_width=4)
-        circle.move_to(main_center + RIGHT * 2.5 + UP * 0.5)
-        
-        new_sub = update_subtitle("Kesir, bir bütünün eş parçalara bölünmesiyle elde edilen parçaları ifade eder.")
-        self.play(Transform(subtitle_text, new_sub), Create(circle))
-        self.wait(2)
-
-        sector1 = Sector(outer_radius=1.5, angle=PI/2, start_angle=0, color="#FFFFFF", fill_opacity=1, stroke_color="#333333", stroke_width=2)
-        sector2 = Sector(outer_radius=1.5, angle=PI/2, start_angle=PI/2, color="#FFFFFF", fill_opacity=1, stroke_color="#333333", stroke_width=2)
-        sector3 = Sector(outer_radius=1.5, angle=PI/2, start_angle=PI, color="#FFFFFF", fill_opacity=1, stroke_color="#333333", stroke_width=2)
-        sector4 = Sector(outer_radius=1.5, angle=PI/2, start_angle=3*PI/2, color="#FFFFFF", fill_opacity=1, stroke_color="#333333", stroke_width=2)
-        
-        sectors = VGroup(sector1, sector2, sector3, sector4)
-        sectors.move_to(main_center + RIGHT * 2.5 + UP * 0.5)
-
-        new_sub = update_subtitle("Bütünümüzü 4 eşit parçaya bölelim. Bu toplam parça sayısına 'Payda' diyoruz.")
-        self.play(Transform(subtitle_text, new_sub), FadeIn(sectors))
-        self.remove(circle)
-        self.wait(2)
-
-        payda = Text("4", font="Sans", color="#E74C3C").scale(1.5)
-        payda_label = Text("Payda (Toplam Parça)", font="Sans", color="#E74C3C").scale(0.5)
-        
-        line = Line(LEFT, RIGHT, color="#333333").set_length(1.5)
-        cizgi_label = Text("Kesir Çizgisi", font="Sans", color="#333333").scale(0.4)
-        
-        pay = Text("3", font="Sans", color="#2ECC71").scale(1.5)
-        pay_label = Text("Pay (Alınan Parça)", font="Sans", color="#2ECC71").scale(0.5)
-
-        fraction_group = VGroup(pay, line, payda).arrange(DOWN, buff=0.3)
-        fraction_group.move_to(main_center + LEFT * 2.5 + UP * 0.5)
-        
-        payda_label.next_to(payda, DOWN, buff=0.2)
-        cizgi_label.next_to(line, LEFT, buff=0.3)
-        pay_label.next_to(pay, UP, buff=0.2)
-
-        self.play(Write(payda), Write(payda_label))
-        self.wait(1)
-        self.play(Create(line), Write(cizgi_label))
-        self.wait(1)
-
-        new_sub = update_subtitle("Şimdi bu 4 parçadan 3 tanesini alalım. Aldığımız parça sayısına 'Pay' denir.")
-        self.play(Transform(subtitle_text, new_sub))
-        
-        self.play(
-            sector1.animate.set_color("#87CEEB").set_stroke("#333333", 2),
-            sector2.animate.set_color("#87CEEB").set_stroke("#333333", 2),
-            sector3.animate.set_color("#87CEEB").set_stroke("#333333", 2)
+        lines = VGroup(
+            Line(circle.get_top(), circle.get_bottom(), color="#333333"),
+            Line(circle.get_left(), circle.get_right(), color="#333333")
         )
+        pie = VGroup(circle, lines).move_to(main_center + LEFT * 3)
+
+        update_subtitle("Bir bütünü 4 eş parçaya bölelim. Bu toplam parça sayısıdır.")
+        self.play(Create(circle))
+        self.play(Create(lines))
+
+        sectors = VGroup()
+        angles = [0, PI/2, PI, 3*PI/2]
+        for i in range(3):
+            sector = Sector(outer_radius=1.5, angle=PI/2, start_angle=angles[i], color="#87CEEB", fill_opacity=0.8)
+            sectors.add(sector)
+        sectors.move_to(pie.get_center())
+
+        update_subtitle("Bu parçalardan 3 tanesini alalım.")
+        self.play(FadeIn(sectors))
+        self.bring_to_front(lines)
+        self.bring_to_front(circle)
+
+        update_subtitle("Şimdi bunu kesir olarak yazalım.")
+        num = Text("3", font="Sans", color="#2ECC71", font_size=72)
+        line = Line(LEFT*0.6, RIGHT*0.6, color="#333333", stroke_width=6)
+        den = Text("4", font="Sans", color="#E74C3C", font_size=72)
         
-        self.play(Write(pay), Write(pay_label))
-        self.wait(2)
-
-        new_sub = update_subtitle("Kesirleri iki farklı şekilde okuyabiliriz: Yukarıdan aşağıya veya aşağıdan yukarıya.")
-        self.play(Transform(subtitle_text, new_sub))
-        self.wait(2)
-
-        reading1 = Text("1. Okunuş: Üç bölü dört", font="Sans", color="#333333").scale(0.6)
-        reading2 = Text("2. Okunuş: Dörtte üç", font="Sans", color="#333333").scale(0.6)
+        frac_group = VGroup(num, line, den).arrange(DOWN, buff=0.3).move_to(main_center + RIGHT * 2)
         
-        readings = VGroup(reading1, reading2).arrange(DOWN, buff=0.4)
-        readings.move_to(main_center + DOWN * 1.5)
+        self.play(Write(line))
+        
+        update_subtitle("Bütünün kaç parçaya bölündüğünü alta yazarız. Buna 'Payda' denir.")
+        self.play(Write(den))
+        den_label = Text("Payda", font="Sans", color="#E74C3C", font_size=24).next_to(den, RIGHT, buff=0.5)
+        self.play(Write(den_label))
 
-        new_sub = update_subtitle("Yukarıdan aşağıya okurken önce pay, sonra 'bölü', sonra payda söylenir: 'Üç bölü dört'.")
-        self.play(Transform(subtitle_text, new_sub), Write(reading1))
+        update_subtitle("Kaç parça aldığımızı üste yazarız. Buna 'Pay' denir.")
+        self.play(Write(num))
+        num_label = Text("Pay", font="Sans", color="#2ECC71", font_size=24).next_to(num, RIGHT, buff=0.5)
+        self.play(Write(num_label))
+        self.wait(1)
+
+        update_subtitle("Ortadaki çizgiye ise 'Kesir Çizgisi' adı verilir.")
+        line_label = Text("Kesir Çizgisi", font="Sans", color="#333333", font_size=24).next_to(line, RIGHT, buff=0.5)
+        self.play(Write(line_label))
+        self.wait(1)
+
+        self.play(FadeOut(num_label), FadeOut(den_label), FadeOut(line_label))
+
+        update_subtitle("Bu kesri iki farklı şekilde okuyabiliriz.")
+        read1 = Text("1. Okunuş: Üç bölü dört", font="Sans", color="#333333", font_size=32).move_to(main_center + RIGHT * 2 + UP * 1.5)
+        read2 = Text("2. Okunuş: Dörtte üç", font="Sans", color="#333333", font_size=32).next_to(read1, DOWN, buff=0.5)
+
+        update_subtitle("Yukarıdan aşağıya doğru okurken: 'Üç bölü dört'")
+        self.play(Write(read1))
+        self.wait(1)
+
+        update_subtitle("Aşağıdan yukarıya doğru okurken: 'Dörtte üç'")
+        self.play(Write(read2))
         self.wait(2)
 
-        new_sub = update_subtitle("Aşağıdan yukarıya okurken önce payda, sonra 'de/da' eki, sonra pay söylenir: 'Dörtte üç'.")
-        self.play(Transform(subtitle_text, new_sub), Write(reading2))
-        self.wait(3)
-
-        new_sub = update_subtitle("Tebrikler! Kesirlerin temel yapısını ve nasıl okunduğunu harika bir şekilde öğrendiniz.")
-        self.play(Transform(subtitle_text, new_sub))
-        self.wait(3)
+        update_subtitle("Tebrikler! Kesirlerin temel kavramlarını ve okunuşunu öğrendiniz.")
+        self.wait(2)
