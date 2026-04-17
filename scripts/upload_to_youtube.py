@@ -6,8 +6,8 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from google.auth.transport.requests import Request
 
-# ⚠️ YETKİ KAPSAMI
-SCOPES = ['[https://www.googleapis.com/auth/youtube.force-ssl](https://www.googleapis.com/auth/youtube.force-ssl)']
+# ⚠️ YETKİ KAPSAMI - TERTEMİZ URL (Boşluksuz ve Köşeli Parantezsiz)
+SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl']
 
 def upload_video():
     try:
@@ -17,6 +17,7 @@ def upload_video():
             return
 
         token_data = json.loads(t_json)
+        # Token içindeki yetkileri kod seviyesinde garantiye alıyoruz
         token_data['scopes'] = SCOPES 
         creds = Credentials.from_authorized_user_info(token_data, SCOPES)
         
@@ -27,25 +28,26 @@ def upload_video():
         youtube = build('youtube', 'v3', credentials=creds)
         print("✅ YouTube API bağlantısı başarıyla kuruldu.")
         
+        # Varsayılan Değerler
         video_path = "media/videos/final_output.mp4"
         title = "İbrahim Soykan | Maarif Matematik - Yeni Ders"
         description = "Mantık odaklı, ezbersiz matematik anlatımı."
         tags = []
         
-        # Dinamik Metadata Okuma (DÜZELTİLDİ: Tags eklendi)
+        # Dinamik Metadata Okuma (Tags ve SEO Verileri)
         if os.path.exists('metadata.json'):
             try:
                 with open('metadata.json', 'r', encoding='utf-8') as f:
                     m = json.load(f)
                     title = m.get('title', title)
                     description = m.get('description', description)
-                    # Tags verisini al (String veya Listeyi destekler)
+                    # Tags verisini hem liste hem string formatında destekler
                     raw_tags = m.get('tags', [])
-                    if isinstance(raw_tags, str):
-                        tags = [t.strip() for t in raw_tags.split(',')]
-                    else:
+                    if isinstance(raw_tags, list):
                         tags = raw_tags
-                    print(f"📄 Dinamik Veri Alındı: {title}")
+                    else:
+                        tags = [t.strip() for t in str(raw_tags).split(',')]
+                    print(f"📄 Metadata başarıyla işlendi: {title}")
             except Exception as e:
                 print(f"⚠️ metadata.json okunamadı, standart başlık kullanılıyor: {e}")
 
@@ -53,11 +55,11 @@ def upload_video():
             'snippet': {
                 'title': title,
                 'description': description,
-                'tags': tags, # ✅ Etiketler YouTube'a gönderiliyor
-                'categoryId': '27'
+                'tags': tags,
+                'categoryId': '27' # Eğitim Kategorisi
             },
             'status': {
-                'privacyStatus': 'unlisted',
+                'privacyStatus': 'unlisted', # Siz hazır olunca public yaparsınız
                 'selfDeclaredMadeForKids': False
             }
         }
@@ -77,11 +79,12 @@ def upload_video():
                 print(f"⌛ Yükleme Durumu: %{int(status.progress() * 100)}")
 
         video_id = response.get('id')
-        print(f"🎉 BAŞARI! Video yüklendi. ID: {video_id}")
+        print(f"🎉 BAŞARI! Video yüklendi. Video ID: {video_id}")
 
+        # Kapak Fotoğrafı Mıhlama (s.png)
         if os.path.exists("s.png"):
             print("🖼️ Kapak fotoğrafı yükleniyor...")
-            time.sleep(10)
+            time.sleep(10) # YouTube'un videoyu işlemesi için kısa bekleme
             try:
                 youtube.thumbnails().set(
                     videoId=video_id,
@@ -96,13 +99,3 @@ def upload_video():
 
 if __name__ == "__main__":
     upload_video()
-```
-
----
-
-## 🎯 Şu An Ne Yapılmalı?
-
-1.  **Kod Güncellemesi:** GitHub'daki `scripts/upload_to_youtube.py` dosyasını açın ve yukarıdaki yeni "Tags Fix" sürümüyle güncelleyin. (Böylece az önce gönderdiğiniz etiketler YouTube'da görünür hale gelecek).
-2.  **Run Once:** Her şey 200 OK olduğuna göre, artık fırlatma kolunu çekebilirsiniz.
-
-**Maarif Matematik Notu:** Hocam, o logdaki `200` kodu Maarif Matematik'in "başarı belgesi"dir. Artık teknik engelleri tamamen süpürdük. Tebrikler! 🚀🎓
