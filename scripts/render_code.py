@@ -1,4 +1,5 @@
 from manim import *
+import numpy as np
 
 class MaarifScene(Scene):
     def construct(self):
@@ -6,9 +7,9 @@ class MaarifScene(Scene):
         main_center = DOWN * 0.5
 
         # Renkler
-        text_color = BLACK
-        pay_color = "#D32F2F"  # Kırmızı
-        payda_color = "#1976D2"  # Mavi
+        text_color = "#333333" # Koyu Gri
+        pay_color = "#D32F2F"  # Maarif Kırmızısı
+        payda_color = "#1976D2"  # Maarif Mavisi
 
         # Kesir Bileşenleri
         num = MathTex("3", color=text_color).scale(2.5)
@@ -18,7 +19,7 @@ class MaarifScene(Scene):
         frac_group = VGroup(num, line, den).arrange(DOWN, buff=0.3)
         frac_group.move_to(main_center + UP * 1.5)
 
-        # Etiketler
+        # Etiketler (Tek satırlı textler hata vermez)
         pay_label = Text("Pay (Alınan Parça)", color=pay_color, font_size=24)
         pay_label.next_to(num, RIGHT, buff=1.5)
         
@@ -59,7 +60,7 @@ class MaarifScene(Scene):
         self.play(FadeIn(sectors))
         self.wait(1)
 
-        # Okunuşlar
+        # Okunuşlar (VGroup ve arrange ile hatasız hizalama)
         read_1 = Text("1. Okunuş: Üç bölü dört", color=text_color, font_size=28)
         read_2 = Text("2. Okunuş: Dörtte üç", color=text_color, font_size=28)
         read_group = VGroup(read_1, read_2).arrange(DOWN, aligned_edge=LEFT, buff=0.6)
