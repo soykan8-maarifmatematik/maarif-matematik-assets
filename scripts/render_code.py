@@ -5,44 +5,50 @@ class MaarifScene(Scene):
         self.camera.background_color = "#FFFFFF"
         main_center = DOWN * 0.5
 
-        title = Text("Kesirler: Pay, Payda ve Okunuş", color=BLACK, font_size=40)
-        title.to_edge(UP)
+        # Title
+        title = Text("Kesir Nedir?", color=BLACK, font_size=48, weight=BOLD)
+        title.to_edge(UP, buff=0.5)
         self.play(Write(title))
 
-        numerator = Text("3", color=BLUE, font_size=64)
-        line = Line(LEFT, RIGHT, color=BLACK).scale(0.5)
-        denominator = Text("4", color=RED, font_size=64)
-
-        numerator.next_to(line, UP, buff=0.2)
-        denominator.next_to(line, DOWN, buff=0.2)
+        # Fraction components
+        num = Text("3", color=BLACK, font_size=96)
+        line = Line(LEFT, RIGHT, color=BLACK).scale(0.8)
+        den = Text("4", color=BLACK, font_size=96)
         
-        fraction = VGroup(numerator, line, denominator)
-
-        pay_label = Text("<- Pay (Alınan Parça)", color=BLUE, font_size=24)
-        pay_label.next_to(numerator, RIGHT, buff=0.3)
-
-        payda_label = Text("<- Payda (Toplam Parça)", color=RED, font_size=24)
-        payda_label.next_to(denominator, RIGHT, buff=0.3)
-
-        read_1 = Text("Dörtte Üç", color=DARK_GRAY, font_size=32)
-        read_2 = Text("Üç Bölü Dört", color=DARK_GRAY, font_size=32)
+        fraction = VGroup(num, line, den).arrange(DOWN, buff=0.3)
+        fraction.move_to(main_center)
         
-        read_group = VGroup(read_1, read_2).arrange(DOWN, buff=0.5)
-        read_group.next_to(fraction, LEFT, buff=1.5)
-
-        content_group = VGroup(fraction, pay_label, payda_label, read_group)
-        content_group.move_to(main_center)
-
-        self.play(Write(line))
-        self.play(Write(denominator), Write(payda_label))
+        self.play(FadeIn(fraction, shift=UP))
         self.wait(1)
-        self.play(Write(numerator), Write(pay_label))
-        self.wait(2)
+
+        # Denominator (Payda)
+        payda_label = Text("Payda\n(Eş Parça Sayısı)", color=RED, font_size=24, alignment="CENTER")
+        payda_label.next_to(fraction, DOWN, buff=1)
+        arrow_payda = Arrow(payda_label.get_top(), den.get_bottom(), color=RED, buff=0.1)
         
-        self.play(Write(read_1))
-        self.wait(2)
-        self.play(Write(read_2))
+        self.play(den.animate.set_color(RED), Write(payda_label), GrowArrow(arrow_payda))
+        self.wait(1)
+
+        # Numerator (Pay)
+        pay_label = Text("Pay\n(Alınan Parça)", color=BLUE, font_size=24, alignment="CENTER")
+        pay_label.next_to(fraction, UP, buff=1)
+        arrow_pay = Arrow(pay_label.get_bottom(), num.get_top(), color=BLUE, buff=0.1)
+
+        self.play(num.animate.set_color(BLUE), Write(pay_label), GrowArrow(arrow_pay))
+        self.wait(1)
+
+        # Readings
+        reading1 = Text("1. Okunuş: Üç bölü dört", color=DARK_GRAY, font_size=28)
+        reading1.next_to(fraction, LEFT, buff=1.5)
+        
+        reading2 = Text("2. Okunuş: Dörtte üç", color=DARK_GRAY, font_size=28)
+        reading2.next_to(fraction, RIGHT, buff=1.5)
+
+        self.play(Write(reading1))
+        self.wait(1)
+        self.play(Write(reading2))
         self.wait(2)
 
-        self.play(FadeOut(Group(*self.mobjects)))
+        # Clear screen
+        self.play(FadeOut(VGroup(title, fraction, pay_label, payda_label, arrow_pay, arrow_payda, reading1, reading2)))
         self.wait(1)
