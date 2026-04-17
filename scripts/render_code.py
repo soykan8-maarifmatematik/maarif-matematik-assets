@@ -1,66 +1,75 @@
 from manim import *
-import numpy as np
 
-# Maarif Matematik - Hata Giderilmiş Master Sahne
 class MaarifScene(Scene):
     def construct(self):
-        # 1. Sahne Ayarları
         self.camera.background_color = "#FFFFFF"
-        dark_grey = "#333333"
-        maarif_blue = "#87CEEB"
-        maarif_red = "#FF0000"
-        
         main_center = DOWN * 0.5
 
-        # 2. Başlık
-        title = Text("Kesir Kavramı: Pay ve Payda", color=dark_grey).scale(0.8)
-        title.to_edge(UP, buff=0.7)
+        # Renkler
+        text_color = BLACK
+        pay_color = "#D32F2F"  # Kırmızı
+        payda_color = "#1976D2"  # Mavi
+
+        # Kesir Bileşenleri
+        num = MathTex("3", color=text_color).scale(2.5)
+        line = Line(LEFT*0.8, RIGHT*0.8, color=text_color).set_stroke(width=4)
+        den = MathTex("4", color=text_color).scale(2.5)
+
+        frac_group = VGroup(num, line, den).arrange(DOWN, buff=0.3)
+        frac_group.move_to(main_center + UP * 1.5)
+
+        # Etiketler
+        pay_label = Text("Pay (Alınan Parça)", color=pay_color, font_size=24)
+        pay_label.next_to(num, RIGHT, buff=1.5)
         
-        # 3. Kesir Modeli (Daire)
-        whole = Circle(radius=1.8, color=dark_grey, stroke_width=4).move_to(main_center)
+        payda_label = Text("Payda (Eş Parçalar)", color=payda_color, font_size=24)
+        payda_label.next_to(den, RIGHT, buff=1.5)
+
+        # Oklar
+        arrow_pay = Arrow(pay_label.get_left(), num.get_right(), color=pay_color, buff=0.2)
+        arrow_payda = Arrow(payda_label.get_left(), den.get_right(), color=payda_color, buff=0.2)
+
+        # Animasyon: Payda ve Kesir Çizgisi
+        self.play(Create(line))
+        self.play(Write(den))
+        self.play(Write(payda_label), GrowArrow(arrow_payda))
+        self.wait(1)
+        
+        # Animasyon: Pay
+        self.play(Write(num))
+        self.play(Write(pay_label), GrowArrow(arrow_pay))
+        self.wait(1)
+
+        # Görsel Temsil (Pasta Grafiği)
+        circle_center = main_center + DOWN * 1.5 + LEFT * 2.5
+        circle = Circle(radius=1.2, color=text_color, stroke_width=4)
+        circle.move_to(circle_center)
+
         lines = VGroup(
-            Line(whole.get_left(), whole.get_right(), color=dark_grey),
-            Line(whole.get_top(), whole.get_bottom(), color=dark_grey)
-        ).move_to(whole)
-        
-        # 4. Kesir Yazısı (MathTex her zaman daha güvenlidir)
-        fraction = MathTex(r"\frac{3}{4}", color=dark_grey).scale(2).next_to(whole, RIGHT, buff=1.2)
-        num = fraction[0][0] # 3
-        den = fraction[0][2] # 4
+            Line(circle.get_top(), circle.get_bottom(), color=text_color, stroke_width=4),
+            Line(circle.get_left(), circle.get_right(), color=text_color, stroke_width=4)
+        )
 
-        # 5. Etiketler (Hata veren kısım düzeltildi)
-        # Çoklu satır yerine tekli Text objeleri kullanarak riski sıfırlıyoruz
-        pay_label = Text("Pay (Alınan Parça)", color=maarif_blue).scale(0.5)
-        pay_label.next_to(fraction, UP, buff=0.8)
-        
-        payda_label = Text("Payda (Eş Parça Sayısı)", color=maarif_red).scale(0.5)
-        payda_label.next_to(fraction, DOWN, buff=0.8)
+        sectors = VGroup()
+        for i in range(3):
+            sectors.add(Sector(arc_center=circle_center, outer_radius=1.18, start_angle=i*PI/2, angle=PI/2, color=pay_color, fill_opacity=0.7))
 
-        # --- Animasyon Akışı ---
-        self.play(Write(title))
+        self.play(Create(circle), Create(lines))
         self.wait(1)
-        
-        self.play(Create(whole), Create(lines))
-        self.wait(2)
-        
-        # Birim parçaları boya (Örnek: 3 parça)
-        slices = VGroup(*[
-            Sector(radius=1.8, angle=90*DEGREES, start_angle=i*90*DEGREES, 
-                   color=maarif_blue, fill_opacity=0.7).move_to(whole)
-            for i in range(3)
-        ])
-        
-        self.play(FadeIn(slices), Write(fraction))
+        self.play(FadeIn(sectors))
         self.wait(1)
-        
-        # Pay ve Payda Vurgusu
-        self.play(Indicate(num), Write(pay_label))
+
+        # Okunuşlar
+        read_1 = Text("1. Okunuş: Üç bölü dört", color=text_color, font_size=28)
+        read_2 = Text("2. Okunuş: Dörtte üç", color=text_color, font_size=28)
+        read_group = VGroup(read_1, read_2).arrange(DOWN, aligned_edge=LEFT, buff=0.6)
+        read_group.move_to(main_center + DOWN * 1.5 + RIGHT * 2.5)
+
+        self.play(Write(read_1))
+        self.wait(1)
+        self.play(Write(read_2))
         self.wait(2)
-        self.play(Indicate(den), Write(payda_label))
-        self.wait(4)
-        
+
         # Kapanış
-        self.play(FadeOut(VGroup(whole, lines, slices, fraction, pay_label, payda_label, title)))
-        outro = Text("Bir sonraki derste görüşmek üzere,\nhoşça kalın.", color=maarif_blue).scale(0.7)
-        self.play(Write(outro))
-        self.wait(2)
+        self.play(FadeOut(Group(*self.mobjects)))
+        self.wait(1)
