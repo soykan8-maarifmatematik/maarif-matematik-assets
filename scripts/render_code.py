@@ -4,62 +4,65 @@ import numpy as np
 class MaarifScene(Scene):
     def construct(self):
         self.camera.background_color = "#FFFFFF"
-        dark_gray = "#333333"
-        maarif_blue = "#87CEEB"
         main_center = DOWN * 0.5
 
-        title = Text("Kesir Nedir?", color=dark_gray, font_size=48, weight=BOLD)
+        # Title
+        title = Text("Kesirler: Pay ve Payda", color="#333333", font_size=48)
         title.to_edge(UP, buff=0.7)
         self.play(Write(title))
+        self.wait(22)
 
-        num = Text("3", color=dark_gray, font_size=64)
-        line = Line(LEFT, RIGHT, color=dark_gray).set_length(1.2)
-        den = Text("4", color=dark_gray, font_size=64)
-        fraction = VGroup(num, line, den).arrange(DOWN, buff=0.3)
-        fraction.move_to(main_center + LEFT * 3)
+        # Fraction Structure
+        fraction_group = VGroup()
+        pay = Text("Pay", color="#87CEEB", font_size=64)
+        line = Line(LEFT*2, RIGHT*2, color="#333333", stroke_width=8)
+        payda = Text("Payda", color="#333333", font_size=64)
+        
+        pay.next_to(line, UP, buff=0.7)
+        payda.next_to(line, DOWN, buff=0.7)
+        fraction_group.add(pay, line, payda).move_to(main_center)
 
-        pay_label = Text("Pay", color=maarif_blue, font_size=28).next_to(num, UP, buff=0.6)
-        pay_arrow = Arrow(pay_label.get_bottom(), num.get_top(), color=dark_gray, buff=0.1)
+        self.play(Create(line))
+        self.wait(6)
+        
+        self.play(Write(payda))
+        self.wait(14)
+        
+        self.play(Write(pay))
+        self.wait(14)
 
-        payda_label = Text("Payda", color=maarif_blue, font_size=28).next_to(den, DOWN, buff=0.6)
-        payda_arrow = Arrow(payda_label.get_top(), den.get_bottom(), color=dark_gray, buff=0.1)
-
-        self.play(Write(fraction))
-        self.wait(1)
-
-        self.play(FadeIn(payda_label), GrowArrow(payda_arrow))
-        self.wait(1)
-
-        self.play(FadeIn(pay_label), GrowArrow(pay_arrow))
-        self.wait(1)
-
-        sectors = VGroup()
-        for i in range(4):
-            sector = Sector(outer_radius=1.5, angle=PI/2, start_angle=i*PI/2, color=dark_gray, fill_opacity=0, stroke_width=3)
-            sectors.add(sector)
-        sectors.move_to(main_center + RIGHT * 3)
-
-        self.play(Create(sectors))
-        self.wait(1)
-
-        filled_sectors = VGroup()
-        for i in range(3):
-            filled_sector = Sector(outer_radius=1.5, angle=PI/2, start_angle=i*PI/2, color=maarif_blue, fill_opacity=0.8, stroke_width=3)
-            filled_sectors.add(filled_sector)
-        filled_sectors.move_to(main_center + RIGHT * 3)
-
-        self.play(FadeIn(filled_sectors))
-        self.wait(1)
-
-        reading1 = Text("1. Okunuş: Dörtte Üç", color=maarif_blue, font_size=32)
-        reading2 = Text("2. Okunuş: Üç Bölü Dört", color=dark_gray, font_size=32)
-        readings = VGroup(reading1, reading2).arrange(DOWN, aligned_edge=LEFT, buff=0.4)
-        readings.move_to(main_center + DOWN * 2.5)
-
-        self.play(Write(reading1))
-        self.wait(1)
-        self.play(Write(reading2))
+        self.play(FadeOut(fraction_group))
         self.wait(2)
 
-        self.play(FadeOut(Group(*self.mobjects)))
-        self.wait(1)
+        # Example Fraction 3/5
+        example_group = VGroup()
+        num_3 = Text("3", color="#87CEEB", font_size=80)
+        ex_line = Line(LEFT*1.5, RIGHT*1.5, color="#333333", stroke_width=8)
+        num_5 = Text("5", color="#333333", font_size=80)
+        
+        num_3.next_to(ex_line, UP, buff=0.7)
+        num_5.next_to(ex_line, DOWN, buff=0.7)
+        example_group.add(num_3, ex_line, num_5).move_to(main_center)
+
+        self.play(FadeIn(example_group))
+        self.wait(8)
+
+        # Reading 1: 3 bölü 5
+        read1_text = Text("3 bölü 5", color="#333333", font_size=48).next_to(example_group, RIGHT, buff=2)
+        arrow1 = Arrow(num_3.get_right(), num_5.get_right(), path_arc=-1.5, color="#87CEEB", stroke_width=6)
+        
+        self.play(Create(arrow1), Write(read1_text))
+        self.wait(14)
+        
+        self.play(FadeOut(read1_text), FadeOut(arrow1))
+        self.wait(2)
+
+        # Reading 2: 5'te 3
+        read2_text = Text("5'te 3", color="#333333", font_size=48).next_to(example_group, LEFT, buff=2)
+        arrow2 = Arrow(num_5.get_left(), num_3.get_left(), path_arc=-1.5, color="#87CEEB", stroke_width=6)
+
+        self.play(Create(arrow2), Write(read2_text))
+        self.wait(14)
+
+        self.play(FadeOut(example_group), FadeOut(read2_text), FadeOut(arrow2), FadeOut(title))
+        self.wait(10)
