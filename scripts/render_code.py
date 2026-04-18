@@ -53,7 +53,8 @@ class MaarifScene(Scene):
 
         sectors = VGroup()
         for i in range(3):
-            sectors.add(Sector(arc_center=circle_center, outer_radius=1.18, start_angle=i*PI/2, angle=PI/2, color=pay_color, fill_opacity=0.7))
+            # DÜZELTME: outer_radius yerine radius kullanıldı (TypeError Fix)
+            sectors.add(Sector(radius=1.18, arc_center=circle_center, start_angle=i*PI/2, angle=PI/2, color=pay_color, fill_opacity=0.7))
 
         self.play(Create(circle), Create(lines))
         self.wait(1)
