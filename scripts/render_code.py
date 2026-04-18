@@ -1,66 +1,59 @@
 from manim import *
-import numpy as np
 
-# Maarif Matematik - %100 Çalışan ve Test Edilmiş Master Sahne
 class MaarifScene(Scene):
     def construct(self):
+        # Arka plan rengini beyaz yapıyoruz
         self.camera.background_color = "#FFFFFF"
+        
+        # Merkez konumlandırma kuralı
         main_center = DOWN * 0.5
-        dark_grey = "#333333"
-        pay_color = "#D32F2F"  # Maarif Kırmızısı
-        payda_color = "#1976D2"  # Maarif Mavisi
-
-        # 1. Başlık
-        title = Text("Kesir Kavramı: Pay ve Payda", color=dark_grey).scale(0.8).to_edge(UP)
-        self.play(Write(title))
-        self.wait(1)
-
-        # 2. Kesir Yazımı (MathTex)
-        num = MathTex("3", color=pay_color).scale(2.5)
-        line = Line(LEFT*0.8, RIGHT*0.8, color=dark_grey).set_stroke(width=4)
-        den = MathTex("4", color=payda_color).scale(2.5)
-        frac_group = VGroup(num, line, den).arrange(DOWN, buff=0.3).shift(LEFT*3 + UP*0.5)
-
-        self.play(Create(line), Write(den))
-        self.wait(1)
-        self.play(Write(num))
-        self.wait(1)
-
-        # 3. Görselleştirme (Pasta Modeli)
-        # HATA FİX: outer_radius parametresi 'radius' olarak değiştirildi
-        circle_center = RIGHT*2 + UP*0.5
-        circle = Circle(radius=1.5, color=dark_grey).move_to(circle_center)
         
-        # Kesir çizgileri
-        grid = VGroup(
-            Line(circle.get_top(), circle.get_bottom(), color=dark_grey),
-            Line(circle.get_left(), circle.get_right(), color=dark_grey)
+        # Kesir elemanlarını oluşturma
+        pay = MathTex("3", color="#00529B").scale(3)
+        cizgi = Line(LEFT, RIGHT, color=BLACK).scale(1.2)
+        payda = MathTex("4", color="#D32F2F").scale(3)
+        
+        # Kesri VGroup ile birleştirip merkeze sabitliyoruz
+        kesir_grubu = VGroup(pay, cizgi, payda).arrange(DOWN, buff=0.3)
+        kesir_grubu.move_to(main_center)
+        
+        # Kavram etiketleri
+        pay_etiket = Text("Pay (Alınan Parça)", color="#00529B", font_size=28)
+        pay_etiket.next_to(pay, RIGHT, buff=1)
+        
+        payda_etiket = Text("Payda (Toplam Eşit Parça)", color="#D32F2F", font_size=28)
+        payda_etiket.next_to(payda, RIGHT, buff=1)
+        
+        cizgi_etiket = Text("Kesir Çizgisi", color=BLACK, font_size=24)
+        cizgi_etiket.next_to(cizgi, LEFT, buff=1)
+        
+        # Okunuş metinleri (Üst kısma yerleştiriliyor)
+        okunus_baslik = Text("Kesrin Okunuşu", color=BLACK, font_size=36, weight=BOLD)
+        okunus_baslik.to_edge(UP).shift(DOWN * 0.2)
+        
+        okunus1 = Text("1) Yukarıdan Aşağıya: \"3 bölü 4\"", color="#00529B", font_size=28)
+        okunus1.next_to(okunus_baslik, DOWN, buff=0.3)
+        
+        okunus2 = Text("2) Aşağıdan Yukarıya: \"4'te 3\"", color="#D32F2F", font_size=28)
+        okunus2.next_to(okunus1, DOWN, buff=0.2)
+        
+        # Animasyon sırası
+        self.play(Write(kesir_grubu), run_time=2)
+        self.wait(1)
+        
+        self.play(
+            Write(pay_etiket),
+            Write(payda_etiket),
+            Write(cizgi_etiket)
         )
+        self.wait(2)
         
-        # Boyalı dilimler
-        sectors = VGroup()
-        for i in range(3):
-            # radius=1.48 yaparak ana çizginin dışına taşmayı engelledik
-            sector = Sector(radius=1.48, angle=TAU/4, start_angle=i*TAU/4, color=pay_color, fill_opacity=0.7).move_to(circle_center)
-            sectors.add(sector)
-
-        self.play(Create(circle), Create(grid))
+        self.play(Write(okunus_baslik))
+        self.play(Write(okunus1))
         self.wait(1)
-        self.play(FadeIn(sectors))
-        self.wait(2)
-
-        # 4. Okunuşlar (Tek Satırlı ve Güvenli)
-        read_1 = Text("1. Okunuş: Üç bölü dört", color=dark_grey, font_size=28)
-        read_2 = Text("2. Okunuş: Dörtte üç", color=dark_grey, font_size=28)
-        read_group = VGroup(read_1, read_2).arrange(DOWN, aligned_edge=LEFT, buff=0.5).to_edge(DOWN, buff=1)
-
-        self.play(Write(read_1))
-        self.wait(1)
-        self.play(Write(read_2))
+        self.play(Write(okunus2))
         self.wait(3)
-
-        # 5. Kapanış
-        self.play(FadeOut(VGroup(title, frac_group, circle, grid, sectors, read_group)))
-        outro = Text("Bir sonraki derste görüşmek üzere,\nhoşça kalın.", color=payda_color).scale(0.8)
-        self.play(Write(outro))
-        self.wait(2)
+        
+        # Sahne kapanışı
+        self.play(FadeOut(Group(*self.mobjects)))
+        self.wait(1)
