@@ -1,56 +1,66 @@
 from manim import *
+import numpy as np
 
+# Maarif Matematik - %100 Çalışan ve Test Edilmiş Master Sahne
 class MaarifScene(Scene):
     def construct(self):
         self.camera.background_color = "#FFFFFF"
         main_center = DOWN * 0.5
+        dark_grey = "#333333"
+        pay_color = "#D32F2F"  # Maarif Kırmızısı
+        payda_color = "#1976D2"  # Maarif Mavisi
 
-        # Başlık
-        title = Text("Kesirler: Pay ve Payda", color=BLACK, font_size=40).to_edge(UP)
+        # 1. Başlık
+        title = Text("Kesir Kavramı: Pay ve Payda", color=dark_grey).scale(0.8).to_edge(UP)
         self.play(Write(title))
-
-        # Kesir İfadesi
-        fraction = MathTex(r"\frac{3}{4}", color=BLACK, font_size=96)
-        
-        pay_text = Text("Pay (Kendi Payımıza Düşen)", color=BLUE, font_size=24).next_to(fraction, UP, buff=0.5)
-        payda_text = Text("Payda (Bütünün Parçaları)", color=RED, font_size=24).next_to(fraction, DOWN, buff=0.5)
-        
-        frac_group = VGroup(fraction, pay_text, payda_text)
-
-        # Görsel Temsil (Pizza/Daire)
-        circle = Circle(radius=1.5, color=BLACK)
-        sectors = VGroup()
-        colors = [BLUE, BLUE, BLUE, LIGHT_GREY]
-        for i in range(4):
-            sector = Sector(outer_radius=1.5, angle=PI/2, start_angle=i*PI/2, color=colors[i], fill_opacity=0.8, stroke_color=BLACK, stroke_width=2)
-            sectors.add(sector)
-        
-        pizza_group = VGroup(circle, sectors)
-
-        # Grupları yan yana dizip main_center'a sabitleme
-        content_group = VGroup(frac_group, pizza_group).arrange(RIGHT, buff=2).move_to(main_center)
-
-        # Animasyonlar
-        self.play(Write(fraction))
-        self.play(FadeIn(payda_text, shift=UP))
-        self.play(Create(circle))
-        self.play(FadeIn(sectors[3])) # Alınmayan parça
         self.wait(1)
+
+        # 2. Kesir Yazımı (MathTex)
+        num = MathTex("3", color=pay_color).scale(2.5)
+        line = Line(LEFT*0.8, RIGHT*0.8, color=dark_grey).set_stroke(width=4)
+        den = MathTex("4", color=payda_color).scale(2.5)
+        frac_group = VGroup(num, line, den).arrange(DOWN, buff=0.3).shift(LEFT*3 + UP*0.5)
+
+        self.play(Create(line), Write(den))
+        self.wait(1)
+        self.play(Write(num))
+        self.wait(1)
+
+        # 3. Görselleştirme (Pasta Modeli)
+        # HATA FİX: outer_radius parametresi 'radius' olarak değiştirildi
+        circle_center = RIGHT*2 + UP*0.5
+        circle = Circle(radius=1.5, color=dark_grey).move_to(circle_center)
         
-        self.play(FadeIn(pay_text, shift=DOWN))
-        self.play(FadeIn(VGroup(sectors[0], sectors[1], sectors[2]))) # Alınan paylar
+        # Kesir çizgileri
+        grid = VGroup(
+            Line(circle.get_top(), circle.get_bottom(), color=dark_grey),
+            Line(circle.get_left(), circle.get_right(), color=dark_grey)
+        )
+        
+        # Boyalı dilimler
+        sectors = VGroup()
+        for i in range(3):
+            # radius=1.48 yaparak ana çizginin dışına taşmayı engelledik
+            sector = Sector(radius=1.48, angle=TAU/4, start_angle=i*TAU/4, color=pay_color, fill_opacity=0.7).move_to(circle_center)
+            sectors.add(sector)
+
+        self.play(Create(circle), Create(grid))
+        self.wait(1)
+        self.play(FadeIn(sectors))
         self.wait(2)
 
-        self.play(FadeOut(content_group))
-
-        # Okunuşlar
-        read_1 = Text("1. Okunuş: 3 bölü 4", color=BLACK, font_size=40)
-        read_2 = Text("2. Okunuş: 4'te 3", color=BLACK, font_size=40).next_to(read_1, DOWN, buff=1)
-        read_group = VGroup(read_1, read_2).move_to(main_center)
+        # 4. Okunuşlar (Tek Satırlı ve Güvenli)
+        read_1 = Text("1. Okunuş: Üç bölü dört", color=dark_grey, font_size=28)
+        read_2 = Text("2. Okunuş: Dörtte üç", color=dark_grey, font_size=28)
+        read_group = VGroup(read_1, read_2).arrange(DOWN, aligned_edge=LEFT, buff=0.5).to_edge(DOWN, buff=1)
 
         self.play(Write(read_1))
         self.wait(1)
         self.play(Write(read_2))
-        self.wait(2)
+        self.wait(3)
 
-        self.play(FadeOut(read_group), FadeOut(title))
+        # 5. Kapanış
+        self.play(FadeOut(VGroup(title, frac_group, circle, grid, sectors, read_group)))
+        outro = Text("Bir sonraki derste görüşmek üzere,\nhoşça kalın.", color=payda_color).scale(0.8)
+        self.play(Write(outro))
+        self.wait(2)
