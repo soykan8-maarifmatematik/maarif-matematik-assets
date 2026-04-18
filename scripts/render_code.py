@@ -1,65 +1,44 @@
 from manim import *
-import numpy as np
 
-# Maarif Matematik - %100 Çalışan Master Sahne
 class MaarifScene(Scene):
     def construct(self):
         self.camera.background_color = "#FFFFFF"
         main_center = DOWN * 0.5
-        dark_grey = "#333333"
-        pay_color = "#D32F2F"  # Maarif Kırmızısı
-        payda_color = "#1976D2"  # Maarif Mavisi
 
-        # 1. Giriş Metni
-        title = Text("Kesirlerin Mantığı: Pay ve Payda", color=dark_grey).scale(0.8).to_edge(UP)
+        title = Text("Kesir Nedir?", color=BLACK, font_size=48, weight=BOLD).to_edge(UP)
+        
+        num = MathTex("3", color=BLUE, font_size=120)
+        line = Line(LEFT, RIGHT, color=BLACK).scale(0.8)
+        den = MathTex("4", color=RED, font_size=120)
+        
+        fraction = VGroup(num, line, den).arrange(DOWN, buff=0.3).move_to(main_center)
+        
+        pay_text = Text("Pay (Bizim payımıza düşen)", color=BLUE, font_size=28).next_to(num, RIGHT, buff=1)
+        pay_arrow = Arrow(pay_text.get_left(), num.get_right(), color=BLUE, buff=0.2)
+        
+        payda_text = Text("Payda (Bütünü pay eden)", color=RED, font_size=28).next_to(den, RIGHT, buff=1)
+        payda_arrow = Arrow(payda_text.get_left(), den.get_right(), color=RED, buff=0.2)
+
+        read_1 = Text("1. Okunuş: Üç bölü dört", color=DARK_GRAY, font_size=32).next_to(fraction, LEFT, buff=1.5).shift(UP*0.5)
+        read_2 = Text("2. Okunuş: Dörtte üç", color=DARK_GRAY, font_size=32).next_to(fraction, LEFT, buff=1.5).shift(DOWN*0.5)
+
         self.play(Write(title))
         self.wait(1)
-
-        # 2. Kesir Yazımı
-        num = MathTex("3", color=pay_color).scale(2.5)
-        line = Line(LEFT*0.8, RIGHT*0.8, color=dark_grey).set_stroke(width=4)
-        den = MathTex("4", color=payda_color).scale(2.5)
-        frac_group = VGroup(num, line, den).arrange(DOWN, buff=0.3).shift(LEFT*3 + UP*0.5)
-
-        self.play(Create(line), Write(den))
-        self.wait(1)
-        self.play(Write(num))
-        self.wait(1)
-
-        # 3. Görselleştirme (Pasta Modeli)
-        # KRİTİK DÜZELTME: outer_radius yerine radius kullanıldı
-        circle_center = RIGHT*2 + UP*0.5
-        circle = Circle(radius=1.5, color=dark_grey).move_to(circle_center)
         
-        # Kesir çizgileri
-        grid = VGroup(
-            Line(circle.get_top(), circle.get_bottom(), color=dark_grey),
-            Line(circle.get_left(), circle.get_right(), color=dark_grey)
-        )
-        
-        # Boyalı dilimler
-        sectors = VGroup()
-        for i in range(3):
-            # radius=1.48 yaparak ana çizginin taşmasını engelliyoruz
-            sector = Sector(radius=1.48, angle=TAU/4, start_angle=i*TAU/4, color=pay_color, fill_opacity=0.7).move_to(circle_center)
-            sectors.add(sector)
-
-        self.play(Create(circle), Create(grid))
-        self.wait(1)
-        self.play(FadeIn(sectors))
+        self.play(Create(line))
+        self.play(Write(den))
+        self.play(Write(payda_text), GrowArrow(payda_arrow))
         self.wait(2)
-
-        # 4. Okunuşlar
-        read_1 = Text("Okunuş 1: Üç bölü dört", color=dark_grey, font_size=28)
-        read_2 = Text("Okunuş 2: Dörtte üç", color=dark_grey, font_size=28)
-        read_group = VGroup(read_1, read_2).arrange(DOWN, aligned_edge=LEFT, buff=0.5).to_edge(DOWN, buff=1)
-
+        
+        self.play(Write(num))
+        self.play(Write(pay_text), GrowArrow(pay_arrow))
+        self.wait(2)
+        
         self.play(Write(read_1))
-        self.wait(1)
+        self.wait(2)
+        
         self.play(Write(read_2))
         self.wait(3)
-
-        # Kapanış
-        self.play(FadeOut(VGroup(title, frac_group, circle, grid, sectors, read_group)))
-        self.play(Write(Text("Bir sonraki derste görüşmek üzere,\nhoşça kalın.", color=payda_color).scale(0.8)))
-        self.wait(2)
+        
+        self.play(FadeOut(Group(title, fraction, pay_text, pay_arrow, payda_text, payda_arrow, read_1, read_2)))
+        self.wait(1)
