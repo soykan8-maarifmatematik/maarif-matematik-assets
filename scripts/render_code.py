@@ -5,40 +5,52 @@ class MaarifScene(Scene):
         self.camera.background_color = "#FFFFFF"
         main_center = DOWN * 0.5
 
-        title = Text("Kesir Nedir?", color=BLACK, font_size=48, weight=BOLD).to_edge(UP)
-        
-        num = MathTex("3", color=BLUE, font_size=120)
-        line = Line(LEFT, RIGHT, color=BLACK).scale(0.8)
-        den = MathTex("4", color=RED, font_size=120)
-        
-        fraction = VGroup(num, line, den).arrange(DOWN, buff=0.3).move_to(main_center)
-        
-        pay_text = Text("Pay (Bizim payımıza düşen)", color=BLUE, font_size=28).next_to(num, RIGHT, buff=1)
-        pay_arrow = Arrow(pay_text.get_left(), num.get_right(), color=BLUE, buff=0.2)
-        
-        payda_text = Text("Payda (Bütünü pay eden)", color=RED, font_size=28).next_to(den, RIGHT, buff=1)
-        payda_arrow = Arrow(payda_text.get_left(), den.get_right(), color=RED, buff=0.2)
-
-        read_1 = Text("1. Okunuş: Üç bölü dört", color=DARK_GRAY, font_size=32).next_to(fraction, LEFT, buff=1.5).shift(UP*0.5)
-        read_2 = Text("2. Okunuş: Dörtte üç", color=DARK_GRAY, font_size=32).next_to(fraction, LEFT, buff=1.5).shift(DOWN*0.5)
-
+        # Başlık
+        title = Text("Kesirler: Pay ve Payda", color=BLACK, font_size=40).to_edge(UP)
         self.play(Write(title))
+
+        # Kesir İfadesi
+        fraction = MathTex(r"\frac{3}{4}", color=BLACK, font_size=96)
+        
+        pay_text = Text("Pay (Kendi Payımıza Düşen)", color=BLUE, font_size=24).next_to(fraction, UP, buff=0.5)
+        payda_text = Text("Payda (Bütünün Parçaları)", color=RED, font_size=24).next_to(fraction, DOWN, buff=0.5)
+        
+        frac_group = VGroup(fraction, pay_text, payda_text)
+
+        # Görsel Temsil (Pizza/Daire)
+        circle = Circle(radius=1.5, color=BLACK)
+        sectors = VGroup()
+        colors = [BLUE, BLUE, BLUE, LIGHT_GREY]
+        for i in range(4):
+            sector = Sector(outer_radius=1.5, angle=PI/2, start_angle=i*PI/2, color=colors[i], fill_opacity=0.8, stroke_color=BLACK, stroke_width=2)
+            sectors.add(sector)
+        
+        pizza_group = VGroup(circle, sectors)
+
+        # Grupları yan yana dizip main_center'a sabitleme
+        content_group = VGroup(frac_group, pizza_group).arrange(RIGHT, buff=2).move_to(main_center)
+
+        # Animasyonlar
+        self.play(Write(fraction))
+        self.play(FadeIn(payda_text, shift=UP))
+        self.play(Create(circle))
+        self.play(FadeIn(sectors[3])) # Alınmayan parça
         self.wait(1)
         
-        self.play(Create(line))
-        self.play(Write(den))
-        self.play(Write(payda_text), GrowArrow(payda_arrow))
+        self.play(FadeIn(pay_text, shift=DOWN))
+        self.play(FadeIn(VGroup(sectors[0], sectors[1], sectors[2]))) # Alınan paylar
         self.wait(2)
-        
-        self.play(Write(num))
-        self.play(Write(pay_text), GrowArrow(pay_arrow))
-        self.wait(2)
-        
+
+        self.play(FadeOut(content_group))
+
+        # Okunuşlar
+        read_1 = Text("1. Okunuş: 3 bölü 4", color=BLACK, font_size=40)
+        read_2 = Text("2. Okunuş: 4'te 3", color=BLACK, font_size=40).next_to(read_1, DOWN, buff=1)
+        read_group = VGroup(read_1, read_2).move_to(main_center)
+
         self.play(Write(read_1))
-        self.wait(2)
-        
-        self.play(Write(read_2))
-        self.wait(3)
-        
-        self.play(FadeOut(Group(title, fraction, pay_text, pay_arrow, payda_text, payda_arrow, read_1, read_2)))
         self.wait(1)
+        self.play(Write(read_2))
+        self.wait(2)
+
+        self.play(FadeOut(read_group), FadeOut(title))
