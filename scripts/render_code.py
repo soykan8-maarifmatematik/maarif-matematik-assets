@@ -1,71 +1,65 @@
 from manim import *
+import numpy as np
 
+# Maarif Matematik - %100 Çalışan Master Sahne
 class MaarifScene(Scene):
     def construct(self):
         self.camera.background_color = "#FFFFFF"
         main_center = DOWN * 0.5
+        dark_grey = "#333333"
+        pay_color = "#D32F2F"  # Maarif Kırmızısı
+        payda_color = "#1976D2"  # Maarif Mavisi
 
-        # Title
-        title = Text("Kesir Nedir?", color=BLACK, font_size=48)
-        title.to_edge(UP)
+        # 1. Giriş Metni
+        title = Text("Kesirlerin Mantığı: Pay ve Payda", color=dark_grey).scale(0.8).to_edge(UP)
         self.play(Write(title))
+        self.wait(1)
 
-        # Fraction Structure
-        pay_text = Text("Pay", color=BLUE, font_size=48)
-        line = Line(LEFT, RIGHT, color=BLACK).scale(1.2)
-        payda_text = Text("Payda", color=RED, font_size=48)
-        frac_group = VGroup(pay_text, line, payda_text).arrange(DOWN, buff=0.3)
+        # 2. Kesir Yazımı
+        num = MathTex("3", color=pay_color).scale(2.5)
+        line = Line(LEFT*0.8, RIGHT*0.8, color=dark_grey).set_stroke(width=4)
+        den = MathTex("4", color=payda_color).scale(2.5)
+        frac_group = VGroup(num, line, den).arrange(DOWN, buff=0.3).shift(LEFT*3 + UP*0.5)
+
+        self.play(Create(line), Write(den))
+        self.wait(1)
+        self.play(Write(num))
+        self.wait(1)
+
+        # 3. Görselleştirme (Pasta Modeli)
+        # KRİTİK DÜZELTME: outer_radius yerine radius kullanıldı
+        circle_center = RIGHT*2 + UP*0.5
+        circle = Circle(radius=1.5, color=dark_grey).move_to(circle_center)
         
-        # Visual (Circle)
+        # Kesir çizgileri
+        grid = VGroup(
+            Line(circle.get_top(), circle.get_bottom(), color=dark_grey),
+            Line(circle.get_left(), circle.get_right(), color=dark_grey)
+        )
+        
+        # Boyalı dilimler
         sectors = VGroup()
-        for i in range(5):
-            sector = Sector(outer_radius=1.5, angle=TAU/5, start_angle=i*TAU/5, color=BLACK, fill_opacity=0, stroke_width=2)
-            sectors.add(sector)
-        
-        visual_group = VGroup(frac_group, sectors).arrange(RIGHT, buff=2)
-        visual_group.move_to(main_center)
-
-        self.play(Write(frac_group))
-        self.wait(2)
-
-        self.play(Create(sectors))
-        self.wait(2)
-
-        # Highlight Pay
-        filled_sectors = VGroup()
         for i in range(3):
-            filled_sector = Sector(outer_radius=1.5, angle=TAU/5, start_angle=i*TAU/5, color=GREEN, fill_opacity=0.6, stroke_width=2)
-            filled_sectors.add(filled_sector)
-        filled_sectors.move_to(sectors.get_center())
-        
-        self.play(FadeIn(filled_sectors))
+            # radius=1.48 yaparak ana çizginin taşmasını engelliyoruz
+            sector = Sector(radius=1.48, angle=TAU/4, start_angle=i*TAU/4, color=pay_color, fill_opacity=0.7).move_to(circle_center)
+            sectors.add(sector)
+
+        self.play(Create(circle), Create(grid))
+        self.wait(1)
+        self.play(FadeIn(sectors))
         self.wait(2)
 
-        # Transform to 3/5
-        num_3 = Text("3", color=BLUE, font_size=48)
-        num_5 = Text("5", color=RED, font_size=48)
-        frac_35 = VGroup(num_3, line.copy(), num_5).arrange(DOWN, buff=0.3)
-        frac_35.move_to(frac_group.get_center())
+        # 4. Okunuşlar
+        read_1 = Text("Okunuş 1: Üç bölü dört", color=dark_grey, font_size=28)
+        read_2 = Text("Okunuş 2: Dörtte üç", color=dark_grey, font_size=28)
+        read_group = VGroup(read_1, read_2).arrange(DOWN, aligned_edge=LEFT, buff=0.5).to_edge(DOWN, buff=1)
 
-        self.play(Transform(frac_group, frac_35))
-        self.wait(2)
-
-        # Readings
-        read_1 = Text("3 bölü 5", color=BLACK, font_size=36)
-        read_1.next_to(frac_35, DOWN, buff=0.5)
-        
-        arrow_down = Arrow(start=frac_35.get_top() + UP*0.2 + LEFT*0.8, end=frac_35.get_bottom() + DOWN*0.2 + LEFT*0.8, color=BLUE)
-        
-        self.play(Write(read_1), GrowArrow(arrow_down))
-        self.wait(2)
-
-        read_2 = Text("5'te 3", color=BLACK, font_size=36)
-        read_2.next_to(frac_35, DOWN, buff=0.5)
-        
-        arrow_up = Arrow(start=frac_35.get_bottom() + DOWN*0.2 + LEFT*0.8, end=frac_35.get_top() + UP*0.2 + LEFT*0.8, color=RED)
-
-        self.play(Transform(read_1, read_2), Transform(arrow_down, arrow_up))
+        self.play(Write(read_1))
+        self.wait(1)
+        self.play(Write(read_2))
         self.wait(3)
 
-        self.play(FadeOut(Group(*self.mobjects)))
-        self.wait(1)
+        # Kapanış
+        self.play(FadeOut(VGroup(title, frac_group, circle, grid, sectors, read_group)))
+        self.play(Write(Text("Bir sonraki derste görüşmek üzere,\nhoşça kalın.", color=payda_color).scale(0.8)))
+        self.wait(2)
