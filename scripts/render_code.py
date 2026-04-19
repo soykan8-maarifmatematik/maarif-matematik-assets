@@ -1,62 +1,61 @@
 from manim import *
-import numpy as np
 
-# Maarif Matematik - %100 Çalışan ve Test Edilmiş Master Sahne
 class MaarifScene(Scene):
     def construct(self):
         self.camera.background_color = "#FFFFFF"
         main_center = DOWN * 0.5
-        
-        # Renk Mühürleri (Hex kodları ile hata riski sıfırlandı)
-        text_color = "#333333" 
-        maarif_blue = "#1976D2" 
-        maarif_red = "#D32F2F"  
 
-        # 1. Başlık
-        title = Text("Birim Kesirler: 1 Bölü 4", color=text_color).scale(0.8).to_edge(UP)
+        title = Text("Kesir Nedir?", color=BLACK, font_size=48)
+        title.to_edge(UP)
         self.play(Write(title))
-        self.wait(1)
 
-        # 2. Kesir Yazımı
-        num = MathTex("1", color=maarif_blue).scale(2.5)
-        line = Line(LEFT*0.8, RIGHT*0.8, color=text_color).set_stroke(width=4)
-        den = MathTex("4", color=text_color).scale(2.5)
-        frac_group = VGroup(num, line, den).arrange(DOWN, buff=0.3).shift(LEFT*3 + UP*0.5)
-
-        self.play(Create(line), Write(den))
-        self.wait(1)
-        self.play(Write(num))
-        self.wait(1)
-
-        # 3. Görselleştirme (Pasta Modeli)
-        circle_center = RIGHT*2 + UP*0.5
-        circle = Circle(radius=1.5, color=text_color).move_to(circle_center)
+        # Kesir
+        fraction = MathTex(r"\frac{2}{5}", color=BLACK, font_size=96)
         
-        grid = VGroup(
-            Line(circle.get_top(), circle.get_bottom(), color=text_color),
-            Line(circle.get_left(), circle.get_right(), color=text_color)
-        )
+        # Etiketler
+        pay_label = Text("Pay (Alınan)", color=BLUE, font_size=28)
+        pay_label.next_to(fraction, RIGHT, buff=1).shift(UP*0.6)
+        payda_label = Text("Payda (Bütün)", color=RED, font_size=28)
+        payda_label.next_to(fraction, RIGHT, buff=1).shift(DOWN*0.6)
         
-        # Birim dilim (1/4)
-        sector = Sector(radius=1.48, angle=TAU/4, start_angle=0, color=maarif_blue, fill_opacity=0.7).move_to(circle_center)
+        arrow_pay = Arrow(pay_label.get_left(), fraction[0][0].get_right(), color=BLUE, buff=0.1)
+        arrow_payda = Arrow(payda_label.get_left(), fraction[0][2].get_right(), color=RED, buff=0.1)
 
-        self.play(Create(circle), Create(grid))
+        frac_group = VGroup(fraction, pay_label, payda_label, arrow_pay, arrow_payda)
+
+        # Görselleştirme (5 parçalı dikdörtgen)
+        rect_group = VGroup()
+        for i in range(5):
+            rect = Rectangle(height=1, width=1, color=BLACK, fill_opacity=0.6 if i < 2 else 0, fill_color=BLUE)
+            rect_group.add(rect)
+        rect_group.arrange(RIGHT, buff=0)
+        
+        # Okunuşlar
+        read_1 = Text("1. Okunuş: İki bölü beş", color=DARK_BLUE, font_size=32)
+        read_2 = Text("2. Okunuş: Beşte iki", color=DARK_RED, font_size=32)
+        read_group = VGroup(read_1, read_2).arrange(DOWN, buff=0.4)
+
+        # Tüm elemanları gruplayıp merkeze hizalama
+        master_group = VGroup(frac_group, rect_group, read_group).arrange(DOWN, buff=1)
+        master_group.move_to(main_center)
+
+        # Animasyonlar
+        self.play(Write(fraction))
         self.wait(1)
-        self.play(FadeIn(sector))
+        
+        self.play(Write(payda_label), GrowArrow(arrow_payda))
+        self.wait(1)
+        
+        self.play(Write(pay_label), GrowArrow(arrow_pay))
+        self.wait(1)
+
+        self.play(Create(rect_group))
         self.wait(2)
 
-        # 4. Okunuşlar
-        reading1 = Text("1 bölü 4", color=maarif_blue, font_size=32)
-        reading2 = Text("Dörtte bir", color=maarif_red, font_size=32)
-        read_group = VGroup(reading1, reading2).arrange(DOWN, aligned_edge=LEFT, buff=0.5).to_edge(DOWN, buff=1)
-
-        self.play(Write(reading1))
+        self.play(Write(read_1))
         self.wait(1)
-        self.play(Write(reading2))
-        self.wait(3)
-
-        # 5. Kapanış
-        self.play(FadeOut(VGroup(title, frac_group, circle, grid, sector, read_group)))
-        outro = Text("Bir sonraki derste görüşmek üzere,\nhoşça kalın.", color=maarif_blue).scale(0.8)
-        self.play(Write(outro))
+        self.play(Write(read_2))
         self.wait(2)
+
+        self.play(FadeOut(title), FadeOut(master_group))
+        self.wait(1)
