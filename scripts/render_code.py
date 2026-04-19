@@ -1,50 +1,45 @@
-from manim import *
+import os
+import json
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload
 
-class MaarifScene(Scene):
-    def construct(self):
-        self.camera.background_color = "#FFFFFF"
-        main_center = DOWN * 0.5
+def upload_video():
+    try:
+        # 1. Kimlik Doğrulama
+        token_data = json.loads(os.environ.get('TOKEN_JSON'))
+        creds = Credentials.from_authorized_user_info(token_data)
+        youtube = build('youtube', 'v3', credentials=creds)
 
-        title = Text("Kesir Kavramı", color=BLACK, font_size=48).to_edge(UP)
-        self.play(Write(title))
+        # 2. Metadata Okuma (ZORUNLU MOD)
+        if not os.path.exists('metadata.json'):
+            raise Exception("Kritik Hata: metadata.json dosyası bulunamadı!")
+            
+        with open('metadata.json', 'r', encoding='utf-8') as f:
+            m = json.load(f)
+            title = m.get('title', 'Başlık Alınamadı')
+            description = m.get('description', 'Açıklama Alınamadı')
+            tags = m.get('tags', [])
+            if isinstance(tags, str): tags = [t.strip() for t in tags.split(',')]
 
-        # Structure
-        pay_text = Text("Pay", color=BLUE, font_size=48)
-        payda_text = Text("Payda", color=RED, font_size=48)
-        line = Line(LEFT, RIGHT, color=BLACK).set_length(2)
+        # 3. Video ve Kapak
+        video_path = "media/videos/final_output.mp4"
+        body = {
+            'snippet': {'title': title, 'description': description, 'tags': tags, 'categoryId': '27'},
+            'status': {'privacyStatus': 'unlisted', 'selfDeclaredMadeForKids': False}
+        }
 
-        fraction_group = VGroup(pay_text, line, payda_text).arrange(DOWN, buff=0.3)
-        fraction_group.move_to(main_center)
+        print(f"🚀 Yükleniyor: {title}")
+        media = MediaFileUpload(video_path, chunksize=-1, resumable=True)
+        response = youtube.videos().insert(part='snippet,status', body=body, media_body=media).execute()
+        
+        # 4. Kapak Mıhlama (s.png)
+        if os.path.exists("s.png"):
+            youtube.thumbnails().set(videoId=response.get('id'), media_body=MediaFileUpload("s.png")).execute()
+            print("✅ Kapak ve SEO başarıyla tamamlandı.")
 
-        self.play(Write(fraction_group))
-        self.wait(2)
+    except Exception as e:
+        print(f"❌ SİSTEM DURDURULDU: {e}")
 
-        pay_desc = Text("Kaç parça alındı?", color=BLUE, font_size=24).next_to(pay_text, RIGHT, buff=0.5)
-        payda_desc = Text("Kaç eş parçaya bölündü?", color=RED, font_size=24).next_to(payda_text, RIGHT, buff=0.5)
-
-        self.play(FadeIn(pay_desc), FadeIn(payda_desc))
-        self.wait(3)
-
-        self.play(FadeOut(fraction_group), FadeOut(pay_desc), FadeOut(payda_desc))
-
-        # Example 3/4
-        num_3 = Text("3", color=BLUE, font_size=64)
-        num_4 = Text("4", color=RED, font_size=64)
-        line_ex = Line(LEFT, RIGHT, color=BLACK).set_length(1.5)
-
-        ex_group = VGroup(num_3, line_ex, num_4).arrange(DOWN, buff=0.3)
-        ex_group.move_to(main_center)
-
-        self.play(Write(ex_group))
-        self.wait(2)
-
-        read1 = Text("Yukarıdan Aşağıya:\n'Üç bölü dört'", color=BLACK, font_size=32).next_to(ex_group, LEFT, buff=1)
-        read2 = Text("Aşağıdan Yukarıya:\n'Dörtte üç'", color=BLACK, font_size=32).next_to(ex_group, RIGHT, buff=1)
-
-        self.play(Write(read1))
-        self.wait(2)
-        self.play(Write(read2))
-        self.wait(3)
-
-        self.play(FadeOut(ex_group), FadeOut(read1), FadeOut(read2), FadeOut(title))
-        self.wait(1)
+if __name__ == "__main__":
+    upload_video()
