@@ -4,38 +4,49 @@ class MaarifScene(Scene):
     def construct(self):
         self.camera.background_color = "#FFFFFF"
         main_center = DOWN * 0.5
+
+        # Title
+        title = Tex("Kesirlerin Mantığı", color=BLACK).scale(1.2).to_edge(UP)
+        self.play(Write(title))
+
+        # Main Group to be centered
+        main_group = VGroup()
+
+        # Fraction
+        line = Line(LEFT, RIGHT, color=BLACK).scale(0.8)
+        num = MathTex("3", color=BLUE).scale(1.5).next_to(line, UP, buff=0.3)
+        den = MathTex("4", color=RED).scale(1.5).next_to(line, DOWN, buff=0.3)
+        fraction = VGroup(num, line, den)
+
+        # Labels
+        num_label = Tex("Pay (Bizim Payımız)", color=BLUE).scale(0.7).next_to(num, RIGHT, buff=0.5)
+        den_label = Tex("Payda (Bütün Parçalar)", color=RED).scale(0.7).next_to(den, RIGHT, buff=0.5)
         
-        # Kesir ve yazıların oluşturulması
-        fraction = MathTex(r"\frac{3}{4}", color=BLACK, font_size=144)
-        pay_text = Text("Pay (Alınan Parça)", color=BLUE, font_size=32).next_to(fraction, UP, buff=0.6)
-        payda_text = Text("Payda (Toplam Parça)", color=RED, font_size=32).next_to(fraction, DOWN, buff=0.6)
+        fraction_with_labels = VGroup(fraction, num_label, den_label)
+
+        # Readings
+        read1 = Tex("- 3 bölü 4", color=BLACK).scale(0.8)
+        read2 = Tex("- 4'te 3", color=BLACK).scale(0.8)
+        readings = VGroup(read1, read2).arrange(DOWN, aligned_edge=LEFT, buff=0.3)
         
-        # Ana grubu merkeze sabitleme
-        core_group = VGroup(pay_text, fraction, payda_text)
-        core_group.move_to(main_center)
-        
-        # Okunuşların oluşturulması
-        read_1 = Text("1. Okunuş: Üç bölü dört (Yukarıdan Aşağıya)", color=BLACK, font_size=28)
-        read_2 = Text("2. Okunuş: Dörtte üç (Aşağıdan Yukarıya)", color=BLACK, font_size=28)
-        
-        read_group = VGroup(read_1, read_2).arrange(DOWN, buff=0.3).to_edge(UP).shift(DOWN * 0.2)
-        
-        # Animasyonlar
-        self.play(Write(fraction))
+        main_group.add(fraction_with_labels, readings).arrange(DOWN, buff=1)
+        main_group.move_to(main_center)
+
+        # Animation Sequence
+        self.play(Create(line))
         self.wait(1)
         
-        self.play(Write(payda_text))
-        self.wait(1)
-        
-        self.play(Write(pay_text))
-        self.wait(1)
-        
-        self.play(Write(read_1))
-        self.wait(1)
-        
-        self.play(Write(read_2))
+        self.play(Write(den))
+        self.play(FadeIn(den_label, shift=LEFT))
         self.wait(2)
         
-        # Kapanış
-        self.play(FadeOut(core_group), FadeOut(read_group))
-        self.wait(1)
+        self.play(Write(num))
+        self.play(FadeIn(num_label, shift=LEFT))
+        self.wait(2)
+
+        self.play(Write(read1))
+        self.wait(2)
+        self.play(Write(read2))
+        self.wait(3)
+
+        self.play(FadeOut(Group(*self.mobjects)))
