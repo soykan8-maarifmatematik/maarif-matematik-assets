@@ -1,56 +1,37 @@
 from manim import *
+import numpy as np
 
-class KesirlerinMantigi(Scene):
+class MaarifScene(Scene):
     def construct(self):
-        self.camera.background_color = WHITE
-        
-        BLUE_C = "#1976D2"
-        RED_C = "#D32F2F"
-        GRAY_C = "#333333"
+        self.camera.background_color = "#FFFFFF"
+        main_center = DOWN * 0.5
+        text_color = "#333333"
+        pay_color = "#1976D2"
+        payda_color = "#D32F2F"
 
-        # P1: Intro
-        title = Text("Kesirlerin Mantığı", color=GRAY_C, font_size=48)
+        # Başlık
+        title = Text("Kesirlerin Mantığı", color=text_color).scale(0.8).to_edge(UP)
         self.play(Write(title))
-        self.wait(10)
-        self.play(FadeOut(title))
+        self.wait(2)
 
-        # P2: Pay and Payda
-        fraction = MathTex(r"\frac{3}{4}", font_size=120, color=GRAY_C)
-        pay_text = Text("Pay", color=RED_C, font_size=36).next_to(fraction, UP, buff=0.5)
-        payda_text = Text("Payda", color=BLUE_C, font_size=36).next_to(fraction, DOWN, buff=0.5)
-        line_text = Text("Kesir Çizgisi", color=GRAY_C, font_size=24).next_to(fraction, RIGHT, buff=1)
-        line_arrow = Arrow(line_text.get_left(), fraction.get_center(), buff=0.1, color=GRAY_C)
-
+        # Kesir Yazımı
+        fraction = MathTex(r"\frac{3}{4}", color=text_color).scale(3).move_to(ORIGIN)
         self.play(Write(fraction))
-        self.play(Write(pay_text), Write(payda_text))
-        self.play(Write(line_text), Create(line_arrow))
-        self.wait(11)
-        self.play(FadeOut(pay_text), FadeOut(payda_text), FadeOut(line_text), FadeOut(line_arrow))
-        self.play(fraction.animate.shift(LEFT * 3))
-
-        # P3: Sector Model
-        pie = VGroup()
-        for i in range(4):
-            sector = Sector(outer_radius=2, angle=PI/2, start_angle=i*PI/2, color=RED_C if i < 3 else GRAY_C, fill_opacity=0.8 if i < 3 else 0.1, stroke_color=WHITE, stroke_width=4)
-            pie.add(sector)
-        pie.move_to(RIGHT * 3)
-
-        self.play(Create(pie))
-        self.wait(11)
-
-        # P4: Reading Directions
-        arrow_down = Arrow(start=UP*2 + LEFT*4.5, end=DOWN*2 + LEFT*4.5, color=RED_C, stroke_width=6)
-        text_down = Text("Üç bölü dört", font_size=28, color=RED_C).next_to(arrow_down, LEFT)
-
-        arrow_up = Arrow(start=DOWN*2 + LEFT*1.5, end=UP*2 + LEFT*1.5, color=BLUE_C, stroke_width=6)
-        text_up = Text("Dörtte üç", font_size=28, color=BLUE_C).next_to(arrow_up, RIGHT)
-
-        self.play(Create(arrow_down), Write(text_down))
-        self.play(Create(arrow_up), Write(text_up))
-        self.wait(14)
-
-        # P5: Outro
-        self.play(FadeOut(Group(fraction, pie, arrow_down, text_down, arrow_up, text_up)))
-        outro = Text("Maarif Matematik", color=GRAY_C, font_size=48)
-        self.play(Write(outro))
         self.wait(3)
+
+        # OKLAR (HATA FİX: Katmanlama ve Konumlandırma)
+        down_arrow = Arrow(start=UP*1.2, end=DOWN*1.2, color=pay_color).next_to(fraction, LEFT, buff=0.5)
+        up_arrow = Arrow(start=DOWN*1.2, end=UP*1.2, color=payda_color).next_to(fraction, RIGHT, buff=0.5)
+        
+        read_1 = Text("Üç bölü dört", color=pay_color, font_size=24).next_to(down_arrow, LEFT)
+        read_2 = Text("Dörtte üç", color=payda_color, font_size=24).next_to(up_arrow, RIGHT)
+
+        self.play(GrowArrow(down_arrow), Write(read_1))
+        self.wait(10)
+        self.play(GrowArrow(up_arrow), Write(read_2))
+        self.wait(10)
+
+        # Kapanış
+        self.play(FadeOut(Group(*self.mobjects)))
+        self.play(Write(Text("Hoşça kalın...", color=pay_color).scale(0.8)))
+        self.wait(2)
