@@ -1,44 +1,64 @@
 from manim import *
-import numpy as np
 
-class MaarifScene(Scene):
+class KesirNedir(Scene):
     def construct(self):
+        # 1. KURALLAR: Renk ve Estetik
         self.camera.background_color = "#FFFFFF"
+        TEXT_COLOR = "#333333"
+        NUM_COLOR = "#1976D2"
+        DENOM_COLOR = "#D32F2F"
+
+        # 1. KURALLAR: Merkez Nokta Sabitleme
         main_center = DOWN * 0.5
-        text_color = "#333333" # Net Okunur Gri
-        pay_color = "#1976D2"  # Maarif Mavisi
-        payda_color = "#D32F2F" # Maarif Kırmızısı
 
-        # 1. Başlık
-        title = Text("Kesirlerin Okunuş Mantığı", color=text_color).scale(0.8).to_edge(UP)
-        self.play(Write(title))
-        self.wait(2)
+        # GİRİŞ VE KESİR KAVRAMI (Yaklaşık 13 saniye bekleme)
+        title = Tex("Kesir Nedir?", color=TEXT_COLOR).to_edge(UP)
+        self.play(Write(title), run_time=1)
+        self.wait(13)
 
-        # 2. Kesir Yazımı (Büyük ve Net)
-        fraction = MathTex(r"\frac{1}{4}", color=text_color).scale(3).move_to(ORIGIN)
-        self.play(Write(fraction))
+        # GÖRSELLEŞTİRME: 4 parçaya bölünmüş, 3'ü alınmış bütün
+        # 3. KURALLAR: Sector objesinde outer_radius yasak, sadece radius kullanıldı.
+        circle_group = VGroup()
+        s1 = Sector(radius=1.2, angle=PI/2, start_angle=0, color=NUM_COLOR, fill_opacity=1, stroke_color=DENOM_COLOR, stroke_width=4)
+        s2 = Sector(radius=1.2, angle=PI/2, start_angle=PI/2, color=NUM_COLOR, fill_opacity=1, stroke_color=DENOM_COLOR, stroke_width=4)
+        s3 = Sector(radius=1.2, angle=PI/2, start_angle=PI, color=NUM_COLOR, fill_opacity=1, stroke_color=DENOM_COLOR, stroke_width=4)
+        s4 = Sector(radius=1.2, angle=PI/2, start_angle=3*PI/2, color="#FFFFFF", fill_opacity=1, stroke_color=DENOM_COLOR, stroke_width=4)
+        
+        circle_group.add(s1, s2, s3, s4).move_to(main_center + UP * 2)
+        self.play(Create(circle_group), run_time=1.5)
+        self.wait(10)
+
+        # PAY VE PAYDA İLİŞKİSİ
+        # Kesir çizgisi
+        frac_line = Line(LEFT, RIGHT, color=TEXT_COLOR).set_length(1.5).move_to(main_center + DOWN * 0.5)
+        self.play(Create(frac_line), run_time=0.5)
+        self.wait(4)
+
+        # Payda (Kırmızı)
+        denom_num = MathTex("4", color=DENOM_COLOR).next_to(frac_line, DOWN, buff=0.3)
+        denom_text = Tex("Payda", color=DENOM_COLOR).next_to(denom_num, RIGHT, buff=0.5)
+        self.play(Write(denom_num), Write(denom_text), run_time=1)
+        self.wait(9)
+
+        # Pay (Mavi)
+        num_num = MathTex("3", color=NUM_COLOR).next_to(frac_line, UP, buff=0.3)
+        num_text = Tex("Pay", color=NUM_COLOR).next_to(num_num, RIGHT, buff=0.5)
+        self.play(Write(num_num), Write(num_text), run_time=1)
+        self.wait(9)
+
+        # KESİRLERİN OKUNUŞU
+        # 3. KURALLAR: Okunuş yönleri için Arrow ve GrowArrow kullanımı
+        # Yukarıdan aşağıya okunuş (a bölü b)
+        arrow_down = Arrow(start=main_center + LEFT*1.5 + UP*0.2, end=main_center + LEFT*1.5 + DOWN*1.2, color=TEXT_COLOR)
+        read_down = Tex("Üç bölü dört", color=TEXT_COLOR).next_to(arrow_down, LEFT)
+        self.play(GrowArrow(arrow_down), Write(read_down), run_time=1)
+        self.wait(8)
+
+        # Aşağıdan yukarıya okunuş (b'de a)
+        arrow_up = Arrow(start=main_center + RIGHT*2.5 + DOWN*1.2, end=main_center + RIGHT*2.5 + UP*0.2, color=TEXT_COLOR)
+        read_up = Tex("Dörtte üç", color=TEXT_COLOR).next_to(arrow_up, RIGHT)
+        self.play(GrowArrow(arrow_up), Write(read_up), run_time=1)
+        self.wait(8)
+
+        # KAPANIŞ
         self.wait(3)
-
-        # 3. Okunuş Okları ve Metinler
-        # Aşağı doğru ok (Yukarıdan Aşağıya Okunuş)
-        down_arrow = Arrow(start=UP*1.5, end=DOWN*1.5, color=pay_color).next_to(fraction, LEFT, buff=0.8)
-        read_1 = Text("Bir bölü dört", color=pay_color, font_size=28).next_to(down_arrow, LEFT)
-
-        # Yukarı doğru ok (Aşağıdan Yukarıya Okunuş)
-        up_arrow = Arrow(start=DOWN*1.5, end=UP*1.5, color=payda_color).next_to(fraction, RIGHT, buff=0.8)
-        read_2 = Text("Dörtte bir", color=payda_color, font_size=28).next_to(up_arrow, RIGHT)
-
-        # Animasyon Akışı (Sesle uyumlu beklemeler eklendi)
-        self.play(GrowArrow(down_arrow))
-        self.play(Write(read_1))
-        self.wait(15) # Tanım süresi için uzun bekleme
-
-        self.play(GrowArrow(up_arrow))
-        self.play(Write(read_2))
-        self.wait(15) # Karşılaştırma süresi için uzun bekleme
-
-        # 4. Kapanış
-        self.play(FadeOut(Group(*self.mobjects)))
-        outro = Text("Hoşça kalın...", color=pay_color).scale(0.8)
-        self.play(Write(outro))
-        self.wait(2)
