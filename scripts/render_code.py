@@ -2,66 +2,84 @@ from manim import *
 
 class KesirMantigi(Scene):
     def construct(self):
-        # Sabitler ve Renkler
-        main_center = DOWN * 0.5
+        # Renk Paleti
         BLUE_C = "#1976D2"
         RED_C = "#D32F2F"
         GRAY_C = "#333333"
 
-        # 1. Sahne: Giriş (Toplam 8 saniye)
-        title = Tex("Kesirlerin Mantığı", color=BLUE_C, font_size=48).move_to(UP * 2.5)
-        self.play(Write(title)) # 1 sn
-        self.wait(7)
+        # Merkez Noktasi Kurali
+        main_center = DOWN * 0.5
 
-        # 2. Sahne: Pay ve Payda Mantığı (Toplam 14 saniye)
-        fraction = MathTex(r"\frac{3}{4}", font_size=120, color=GRAY_C).move_to(main_center + LEFT * 3)
-        fraction[0][0].set_color(RED_C)  # Pay (3)
-        fraction[0][2].set_color(BLUE_C) # Payda (4)
+        # Baslik
+        title = Text("KESİRLERİN MANTIĞI", font_size=40, color=WHITE).to_edge(UP)
+        self.play(Write(title))
+        # Paragraf 1 Bekleme Suresi (~34 kelime)
+        self.wait(15)
 
-        pay_text = Tex("Pay: Alınan Parça", color=RED_C, font_size=32).next_to(fraction, UP, buff=0.5)
-        payda_text = Tex("Payda: Toplam Eş Parça", color=BLUE_C, font_size=32).next_to(fraction, DOWN, buff=0.5)
+        # Kesir Kurulumu (Sol Taraf)
+        frac_center = main_center + LEFT * 3
 
-        # Pasta/Bütün Modeli
-        pie_group = VGroup()
-        circle = Circle(radius=1.5, color=BLUE_C, stroke_width=4)
-        lines = VGroup(
-            Line(circle.get_top(), circle.get_bottom(), color=BLUE_C),
-            Line(circle.get_left(), circle.get_right(), color=BLUE_C)
-        )
-        sectors = VGroup(
-            Sector(radius=1.5, angle=PI/2, start_angle=0, color=RED_C, fill_opacity=0.6),
-            Sector(radius=1.5, angle=PI/2, start_angle=PI/2, color=RED_C, fill_opacity=0.6),
-            Sector(radius=1.5, angle=PI/2, start_angle=PI, color=RED_C, fill_opacity=0.6)
-        )
-        pie_group.add(circle, lines, sectors).move_to(main_center + RIGHT * 3)
+        line = Line(LEFT, RIGHT, color=GRAY_C).scale(0.8).move_to(frac_center)
+        denom = MathTex("4", color=BLUE_C, font_size=72).next_to(line, DOWN, buff=0.3)
+        denom_label = Text("Payda (Bütün)", font_size=24, color=BLUE_C).next_to(denom, DOWN)
 
-        self.play(Write(fraction)) # 1 sn
-        self.play(Create(pie_group[0]), Create(pie_group[1])) # 1 sn
-        self.play(Write(payda_text)) # 1 sn
-        self.play(FadeIn(pie_group[2])) # 1 sn
-        self.play(Write(pay_text)) # 1 sn
-        self.wait(9)
+        self.play(Create(line))
+        self.play(Write(denom), Write(denom_label))
+        # Paragraf 2 Bekleme Suresi (~75 kelime)
+        self.wait(35)
 
-        # 3. Sahne: Yukarıdan Aşağıya Okunuş (Toplam 10 saniye)
-        arrow_down = Arrow(start=UP, end=DOWN, color=GRAY_C).next_to(fraction, LEFT, buff=0.5)
-        read_down = Tex("3 bölü 4", color=GRAY_C, font_size=36).next_to(arrow_down, LEFT)
+        num = MathTex("3", color=RED_C, font_size=72).next_to(line, UP, buff=0.3)
+        num_label = Text("Pay (Alınan)", font_size=24, color=RED_C).next_to(num, UP)
 
-        self.play(GrowArrow(arrow_down)) # 1 sn
-        self.play(Write(read_down)) # 1 sn
-        self.wait(8)
+        self.play(Write(num), Write(num_label))
+        # Paragraf 3 Bekleme Suresi (~57 kelime)
+        self.wait(30)
 
-        # 4. Sahne: Aşağıdan Yukarıya Okunuş (Toplam 10 saniye)
-        arrow_up = Arrow(start=DOWN, end=UP, color=GRAY_C).next_to(fraction, RIGHT, buff=0.5)
-        read_up = Tex("4'te 3", color=GRAY_C, font_size=36).next_to(arrow_up, RIGHT)
+        # Pasta Dilimi (Sector) Kurulumu (Sag Taraf)
+        pie_center = main_center + RIGHT * 3
+        sectors = VGroup()
+        colors = [RED_C, RED_C, RED_C, GRAY_C]
+        angles = [PI/2, PI/2, PI/2, PI/2]
+        start_angle = 0
 
-        self.play(GrowArrow(arrow_up)) # 1 sn
-        self.play(Write(read_up)) # 1 sn
-        self.wait(8)
+        for i in range(4):
+            # KURAL: outer_radius ASLA kullanilmaz, sadece radius.
+            sector = Sector(
+                arc_center=ORIGIN,
+                radius=1.5,
+                angle=angles[i],
+                start_angle=start_angle,
+                color=colors[i],
+                fill_opacity=0.8,
+                stroke_color=WHITE,
+                stroke_width=2
+            )
+            sectors.add(sector)
+            start_angle += angles[i]
 
-        # 5. Sahne: Kapanış (Toplam 8 saniye)
-        all_objects = Group(title, fraction, pay_text, payda_text, pie_group, arrow_down, read_down, arrow_up, read_up)
-        self.play(FadeOut(all_objects)) # 1 sn
-        
-        outro_text = Tex("Maarif Matematik", color=BLUE_C, font_size=60).move_to(main_center)
-        self.play(Write(outro_text)) # 1 sn
-        self.wait(6)
+        sectors.move_to(pie_center)
+
+        self.play(Create(sectors), run_time=2)
+        # Paragraf 4 Bekleme Suresi (~49 kelime)
+        self.wait(25)
+
+        # Okunus 1: Yukaridan Asagiya (Kirmizi Ok)
+        arrow_down = Arrow(start=num.get_right() + RIGHT*0.2, end=denom.get_right() + RIGHT*0.2, color=RED_C, buff=0.1)
+        read_1 = Text("Üç bölü dört", font_size=24, color=RED_C).next_to(arrow_down, RIGHT)
+
+        self.play(GrowArrow(arrow_down))
+        self.play(Write(read_1))
+        # Paragraf 5 Bekleme Suresi (~59 kelime)
+        self.wait(30)
+
+        # Okunus 2: Asagidan Yukariya (Mavi Ok)
+        arrow_up = Arrow(start=denom.get_left() + LEFT*0.2, end=num.get_left() + LEFT*0.2, color=BLUE_C, buff=0.1)
+        read_2 = Text("Dörtte üç", font_size=24, color=BLUE_C).next_to(arrow_up, LEFT)
+
+        self.play(GrowArrow(arrow_up))
+        self.play(Write(read_2))
+        # Paragraf 6 Bekleme Suresi (~60 kelime)
+        self.wait(30)
+
+        # Kapanis Bekleme Suresi (~33 kelime)
+        self.wait(20)
