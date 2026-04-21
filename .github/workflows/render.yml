@@ -1,4 +1,8 @@
 name: Maarif Matematik Video Render ve Youtube
+concurrency:
+  group: maarif-render
+  cancel-in-progress: true
+
 on:
   push:
     paths:
@@ -33,7 +37,7 @@ jobs:
       - name: Render ve Merge
         run: |
           mkdir -p media/videos
-          # Sırasıyla olası sahne isimlerini dener (Dinamik yapı)
+          # Sırasıyla olası sahne isimlerini dener
           manim -qm --media_dir ./media scripts/render_code.py MaarifScene || \
           manim -qm --media_dir ./media scripts/render_code.py BirimKesirFix || \
           manim -qm --media_dir ./media scripts/render_code.py BirimKesirMihlanmis
