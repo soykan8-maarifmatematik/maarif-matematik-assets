@@ -2,116 +2,76 @@ from manim import *
 
 class MaarifScene(Scene):
     def construct(self):
-        # Renk Tanımlamaları
-        BG_COLOR = "#FFFFFF"
-        TEXT_COLOR = "#333333"
-        PAY_COLOR = "#1976D2"
-        PAYDA_COLOR = "#D32F2F"
+        # 1. MARKA KİMLİĞİ VE ESTETİK
+        self.camera.background_color = "#FFFFFF"
         
-        self.camera.background_color = BG_COLOR
-
-        # Sahne 1: Giriş
-        title = Text("Kesirler", color=TEXT_COLOR, font_size=64)
-        self.play(Write(title))
-        self.wait(13)
-        self.play(FadeOut(title))
-
-        # Sahne 2: Kesir Yapısı (Pay, Kesir Çizgisi, Payda)
-        pay_text = Text("3", color=PAY_COLOR, font_size=96)
-        line = Line(LEFT, RIGHT, color=TEXT_COLOR, stroke_width=8).scale(1.5)
-        payda_text = Text("4", color=PAYDA_COLOR, font_size=96)
-
-        fraction_group = VGroup(pay_text, line, payda_text).arrange(DOWN, buff=0.5)
-        self.play(FadeIn(fraction_group))
-
-        pay_label = Text("Pay", color=PAY_COLOR, font_size=48).next_to(pay_text, RIGHT, buff=1)
-        payda_label = Text("Payda", color=PAYDA_COLOR, font_size=48).next_to(payda_text, RIGHT, buff=1)
-        line_label = Text("Kesir Çizgisi", color=TEXT_COLOR, font_size=36).next_to(line, RIGHT, buff=1)
-
-        self.play(Write(line_label))
-        self.play(Write(pay_label), Write(payda_label))
-        self.wait(20)
-
-        # Sahne 3: Kesri Görselleştirme (Payda ve Pay açıklaması)
-        self.play(FadeOut(pay_label), FadeOut(payda_label), FadeOut(line_label))
-        self.play(fraction_group.animate.to_edge(LEFT, buff=2))
-
-        circle_radius = 2
-        sectors = VGroup()
+        # SCENE 1: Kesir Nedir? (25 kelime -> 10.0 sn)
+        title = Text("Kesir Nedir?", color="#002B4D", font_size=48).to_edge(UP)
+        self.play(Write(title)) # 1 sn
+        
+        whole_circle = Circle(radius=1.5, color="#002B4D", fill_opacity=0.1)
+        self.play(Create(whole_circle)) # 1 sn
+        
+        self.wait(7.0) # (10.0 - 3 animasyon)
+        self.play(FadeOut(whole_circle)) # 1 sn
+        
+        # SCENE 2: Pay ve Payda (33 kelime -> 13.2 sn)
+        frac_line = Line(LEFT*0.5, RIGHT*0.5, color="#333333").shift(UP*0.5)
+        pay_text = Text("3", color="#D32F2F", font_size=48).next_to(frac_line, UP)
+        payda_text = Text("4", color="#002B4D", font_size=48).next_to(frac_line, DOWN)
+        
+        pay_label = Text("Pay (Seçilen Parça)", color="#D32F2F", font_size=24).next_to(pay_text, RIGHT*2)
+        payda_label = Text("Payda (Bütün)", color="#002B4D", font_size=24).next_to(payda_text, RIGHT*2)
+        
+        arrow_payda = Arrow(payda_label.get_left(), payda_text.get_right(), color="#002B4D", buff=0.1)
+        arrow_pay = Arrow(pay_label.get_left(), pay_text.get_right(), color="#D32F2F", buff=0.1)
+        
+        self.play(Create(frac_line)) # 1 sn
+        self.play(Write(payda_text), Write(payda_label), Create(arrow_payda)) # 1 sn
+        self.play(Write(pay_text), Write(pay_label), Create(arrow_pay)) # 1 sn
+        
+        self.wait(9.2) # (13.2 - 4 animasyon)
+        self.play(FadeOut(VGroup(frac_line, pay_text, payda_text, pay_label, payda_label, arrow_pay, arrow_payda))) # 1 sn
+        
+        # SCENE 3: Görselleştirme (Pasta Dilimi ve Sayı Doğrusu) (32 kelime -> 12.8 sn)
+        pie_group = VGroup()
+        colors = ["#D32F2F", "#D32F2F", "#D32F2F", "#002B4D"]
+        opacities = [0.8, 0.8, 0.8, 0.2]
         for i in range(4):
-            # outer_radius kesinlikle kullanılmıyor, sadece radius
-            sector = Sector(radius=circle_radius, angle=TAU/4, start_angle=i*TAU/4,
-                            fill_color=PAYDA_COLOR, fill_opacity=0.1, stroke_color=TEXT_COLOR, stroke_width=4)
-            sectors.add(sector)
-
-        sectors.to_edge(RIGHT, buff=2)
-        self.play(Create(sectors))
-        self.wait(20) # Payda açıklaması süresi
-
-        # Pay açıklaması (3 parçanın boyanması)
-        self.play(
-            sectors[0].animate.set_fill(PAY_COLOR, opacity=0.8),
-            sectors[1].animate.set_fill(PAY_COLOR, opacity=0.8),
-            sectors[2].animate.set_fill(PAY_COLOR, opacity=0.8)
-        )
-        self.wait(22)
-        self.play(FadeOut(sectors))
-
-        # Sahne 4: Kesirlerin Okunuşu
-        self.play(fraction_group.animate.move_to(ORIGIN))
-        self.wait(15) # Okuma yöntemlerine giriş süresi
-
-        # Yöntem 1: Yukarıdan Aşağıya
-        arrow_down = Arrow(start=UP, end=DOWN, color=TEXT_COLOR).next_to(fraction_group, LEFT, buff=1)
-        read_1 = Text("Üç bölü dört", color=TEXT_COLOR, font_size=48).next_to(fraction_group, RIGHT, buff=1)
-
-        self.play(GrowArrow(arrow_down), Write(read_1))
-        self.wait(20)
-        self.play(FadeOut(arrow_down), FadeOut(read_1))
-
-        # Yöntem 2: Aşağıdan Yukarıya
-        arrow_up = Arrow(start=DOWN, end=UP, color=TEXT_COLOR).next_to(fraction_group, LEFT, buff=1)
-        read_2 = Text("Dörtte üç", color=TEXT_COLOR, font_size=48).next_to(fraction_group, RIGHT, buff=1)
-
-        self.play(GrowArrow(arrow_up), Write(read_2))
-        self.wait(21)
-        self.play(FadeOut(arrow_up), FadeOut(read_2), FadeOut(fraction_group))
-
-        # Sahne 5: Örnek 5/8
-        pay_5 = Text("5", color=PAY_COLOR, font_size=72)
-        line_8 = Line(LEFT, RIGHT, color=TEXT_COLOR, stroke_width=6).scale(1)
-        payda_8 = Text("8", color=PAYDA_COLOR, font_size=72)
-        frac_5_8 = VGroup(pay_5, line_8, payda_8).arrange(DOWN, buff=0.3).to_edge(LEFT, buff=2)
-
-        self.play(FadeIn(frac_5_8))
-
-        rects = VGroup()
-        for i in range(8):
-            rect = Rectangle(height=1, width=0.8, stroke_color=TEXT_COLOR, stroke_width=2, fill_color=PAYDA_COLOR, fill_opacity=0.1)
-            rects.add(rect)
-        rects.arrange(RIGHT, buff=0).next_to(frac_5_8, RIGHT, buff=1)
-
-        self.play(Create(rects))
-
-        fills = [rects[i].animate.set_fill(PAY_COLOR, opacity=0.8) for i in range(5)]
-        self.play(*fills)
-
-        text_5_8_1 = Text("Beş bölü sekiz", color=TEXT_COLOR, font_size=36).next_to(rects, DOWN, buff=1)
-        text_5_8_2 = Text("Sekizde beş", color=TEXT_COLOR, font_size=36).next_to(text_5_8_1, DOWN, buff=0.5)
-
-        self.play(Write(text_5_8_1))
-        self.play(Write(text_5_8_2))
-        self.wait(20)
-        self.play(FadeOut(frac_5_8), FadeOut(rects), FadeOut(text_5_8_1), FadeOut(text_5_8_2))
-
-        # Sahne 6: Kapanış ve Özet
-        final_text = Text("Kesirler", color=TEXT_COLOR, font_size=64)
-        pay_text_final = Text("Pay: Alınan Parça", color=PAY_COLOR, font_size=40)
-        payda_text_final = Text("Payda: Toplam Eşit Parça", color=PAYDA_COLOR, font_size=40)
-
-        final_group = VGroup(final_text, pay_text_final, payda_text_final).arrange(DOWN, buff=1)
-        self.play(Write(final_group))
-
-        # Toplam süreyi tam 181 saniyeye (543 kelime / 3) tamamlayan son bekleme
-        self.wait(30)
-        self.play(FadeOut(final_group))
+            sector = Sector(radius=1.5, angle=PI/2, start_angle=i*PI/2, color=colors[i], fill_opacity=opacities[i], stroke_width=2, stroke_color="#FFFFFF").shift(LEFT*3)
+            pie_group.add(sector)
+            
+        nl = NumberLine(x_range=[0, 1, 0.25], length=5, color="#333333", include_numbers=False).shift(RIGHT*3 + DOWN*0.5)
+        label_0 = Text("0", color="#333333", font_size=24).next_to(nl.n2p(0), DOWN)
+        label_1 = Text("1", color="#333333", font_size=24).next_to(nl.n2p(1), DOWN)
+        nl_group = VGroup(nl, label_0, label_1)
+        
+        arrow_nl = Arrow(nl.n2p(0.75) + UP*1, nl.n2p(0.75), color="#D32F2F", buff=0.1)
+        nl_label = Text("3/4", color="#D32F2F", font_size=24).next_to(arrow_nl, UP)
+        
+        self.play(Create(pie_group)) # 1 sn
+        self.play(Create(nl_group)) # 1 sn
+        self.play(Create(arrow_nl), Write(nl_label)) # 1 sn
+        
+        self.wait(8.8) # (12.8 - 4 animasyon)
+        self.play(FadeOut(pie_group), FadeOut(nl_group), FadeOut(arrow_nl), FadeOut(nl_label)) # 1 sn
+        
+        # SCENE 4: Kesrin Okunuşu (29 kelime -> 11.6 sn)
+        frac_line2 = Line(LEFT*0.5, RIGHT*0.5, color="#333333")
+        pay2 = Text("3", color="#D32F2F", font_size=48).next_to(frac_line2, UP)
+        payda2 = Text("4", color="#002B4D", font_size=48).next_to(frac_line2, DOWN)
+        frac_group = VGroup(frac_line2, pay2, payda2).shift(LEFT*3)
+        
+        read1_text = Text("1) Üç bölü dört", color="#333333", font_size=36)
+        read1_arrow = Arrow(UP, DOWN, color="#D32F2F").next_to(read1_text, LEFT)
+        read1_group = VGroup(read1_arrow, read1_text).shift(RIGHT*2 + UP*1)
+        
+        read2_text = Text("2) Dörtte üç", color="#333333", font_size=36)
+        read2_arrow = Arrow(DOWN, UP, color="#002B4D").next_to(read2_text, LEFT)
+        read2_group = VGroup(read2_arrow, read2_text).shift(RIGHT*2 + DOWN*1)
+        
+        self.play(Create(frac_group)) # 1 sn
+        self.play(Write(read1_group)) # 1 sn
+        self.play(Write(read2_group)) # 1 sn
+        
+        self.wait(8.6) # (11.6 - 3 animasyon)
