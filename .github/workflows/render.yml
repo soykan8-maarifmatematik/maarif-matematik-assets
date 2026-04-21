@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install System Dependencies (HIZLI VE LATEX UYUMLU)
+      - name: Install System Dependencies
         run: |
           sudo apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -37,17 +37,14 @@ jobs:
       - name: Render ve Merge
         run: |
           mkdir -p media/videos
-          # Sırasıyla olası sahne isimlerini dener
-          manim -qm --media_dir ./media scripts/render_code.py MaarifScene || \
-          manim -qm --media_dir ./media scripts/render_code.py BirimKesirFix || \
-          manim -qm --media_dir ./media scripts/render_code.py BirimKesirMihlanmis
+          manim -qm --media_dir ./media scripts/render_code.py MaarifScene
           
           VIDEO_PATH=$(find media -name "*.mp4" | grep -v "final_output" | head -n 1)
           AUDIO_PATH=$(find . -name "*.mp3" | head -n 1)
           
           if [ -n "$VIDEO_PATH" ] && [ -n "$AUDIO_PATH" ]; then
-            # fflags +genpts: Ses ve görüntü kaymasını (lag) önleyen sihirli komut
-            ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -fflags +genpts -shortest \
+            # -shortest kaldırıldı: Böylece video sesten önce bitse bile siyah ekranda ses devam eder, video 6 saniyede kesilmez.
+            ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -fflags +genpts \
             -c:v libx264 -c:a aac -map 0:v:0 -map 1:a:0 -y media/videos/final_output.mp4
           fi
 
