@@ -1,64 +1,67 @@
 from manim import *
 
-class KesirNedir(Scene):
+class KesirMantigi(Scene):
     def construct(self):
-        # 1. KURALLAR: Renk ve Estetik
-        self.camera.background_color = "#FFFFFF"
-        TEXT_COLOR = "#333333"
-        NUM_COLOR = "#1976D2"
-        DENOM_COLOR = "#D32F2F"
-
-        # 1. KURALLAR: Merkez Nokta Sabitleme
+        # Sabitler ve Renkler
         main_center = DOWN * 0.5
+        BLUE_C = "#1976D2"
+        RED_C = "#D32F2F"
+        GRAY_C = "#333333"
 
-        # GİRİŞ VE KESİR KAVRAMI (Yaklaşık 13 saniye bekleme)
-        title = Tex("Kesir Nedir?", color=TEXT_COLOR).to_edge(UP)
-        self.play(Write(title), run_time=1)
-        self.wait(13)
+        # 1. Sahne: Giriş (Toplam 8 saniye)
+        title = Tex("Kesirlerin Mantığı", color=BLUE_C, font_size=48).move_to(UP * 2.5)
+        self.play(Write(title)) # 1 sn
+        self.wait(7)
 
-        # GÖRSELLEŞTİRME: 4 parçaya bölünmüş, 3'ü alınmış bütün
-        # 3. KURALLAR: Sector objesinde outer_radius yasak, sadece radius kullanıldı.
-        circle_group = VGroup()
-        s1 = Sector(radius=1.2, angle=PI/2, start_angle=0, color=NUM_COLOR, fill_opacity=1, stroke_color=DENOM_COLOR, stroke_width=4)
-        s2 = Sector(radius=1.2, angle=PI/2, start_angle=PI/2, color=NUM_COLOR, fill_opacity=1, stroke_color=DENOM_COLOR, stroke_width=4)
-        s3 = Sector(radius=1.2, angle=PI/2, start_angle=PI, color=NUM_COLOR, fill_opacity=1, stroke_color=DENOM_COLOR, stroke_width=4)
-        s4 = Sector(radius=1.2, angle=PI/2, start_angle=3*PI/2, color="#FFFFFF", fill_opacity=1, stroke_color=DENOM_COLOR, stroke_width=4)
+        # 2. Sahne: Pay ve Payda Mantığı (Toplam 14 saniye)
+        fraction = MathTex(r"\frac{3}{4}", font_size=120, color=GRAY_C).move_to(main_center + LEFT * 3)
+        fraction[0][0].set_color(RED_C)  # Pay (3)
+        fraction[0][2].set_color(BLUE_C) # Payda (4)
+
+        pay_text = Tex("Pay: Alınan Parça", color=RED_C, font_size=32).next_to(fraction, UP, buff=0.5)
+        payda_text = Tex("Payda: Toplam Eş Parça", color=BLUE_C, font_size=32).next_to(fraction, DOWN, buff=0.5)
+
+        # Pasta/Bütün Modeli
+        pie_group = VGroup()
+        circle = Circle(radius=1.5, color=BLUE_C, stroke_width=4)
+        lines = VGroup(
+            Line(circle.get_top(), circle.get_bottom(), color=BLUE_C),
+            Line(circle.get_left(), circle.get_right(), color=BLUE_C)
+        )
+        sectors = VGroup(
+            Sector(radius=1.5, angle=PI/2, start_angle=0, color=RED_C, fill_opacity=0.6),
+            Sector(radius=1.5, angle=PI/2, start_angle=PI/2, color=RED_C, fill_opacity=0.6),
+            Sector(radius=1.5, angle=PI/2, start_angle=PI, color=RED_C, fill_opacity=0.6)
+        )
+        pie_group.add(circle, lines, sectors).move_to(main_center + RIGHT * 3)
+
+        self.play(Write(fraction)) # 1 sn
+        self.play(Create(pie_group[0]), Create(pie_group[1])) # 1 sn
+        self.play(Write(payda_text)) # 1 sn
+        self.play(FadeIn(pie_group[2])) # 1 sn
+        self.play(Write(pay_text)) # 1 sn
+        self.wait(9)
+
+        # 3. Sahne: Yukarıdan Aşağıya Okunuş (Toplam 10 saniye)
+        arrow_down = Arrow(start=UP, end=DOWN, color=GRAY_C).next_to(fraction, LEFT, buff=0.5)
+        read_down = Tex("3 bölü 4", color=GRAY_C, font_size=36).next_to(arrow_down, LEFT)
+
+        self.play(GrowArrow(arrow_down)) # 1 sn
+        self.play(Write(read_down)) # 1 sn
+        self.wait(8)
+
+        # 4. Sahne: Aşağıdan Yukarıya Okunuş (Toplam 10 saniye)
+        arrow_up = Arrow(start=DOWN, end=UP, color=GRAY_C).next_to(fraction, RIGHT, buff=0.5)
+        read_up = Tex("4'te 3", color=GRAY_C, font_size=36).next_to(arrow_up, RIGHT)
+
+        self.play(GrowArrow(arrow_up)) # 1 sn
+        self.play(Write(read_up)) # 1 sn
+        self.wait(8)
+
+        # 5. Sahne: Kapanış (Toplam 8 saniye)
+        all_objects = Group(title, fraction, pay_text, payda_text, pie_group, arrow_down, read_down, arrow_up, read_up)
+        self.play(FadeOut(all_objects)) # 1 sn
         
-        circle_group.add(s1, s2, s3, s4).move_to(main_center + UP * 2)
-        self.play(Create(circle_group), run_time=1.5)
-        self.wait(10)
-
-        # PAY VE PAYDA İLİŞKİSİ
-        # Kesir çizgisi
-        frac_line = Line(LEFT, RIGHT, color=TEXT_COLOR).set_length(1.5).move_to(main_center + DOWN * 0.5)
-        self.play(Create(frac_line), run_time=0.5)
-        self.wait(4)
-
-        # Payda (Kırmızı)
-        denom_num = MathTex("4", color=DENOM_COLOR).next_to(frac_line, DOWN, buff=0.3)
-        denom_text = Tex("Payda", color=DENOM_COLOR).next_to(denom_num, RIGHT, buff=0.5)
-        self.play(Write(denom_num), Write(denom_text), run_time=1)
-        self.wait(9)
-
-        # Pay (Mavi)
-        num_num = MathTex("3", color=NUM_COLOR).next_to(frac_line, UP, buff=0.3)
-        num_text = Tex("Pay", color=NUM_COLOR).next_to(num_num, RIGHT, buff=0.5)
-        self.play(Write(num_num), Write(num_text), run_time=1)
-        self.wait(9)
-
-        # KESİRLERİN OKUNUŞU
-        # 3. KURALLAR: Okunuş yönleri için Arrow ve GrowArrow kullanımı
-        # Yukarıdan aşağıya okunuş (a bölü b)
-        arrow_down = Arrow(start=main_center + LEFT*1.5 + UP*0.2, end=main_center + LEFT*1.5 + DOWN*1.2, color=TEXT_COLOR)
-        read_down = Tex("Üç bölü dört", color=TEXT_COLOR).next_to(arrow_down, LEFT)
-        self.play(GrowArrow(arrow_down), Write(read_down), run_time=1)
-        self.wait(8)
-
-        # Aşağıdan yukarıya okunuş (b'de a)
-        arrow_up = Arrow(start=main_center + RIGHT*2.5 + DOWN*1.2, end=main_center + RIGHT*2.5 + UP*0.2, color=TEXT_COLOR)
-        read_up = Tex("Dörtte üç", color=TEXT_COLOR).next_to(arrow_up, RIGHT)
-        self.play(GrowArrow(arrow_up), Write(read_up), run_time=1)
-        self.wait(8)
-
-        # KAPANIŞ
-        self.wait(3)
+        outro_text = Tex("Maarif Matematik", color=BLUE_C, font_size=60).move_to(main_center)
+        self.play(Write(outro_text)) # 1 sn
+        self.wait(6)
