@@ -6,37 +6,30 @@ from googleapiclient.http import MediaFileUpload
 
 def upload_video():
     try:
-        # 1. Kimlik Doğrulama
         t_env = os.environ.get('TOKEN_JSON')
-        if not t_env: raise Exception("TOKEN_JSON bulunamadı!")
         token_data = json.loads(t_env)
         creds = Credentials.from_authorized_user_info(token_data)
         youtube = build('youtube', 'v3', credentials=creds)
 
-        # 2. Metadata Okuma
-        if not os.path.exists('metadata.json'):
-            raise Exception("metadata.json dosyası bulunamadı!")
-            
+        # JSON okurken hatalı karakterleri temizleme (strict=False)
         with open('metadata.json', 'r', encoding='utf-8') as f:
-            m = json.load(f)
-            title = m.get('title', 'Başlık Alınamadı')
-            description = m.get('description', 'Açıklama Alınamadı')
+            m = json.loads(f.read(), strict=False) 
+            title = m.get('title', 'Ders Başlığı')
+            description = m.get('description', 'Maarif Matematik Anlatımı')
             tags = m.get('tags', [])
 
-        # 3. Video Yükleme
-        video_path = "media/videos/final_output.mp4"
         body = {
             'snippet': {'title': title, 'description': description, 'tags': tags, 'categoryId': '27'},
             'status': {'privacyStatus': 'unlisted', 'selfDeclaredMadeForKids': False}
         }
 
         print(f"🚀 Yükleniyor: {title}")
-        media = MediaFileUpload(video_path, chunksize=-1, resumable=True)
+        media = MediaFileUpload("media/videos/final_output.mp4", chunksize=-1, resumable=True)
         response = youtube.videos().insert(part='snippet,status', body=body, media_body=media).execute()
         
         if os.path.exists("s.png"):
             youtube.thumbnails().set(videoId=response.get('id'), media_body=MediaFileUpload("s.png")).execute()
-            print("✅ Kapak ve SEO başarıyla tamamlandı.")
+            print("✅ İşlem Başarılı!")
 
     except Exception as e:
         print(f"❌ SİSTEM DURDURULDU: {e}")
