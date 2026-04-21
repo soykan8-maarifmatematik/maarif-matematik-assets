@@ -1,83 +1,95 @@
 from manim import *
 
-class MaarifScene(Scene):
+class FractionLesson(Scene):
     def construct(self):
-        self.camera.background_color = "#FFFFFF"
-        main_center = DOWN * 0.5
+        # Intro (Merhaba, Maarif Matematik’e hoş geldiniz.)
+        title = Text("Maarif Matematik", font_size=48, color=BLUE)
+        self.play(Write(title), run_time=1.5)
+        self.wait(1.5)
+        self.play(FadeOut(title), run_time=1)
 
-        # Intro
-        title = Text("Kesir Nedir?", color="#333333", font_size=48).move_to(main_center)
-        self.play(Write(title))
-        self.wait(15)
-        self.play(FadeOut(title))
+        # Whole circle (Günlük hayatta bir bütünü parçalara ayırdığımızda, bu miktarları tam sayılarla ifade edemeyiz.)
+        circle = Circle(radius=2, color=WHITE, stroke_width=4)
+        self.play(Create(circle), run_time=2)
+        self.wait(3.5)
 
-        # Pizza / Circle Concept
-        pizza = Circle(radius=1.5, color="#FFC107", fill_opacity=0.5).move_to(main_center + LEFT * 3)
-        self.play(Create(pizza))
-        self.wait(25)
+        # Divide into 4 pieces (İşte burada devreye kesirler girer. Kesir, bir bütünün eş parçalarından birini veya birkaçını gösteren matematiksel bir modeldir.)
+        colors = [RED, RED, RED, DARK_GRAY]
+        sectors = VGroup()
+        for i in range(4):
+            sector = Sector(radius=2, angle=PI/2, start_angle=i*PI/2, color=colors[i], fill_opacity=0, stroke_width=2, stroke_color=WHITE)
+            sectors.add(sector)
 
-        # Slicing into 8 equal parts
-        slices = VGroup()
-        for i in range(8):
-            pizza_slice = Sector(radius=1.5, angle=TAU/8, start_angle=i*TAU/8, color="#FFC107", fill_opacity=0.5).move_to(main_center + LEFT * 3)
-            slices.add(pizza_slice)
+        self.play(FadeIn(sectors), FadeOut(circle), run_time=2)
+        self.wait(4.5)
 
-        self.play(FadeOut(pizza), FadeIn(slices))
-        lines = VGroup(*[Line(main_center + LEFT * 3, main_center + LEFT * 3 + np.array([1.5*np.cos(i*TAU/8), 1.5*np.sin(i*TAU/8), 0]), color="#FFFFFF") for i in range(8)])
-        self.play(Create(lines))
-        self.wait(25)
+        # Fraction line (Ekranda gördüğünüz yatay çizgiye kesir çizgisi diyoruz.)
+        frac_line = Line(LEFT, RIGHT, color=WHITE).scale(0.5)
+        frac_line.shift(RIGHT * 4)
+        self.play(sectors.animate.shift(LEFT * 3), Create(frac_line), run_time=2)
+        self.wait(1)
 
-        # Fraction Elements Intro
-        fraction_line = Line(LEFT*0.6, RIGHT*0.6, color="#333333", stroke_width=6).move_to(main_center + RIGHT * 3)
-        self.play(Create(fraction_line))
-        self.wait(10)
+        # Denominator (Bu çizginin altındaki sayıya 'payda' adı verilir. Payda, elimizdeki bütünün toplamda kaç eşit parçaya bölündüğünü gösterir.)
+        denom = MathTex("4", font_size=64).next_to(frac_line, DOWN, buff=0.3)
+        denom_text = Text("Payda", font_size=32, color=YELLOW).next_to(denom, RIGHT, buff=0.5)
+        self.play(Write(denom), run_time=1)
+        self.play(Write(denom_text), run_time=1)
+        self.wait(4)
 
-        # Denominator (Payda)
-        den_text = Text("8", color="#1976D2", font_size=60).next_to(fraction_line, DOWN, buff=0.3)
-        den_label = Text("Payda (Toplam Eş Parça)", color="#1976D2", font_size=24).next_to(den_text, DOWN)
-        self.play(Write(den_text), Write(den_label))
-        self.wait(25)
+        # Highlight equal pieces (Burada en kritik nokta, parçaların kesinlikle birbirine eş olmasıdır; aksi takdirde kesir mantığı çöker.)
+        self.play(sectors.animate.scale(1.05), run_time=1)
+        self.play(sectors.animate.scale(1/1.05), run_time=1)
+        self.wait(3)
 
-        # Numerator (Pay)
-        highlight_slices = VGroup(*[Sector(radius=1.5, angle=TAU/8, start_angle=i*TAU/8, color="#D32F2F", fill_opacity=0.8).move_to(main_center + LEFT * 3) for i in range(3)])
-        self.play(FadeIn(highlight_slices))
+        # Numerator (Çizginin üstündeki sayı ise 'pay' olarak adlandırılır. Böldüğümüz o eşit parçalardan kaç tanesini seçtiğimizi, kullandığımızı veya boyadığımızı belirtir.)
+        self.play(
+            sectors[0].animate.set_fill(opacity=0.7),
+            sectors[1].animate.set_fill(opacity=0.7),
+            sectors[2].animate.set_fill(opacity=0.7),
+            run_time=2
+        )
+        num = MathTex("3", font_size=64).next_to(frac_line, UP, buff=0.3)
+        num_text = Text("Pay", font_size=32, color=GREEN).next_to(num, RIGHT, buff=0.5)
+        self.play(Write(num), run_time=1)
+        self.play(Write(num_text), run_time=1)
+        self.wait(4)
 
-        num_text = Text("3", color="#D32F2F", font_size=60).next_to(fraction_line, UP, buff=0.3)
-        num_label = Text("Pay (Alınan Parça)", color="#D32F2F", font_size=24).next_to(num_text, UP)
-        self.play(Write(num_text), Write(num_label))
-        self.wait(25)
+        # Clear texts for reading methods (Şimdi bu yapıyı nasıl seslendirdiğimize bakalım. Bir kesri okurken iki farklı yöntem kullanırız.)
+        self.play(FadeOut(denom_text), FadeOut(num_text), run_time=1)
+        self.wait(3.5)
 
-        # Fraction Line Meaning
-        line_label = Text("Kesir Çizgisi (Bölme)", color="#333333", font_size=24).next_to(fraction_line, RIGHT, buff=0.5)
-        self.play(Write(line_label))
-        self.wait(10)
+        # Reading Method 1: Top to Bottom (Yukarıdan aşağıya doğru okumak istersek, matematiksel işlemi vurgularız. Önce payı söyler, aradaki çizgiyi 'bölü' kelimesiyle ifade eder ve paydayı okuruz.)
+        arrow_down = Arrow(start=UP, end=DOWN, color=GREEN).next_to(num, LEFT, buff=0.5)
+        read1_text = Text("Üç bölü dört", font_size=36, color=GREEN).next_to(frac_line, RIGHT, buff=1.5).shift(UP*1)
+        self.play(GrowArrow(arrow_down), run_time=1.5)
+        self.wait(5.5)
+        
+        # (Örneğin, üstte üç, altta dört varsa, bunu 'üç bölü dört' şeklinde seslendiririz.)
+        self.play(Write(read1_text), run_time=2)
+        self.wait(3)
 
-        # Transition to Reading
-        self.play(FadeOut(slices), FadeOut(lines), FadeOut(highlight_slices), FadeOut(den_label), FadeOut(num_label), FadeOut(line_label))
-        self.play(VGroup(num_text, fraction_line, den_text).animate.move_to(main_center))
-        self.wait(15)
+        # Reading Method 2: Bottom to Top (İkinci yöntem ise aşağıdan yukarıya doğru okumaktır ve bu, oransal mantığı öne çıkarır. Önce paydayı söyler, bulunma hali eki olan 'de' veya 'da' ekler, ardından payı belirtiriz.)
+        arrow_up = Arrow(start=DOWN, end=UP, color=YELLOW).next_to(denom, LEFT, buff=0.5)
+        read2_text = Text("Dörtte üç", font_size=36, color=YELLOW).next_to(frac_line, RIGHT, buff=1.5).shift(DOWN*1)
+        self.play(GrowArrow(arrow_up), run_time=1.5)
+        self.wait(7.5)
+        
+        # (Aynı örneği bu kuralla 'dörtte üç' olarak okuruz.)
+        self.play(Write(read2_text), run_time=1.5)
+        self.wait(1.5)
 
-        # Reading 1: Top to Bottom
-        arrow_down = Arrow(start=UP, end=DOWN, color="#333333").next_to(fraction_line, LEFT, buff=1.5)
-        read1_title = Text("1. Okunuş (Yukarıdan Aşağıya)", color="#1976D2", font_size=24).next_to(num_text, UP, buff=1)
-        read1_text = Text("Üç Bölü Sekiz", color="#333333", font_size=36).next_to(arrow_down, LEFT)
-        self.play(Create(arrow_down), Write(read1_title), Write(read1_text))
-        self.wait(25)
+        # Final grouping and highlight (Her iki okunuş da zihnimizde aynı resmi canlandırmalıdır: Dört eş dilime ayrılmış bir bütünün üç dilimi.)
+        self.play(Circumscribe(VGroup(read1_text, read2_text), color=WHITE), run_time=1.5)
+        self.wait(4.5)
 
-        # Reading 2: Bottom to Top
-        self.play(FadeOut(arrow_down), FadeOut(read1_title), FadeOut(read1_text))
-        arrow_up = Arrow(start=DOWN, end=UP, color="#333333").next_to(fraction_line, LEFT, buff=1.5)
-        read2_title = Text("2. Okunuş (Aşağıdan Yukarıya)", color="#D32F2F", font_size=24).next_to(num_text, UP, buff=1)
-        read2_text = Text("Sekizde Üç", color="#333333", font_size=36).next_to(arrow_up, LEFT)
-        self.play(Create(arrow_up), Write(read2_title), Write(read2_text))
-        self.wait(25)
-
-        # Conclusion
-        self.play(FadeOut(arrow_up), FadeOut(read2_title), FadeOut(read2_text), FadeOut(num_text), FadeOut(fraction_line), FadeOut(den_text))
-        conc_text = Text("Mantığını Kavra, Ezberleme!", color="#1976D2", font_size=40).move_to(main_center)
-        self.play(Write(conc_text))
-        self.wait(25)
-
-        # Outro
-        self.play(FadeOut(conc_text))
-        self.wait(5)
+        # Outro (Kesirlerin dünyasına sağlam bir adım attık. Bir sonraki derste görüşmek üzere, hoşça kalın.)
+        self.play(
+            FadeOut(sectors), FadeOut(frac_line), FadeOut(num), FadeOut(denom),
+            FadeOut(arrow_down), FadeOut(arrow_up), FadeOut(read1_text), FadeOut(read2_text),
+            run_time=2
+        )
+        self.wait(1)
+        outro_text = Text("Maarif Matematik", font_size=48, color=BLUE)
+        self.play(Write(outro_text), run_time=1.5)
+        self.wait(1.5)
+        self.play(FadeOut(outro_text), run_time=1)
