@@ -1,12 +1,12 @@
 name: Maarif Matematik Video Render ve Youtube
 concurrency:
   group: maarif-render
-  cancel-in-progress: true # Yeni bir tetikleme gelirse eskisini durdurur veya sıraya sokar.
+  cancel-in-progress: true
 
 on:
   push:
     paths:
-      - 'metadata.json' # SADECE bu dosya değiştiğinde fırın çalışır.
+      - 'metadata.json'
 
 jobs:
   render:
