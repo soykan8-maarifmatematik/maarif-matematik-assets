@@ -10,62 +10,77 @@ class MaarifScene(Scene):
         # Arka plan rengi (Maarif Laciverti)
         self.camera.background_color = "#002B4D"
 
-        # --- KANCA (HOOK) ---
-        title = Text("HANGİSİ DAHA BÜYÜK?", font_size=60, color="#FFD700", weight=BOLD).to_edge(UP, buff=2)
-        frac1 = MathTex(r"\frac{1}{2}", font_size=150, color=WHITE)
-        vs = Text("vs", font_size=80, color="#D32F2F")
-        frac2 = MathTex(r"\frac{1}{10}", font_size=150, color=WHITE)
+        # KANCA (HOOK)
+        hook1 = Text("Paydası büyük olan", font_size=48, color=WHITE)
+        hook2 = Text("daha mı büyüktür?", font_size=48, color=WHITE)
+        hook_group = VGroup(hook1, hook2).arrange(DOWN)
         
-        hook_group = VGroup(frac1, vs, frac2).arrange(RIGHT, buff=1).next_to(title, DOWN, buff=2)
+        hook3 = Text("SAKIN TUZAĞA DÜŞME!", font_size=56, color="#D32F2F", weight=BOLD)
         
-        self.play(Write(title), run_time=1)
-        self.play(FadeIn(hook_group, shift=UP), run_time=1)
-        self.wait(3)
-        self.play(FadeOut(title), FadeOut(hook_group), run_time=1)
-
-        # --- GÖVDE (BODY) - Görselleştirme ---
-        # 1/2 Görseli
-        c1 = Circle(radius=2, color=WHITE)
-        s1 = Sector(outer_radius=2, angle=PI, start_angle=PI/2, color="#FFD700", fill_opacity=0.9)
-        l1 = Line(c1.get_top(), c1.get_bottom(), color=WHITE, stroke_width=4)
-        t1 = MathTex(r"\frac{1}{2}", font_size=90, color="#FFD700").next_to(c1, UP, buff=0.5)
-        g1 = VGroup(t1, c1, s1, l1).move_to(UP * 3)
-
-        # 1/4 Görseli
-        c2 = Circle(radius=2, color=WHITE)
-        s2 = Sector(outer_radius=2, angle=PI/2, start_angle=PI/2, color="#D32F2F", fill_opacity=0.9)
-        l2_1 = Line(c2.get_top(), c2.get_bottom(), color=WHITE, stroke_width=4)
-        l2_2 = Line(c2.get_left(), c2.get_right(), color=WHITE, stroke_width=4)
-        t2 = MathTex(r"\frac{1}{4}", font_size=90, color="#D32F2F").next_to(c2, UP, buff=0.5)
-        g2 = VGroup(t2, c2, s2, l2_1, l2_2).move_to(DOWN * 3)
-
-        self.play(Create(c1), Create(c2), run_time=1.5)
-        self.wait(1)
-        self.play(Create(l1), Create(l2_1), Create(l2_2), run_time=1.5)
-        self.wait(1)
-        self.play(FadeIn(s1), Write(t1), run_time=1)
-        self.play(FadeIn(s2), Write(t2), run_time=1)
-        self.wait(5)
-        self.play(FadeOut(g1), FadeOut(g2), run_time=1)
-
-        # --- GÖVDE (BODY) - Kural ---
-        rule1 = Text("PAYDA BÜYÜDÜKÇE", font_size=70, color=WHITE, weight=BOLD)
-        rule2 = Text("DİLİM KÜÇÜLÜR!", font_size=85, color="#D32F2F", weight=BOLD)
-        rule_group = VGroup(rule1, rule2).arrange(DOWN, buff=0.8).move_to(UP * 2)
-
-        ineq = MathTex(r"\frac{1}{2} > \frac{1}{4} > \frac{1}{10}", font_size=120, color="#FFD700").next_to(rule_group, DOWN, buff=2)
-
-        self.play(Write(rule1), run_time=1)
-        self.play(Write(rule2), run_time=1)
+        self.play(Write(hook_group))
         self.wait(2)
-        self.play(FadeIn(ineq, shift=UP), run_time=1.5)
-        self.wait(6)
-        self.play(FadeOut(rule_group), FadeOut(ineq), run_time=1)
+        self.play(ReplacementTransform(hook_group, hook3))
+        self.wait(2)
+        self.play(FadeOut(hook3))
 
-        # --- KAPANIŞ (CTA) ---
-        logo = Text("Maarif Matematik", font_size=80, color=WHITE, weight=BOLD)
-        cta = Text("Daha fazlası için takip et!", font_size=55, color="#FFD700")
-        cta_group = VGroup(logo, cta).arrange(DOWN, buff=0.8).move_to(CENTER)
+        # GÖVDE (BODY)
+        title = Text("BİRİM KESİRLER", font_size=64, color="#FFD700", weight=BOLD).to_edge(UP, buff=1)
+        self.play(FadeIn(title))
+        self.wait(1)
 
-        self.play(FadeIn(cta_group, scale=0.8), run_time=1.5)
+        # 1/2 Kesri ve Pastası
+        frac1 = MathTex(r"\frac{1}{2}", font_size=96, color=WHITE)
+        pie1_base = Circle(radius=1.5, color=WHITE)
+        pie1_slice = Sector(outer_radius=1.5, angle=PI, color="#FFD700", fill_opacity=0.8).rotate(PI/2)
+        pie1_line = Line(pie1_base.get_top(), pie1_base.get_bottom(), color=WHITE)
+        pie1 = VGroup(pie1_base, pie1_slice, pie1_line)
+        group1 = VGroup(frac1, pie1).arrange(RIGHT, buff=1)
+
+        # 1/4 Kesri ve Pastası
+        frac2 = MathTex(r"\frac{1}{4}", font_size=96, color=WHITE)
+        pie2_base = Circle(radius=1.5, color=WHITE)
+        pie2_slice = Sector(outer_radius=1.5, angle=PI/2, color="#D32F2F", fill_opacity=0.8).rotate(PI/2)
+        pie2_lines = VGroup(
+            Line(pie2_base.get_top(), pie2_base.get_bottom(), color=WHITE),
+            Line(pie2_base.get_left(), pie2_base.get_right(), color=WHITE)
+        )
+        pie2 = VGroup(pie2_base, pie2_slice, pie2_lines)
+        group2 = VGroup(frac2, pie2).arrange(RIGHT, buff=1)
+
+        # Grupları dikey hizalama
+        pies = VGroup(group1, group2).arrange(DOWN, buff=1.5).move_to(CENTER).shift(UP*0.5)
+
+        self.play(Write(frac1), Write(frac2))
+        self.wait(3)
+        
+        self.play(FadeIn(pie1_base), FadeIn(pie1_line), FadeIn(pie2_base), FadeIn(pie2_lines))
+        self.wait(3)
+        
+        self.play(FadeIn(pie1_slice), FadeIn(pie2_slice))
+        self.wait(3)
+
+        # Büyük dilimi vurgulama
+        self.play(Indicate(pie1_slice, color="#FFD700", scale_factor=1.1))
+        self.wait(3)
+
+        # Kural Metni
+        rule = Text("Payda KÜÇÜKSE, Kesir BÜYÜKTÜR!", font_size=40, color="#FFD700", weight=BOLD).to_edge(DOWN, buff=1.5)
+        self.play(Write(rule))
         self.wait(4)
+
+        # Final Karşılaştırması
+        self.play(FadeOut(frac1), FadeOut(frac2), FadeOut(pie1), FadeOut(pie2), FadeOut(rule), FadeOut(title))
+        
+        final_comp = MathTex(r"\frac{1}{2}", ">", r"\frac{1}{4}", font_size=144, color=WHITE)
+        final_comp[1].set_color("#FFD700")
+        self.play(Write(final_comp))
+        self.wait(4)
+        
+        self.play(FadeOut(final_comp))
+
+        # KAPANIŞ (CTA)
+        cta1 = Text("Daha fazlası için", font_size=48, color=WHITE)
+        cta2 = Text("TAKİPTE KALIN!", font_size=56, color="#FFD700", weight=BOLD)
+        cta_group = VGroup(cta1, cta2).arrange(DOWN)
+        self.play(Write(cta_group))
+        self.wait(3)
