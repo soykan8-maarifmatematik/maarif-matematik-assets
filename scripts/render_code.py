@@ -7,68 +7,48 @@ config.frame_width = 8.0
 
 class MaarifScene(Scene):
     def construct(self):
-        # Arka plan Maarif Laciverti
         self.camera.background_color = "#002B4D"
 
         # KANCA (Hook)
         title = Text("BİRİM KESİRLER", font_size=72, color="#FFD700", weight=BOLD).to_edge(UP, buff=1.5)
         self.play(Write(title), run_time=1)
-        self.wait(1.5)
-
-        def_text = Text("Payı 1 olan kesirler", font_size=48, color="#FFFFFF").next_to(title, DOWN, buff=0.5)
-        self.play(FadeIn(def_text, shift=DOWN), run_time=1)
-        self.wait(2)
-
-        # GÖVDE (Body) - Görselleştirme
-        # 1/2 Çemberi
-        circle_half = Circle(radius=1.5, color="#FFFFFF", stroke_width=4).move_to(UP * 1.5)
-        line_half = Line(circle_half.get_top(), circle_half.get_bottom(), color="#FFFFFF")
-        fill_half = AnnularSector(inner_radius=0, outer_radius=1.5, angle=PI, start_angle=PI/2, color="#D32F2F", fill_opacity=0.9).move_to(circle_half.get_center())
-        frac_half = MathTex(r"\frac{1}{2}", font_size=96, color="#FFD700").next_to(circle_half, LEFT, buff=1)
-
-        # 1/4 Çemberi
-        circle_quarter = Circle(radius=1.5, color="#FFFFFF", stroke_width=4).move_to(DOWN * 2.5)
-        lines_quarter = VGroup(
-            Line(circle_quarter.get_top(), circle_quarter.get_bottom(), color="#FFFFFF"),
-            Line(circle_quarter.get_left(), circle_quarter.get_right(), color="#FFFFFF")
-        )
-        fill_quarter = AnnularSector(inner_radius=0, outer_radius=1.5, angle=PI/2, start_angle=PI/2, color="#D32F2F", fill_opacity=0.9).move_to(circle_quarter.get_center())
-        frac_quarter = MathTex(r"\frac{1}{4}", font_size=96, color="#FFD700").next_to(circle_quarter, LEFT, buff=1)
-
-        self.play(FadeOut(def_text), run_time=0.5)
         
-        # 1/2 Animasyonu
-        self.play(Create(circle_half), Create(line_half), Write(frac_half), run_time=1)
-        self.play(FadeIn(fill_half), run_time=0.5)
-        self.wait(1.5)
+        q_text = Text("Hangisi daha büyük?", font_size=56, color="#FFFFFF").next_to(title, DOWN, buff=1)
+        self.play(Write(q_text), run_time=1)
 
-        # 1/4 Animasyonu
-        self.play(Create(circle_quarter), Create(lines_quarter), Write(frac_quarter), run_time=1)
-        self.play(FadeIn(fill_quarter), run_time=0.5)
-        self.wait(2)
+        frac_half = MathTex(r"\frac{1}{2}", font_size=144, color="#FFFFFF").move_to(LEFT * 2 + UP * 1.5)
+        frac_ten = MathTex(r"\frac{1}{10}", font_size=144, color="#FFFFFF").move_to(RIGHT * 2 + UP * 1.5)
+        vs = Text("vs", font_size=48, color="#D32F2F").move_to(UP * 1.5)
 
-        # Kural Metni
-        self.play(FadeOut(circle_half, line_half, fill_half, frac_half, circle_quarter, lines_quarter, fill_quarter, frac_quarter), run_time=1)
+        self.play(FadeIn(frac_half, shift=RIGHT), FadeIn(frac_ten, shift=LEFT), Write(vs), run_time=1)
+        self.wait(3)
 
-        rule1 = Text("Payda Büyüdükçe", font_size=60, color="#FFFFFF").move_to(UP * 1)
-        rule2 = Text("Değer KÜÇÜLÜR!", font_size=80, color="#D32F2F", weight=BOLD).next_to(rule1, DOWN, buff=0.5)
+        # GÖVDE (Body)
+        slice_half = Sector(outer_radius=2.5, angle=PI, color="#D32F2F", fill_opacity=0.9).next_to(frac_half, DOWN, buff=1.5)
+        self.play(Create(slice_half), run_time=1)
+        self.wait(3)
 
-        self.play(Write(rule1), run_time=1)
-        self.play(FadeIn(rule2, scale=1.5), run_time=1)
-        self.wait(2.5)
+        slice_ten = Sector(outer_radius=2.5, angle=TAU/10, color="#FFD700", fill_opacity=0.9).next_to(frac_ten, DOWN, buff=1.5)
+        self.play(Create(slice_ten), run_time=1)
+        self.wait(3)
 
-        self.play(FadeOut(rule1, rule2), run_time=0.5)
+        greater_sign = MathTex(">", font_size=144, color="#FFD700").move_to(vs.get_center())
+        self.play(Transform(vs, greater_sign), Indicate(slice_half, color="#FFD700", scale_factor=1.1), run_time=1)
+        self.wait(3)
 
-        # Örnek
-        ex_text = MathTex(r"\frac{1}{10} > \frac{1}{100}", font_size=120, color="#FFD700").move_to(CENTER)
-        self.play(Write(ex_text), run_time=1.5)
-        self.wait(2)
+        self.play(FadeOut(slice_half), FadeOut(slice_ten), FadeOut(q_text), FadeOut(frac_half), FadeOut(frac_ten), FadeOut(vs), run_time=1)
 
-        self.play(FadeOut(ex_text, title), run_time=0.5)
+        rule_box = Rectangle(width=7, height=3, color="#FFD700", fill_color="#002B4D", fill_opacity=1)
+        rule_text1 = Text("Payda BÜYÜDÜKÇE", font_size=56, color="#FFFFFF").move_to(rule_box.get_center() + UP*0.5)
+        rule_text2 = Text("Kesir KÜÇÜLÜR!", font_size=64, color="#D32F2F", weight=BOLD).move_to(rule_box.get_center() + DOWN*0.5)
+        
+        rule_group = VGroup(rule_box, rule_text1, rule_text2).move_to(CENTER)
+
+        self.play(Create(rule_box), Write(rule_text1), run_time=1)
+        self.play(Write(rule_text2), run_time=1)
+        self.wait(4)
 
         # KAPANIŞ (CTA)
-        cta = Text("Daha fazlası için\nTAKİP ET!", font_size=64, color="#FFFFFF", text_alignment="CENTER", weight=BOLD).move_to(CENTER)
-        logo_text = Text("Maarif Matematik", font_size=48, color="#FFD700").next_to(cta, DOWN, buff=1)
-        
-        self.play(FadeIn(cta, shift=UP), Write(logo_text), run_time=1)
+        cta = Text("Daha fazlası için takip et!", font_size=48, color="#FFD700").to_edge(DOWN, buff=2)
+        self.play(Write(cta), run_time=1)
         self.wait(3)
