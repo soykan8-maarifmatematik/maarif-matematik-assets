@@ -7,57 +7,59 @@ config.frame_width = 8.0
 
 class BirimKesirler(Scene):
     def construct(self):
-        # Kanca (0-5 sn)
-        hook_text = Text("Payda Büyüdükçe\nDeğer Neden Küçülür?", font_size=65, color=WHITE)
-        self.play(Write(hook_text))
-        self.wait(2.4)
-        self.play(FadeOut(hook_text))
+        def create_caption(text_str):
+            cap = Text(text_str, font_size=85, weight=BOLD)
+            cap.scale_to_fit_width(7)
+            cap.move_to(UP * 4)
+            return cap
 
-        # Gövde - Pizza 1 (1/2)
-        circle1 = Circle(radius=2, color=YELLOW, fill_opacity=0.2)
-        frac1 = MathTex(r"\frac{1}{2}", font_size=120)
-        group1 = VGroup(circle1, frac1).arrange(RIGHT, buff=0.6)
+        # Sahne 1: Kanca
+        cap1 = create_caption("1/2 mi daha buyuk yoksa 1/8 mi?")
+        frac1 = MathTex(r"\frac{1}{2}", font_size=100).scale(0.8).move_to(LEFT * 1.5)
+        frac2 = MathTex(r"\frac{1}{8}", font_size=100).scale(0.8).move_to(RIGHT * 1.5)
+        qm = Text("?", font_size=100).move_to(ORIGIN)
         
-        sector1 = Sector(radius=2, angle=PI, color=ORANGE, fill_opacity=0.8)
+        self.play(Write(cap1), Write(frac1), Write(frac2), Write(qm))
+        self.wait(3)
+
+        # Sahne 2: Pizza 1/2
+        self.play(FadeOut(cap1), FadeOut(frac1), FadeOut(frac2), FadeOut(qm))
+        
+        cap2 = create_caption("Bir pizza dusun 2 kisiye bolersen dev bir dilim yersin")
+        circle1 = Circle(radius=1.6, color=WHITE).move_to(ORIGIN)
+        sector1 = Sector(radius=1.6, angle=PI, color=ORANGE, fill_opacity=0.8)
         sector1.move_to(circle1.get_center())
+        lbl1 = MathTex(r"\frac{1}{2}", font_size=100).scale(0.8).next_to(circle1, DOWN, buff=0.5)
         
-        pizza_group1 = VGroup(group1, sector1).scale(0.9)
-        pizza_group1.move_to(UP * 2.5)
+        self.play(Write(cap2), Create(circle1), FadeIn(sector1), Write(lbl1))
+        self.wait(4)
 
-        self.play(FadeIn(circle1))
-        self.wait(1.0)
-        self.play(FadeIn(sector1))
-        self.wait(2.0)
-        self.play(Write(frac1))
-        self.wait(2.6)
-
-        # Gövde - Pizza 2 (1/8)
-        circle2 = Circle(radius=2, color=YELLOW, fill_opacity=0.2)
-        frac2 = MathTex(r"\frac{1}{8}", font_size=120)
-        group2 = VGroup(circle2, frac2).arrange(RIGHT, buff=0.6)
+        # Sahne 3: Pizza 1/8
+        self.play(FadeOut(cap2), FadeOut(circle1), FadeOut(sector1), FadeOut(lbl1))
         
-        sector2 = Sector(radius=2, angle=TAU/8, color=ORANGE, fill_opacity=0.8)
+        cap3 = create_caption("Ama 8 kisiye bolersen dilimin kucucuk kalir")
+        circle2 = Circle(radius=1.6, color=WHITE).move_to(ORIGIN)
+        sector2 = Sector(radius=1.6, angle=PI/4, color=RED, fill_opacity=0.8)
         sector2.move_to(circle2.get_center())
+        lbl2 = MathTex(r"\frac{1}{8}", font_size=100).scale(0.8).next_to(circle2, DOWN, buff=0.5)
         
-        pizza_group2 = VGroup(group2, sector2).scale(0.9)
-        pizza_group2.move_to(DOWN * 2.5)
+        self.play(Write(cap3), Create(circle2), FadeIn(sector2), Write(lbl2))
+        self.wait(3)
 
-        self.play(FadeIn(circle2))
-        self.wait(1.0)
-        self.play(FadeIn(sector2))
-        self.wait(2.0)
-        self.play(Write(frac2))
-        self.wait(2.6)
+        # Sahne 4: Kural
+        self.play(FadeOut(cap3), FadeOut(circle2), FadeOut(sector2), FadeOut(lbl2))
+        
+        cap4 = create_caption("Yani payda buyudukce birim kesir kuculur")
+        final_math = MathTex(r"\frac{1}{2} > \frac{1}{8}", font_size=100).scale(0.8).move_to(ORIGIN)
+        
+        self.play(Write(cap4), Write(final_math))
+        self.wait(3)
 
-        # Sonuç Vurgusu
-        conc_text = Text("Payda = Kişi Sayısı", font_size=65, color=GREEN)
-        self.play(Write(conc_text))
-        self.wait(4.4)
-
-        self.play(FadeOut(pizza_group1), FadeOut(pizza_group2), FadeOut(conc_text))
-
-        # Kapanış (CTA) (50-60 sn)
-        cta_text = Text("Maarif Matematik ile\nmantığını kavra\ntakipte kal", font_size=70, color=YELLOW)
-        self.play(Write(cta_text))
-        self.wait(2.8)
-        self.play(FadeOut(cta_text))
+        # Sahne 5: Kapanis
+        self.play(FadeOut(cap4), FadeOut(final_math))
+        
+        cap5 = create_caption("Maarif Matematik ile mantigini kavra takipte kal")
+        logo = Text("Maarif Matematik", font_size=100, color=YELLOW).scale_to_fit_width(6).move_to(ORIGIN)
+        
+        self.play(Write(cap5), Write(logo))
+        self.wait(3)
