@@ -4,64 +4,83 @@ class MaarifScene(Scene):
     def construct(self):
         # Arka plan rengi
         self.camera.background_color = "#FFFFFF"
-        
+
         # --- PARAGRAF 1 ---
-        # Kelime sayısı: 33. Süre: 16.5 sn. Animasyon: 2 sn. Bekleme: 14.5 sn.
-        title = Tex("Kesir Nedir?", color="#002B4D", font_size=72)
+        # Kelime sayısı: 37. Süre: 37 / 2.0 = 18.5 saniye.
+        # Animasyon süresi: 9 saniye. Bekleme süresi: 9.5 saniye.
+        title = Text("Kesirler", color="#002B4D", font_size=72)
         self.play(Write(title), run_time=2)
-        self.wait(14.5)
+        self.wait(2)
+        self.play(title.animate.to_edge(UP), run_time=1)
         
+        circle = Circle(radius=1.5, color="#333333", stroke_width=4)
+        self.play(Create(circle), run_time=1)
+        
+        lines = VGroup(
+            Line(circle.get_top(), circle.get_bottom(), color="#333333"),
+            Line(circle.get_left(), circle.get_right(), color="#333333")
+        )
+        self.play(Create(lines), run_time=2)
+        
+        colored_part = Sector(radius=1.5, angle=PI/2, start_angle=0, color="#002B4D", fill_opacity=0.8)
+        self.play(FadeIn(colored_part), run_time=1)
+        
+        self.wait(9.5)
+
         # --- PARAGRAF 2 ---
-        # Kelime sayısı: 38. Süre: 19.0 sn. Animasyon: 4 sn. Bekleme: 15.0 sn.
-        self.play(FadeOut(title), run_time=1)
+        # Kelime sayısı: 36. Süre: 36 / 2.0 = 18.0 saniye.
+        # Animasyon süresi: 6 saniye. Bekleme süresi: 12.0 saniye.
+        self.play(FadeOut(title), FadeOut(circle), FadeOut(lines), FadeOut(colored_part), run_time=1)
         
-        line = Line(LEFT, RIGHT, color="#002B4D").scale(1.5)
-        line_label = Tex("Kesir Çizgisi", color="#333333", font_size=36).next_to(line, RIGHT, buff=0.5)
-        self.play(Create(line), Write(line_label), run_time=1)
+        line = Line(LEFT, RIGHT, color="#333333", stroke_width=6).scale(1.5)
+        self.play(Create(line), run_time=1)
         
-        den_text = Tex("Payda", color="#333333", font_size=48).next_to(line, DOWN, buff=0.5)
-        den_desc = Tex("(Bütünün bölündüğü parça sayısı)", color="#333333", font_size=24).next_to(den_text, DOWN)
-        self.play(Write(den_text), Write(den_desc), run_time=1)
+        payda_text = Text("Payda", color="#002B4D", font_size=48).next_to(line, DOWN, buff=0.5)
+        payda_desc = Text("(Bütünün kaç eşit parçaya bölündüğü)", color="#333333", font_size=24).next_to(payda_text, DOWN)
+        self.play(Write(payda_text), run_time=1)
+        self.play(FadeIn(payda_desc), run_time=1)
         
-        num_text = Tex("Pay", color="#333333", font_size=48).next_to(line, UP, buff=0.5)
-        num_desc = Tex("(Alınan parça sayısı)", color="#333333", font_size=24).next_to(num_text, UP)
-        self.play(Write(num_text), Write(num_desc), run_time=1)
+        pay_text = Text("Pay", color="#002B4D", font_size=48).next_to(line, UP, buff=0.5)
+        pay_desc = Text("(Kaç parçanın alındığı)", color="#333333", font_size=24).next_to(pay_text, UP)
+        self.play(Write(pay_text), run_time=1)
+        self.play(FadeIn(pay_desc), run_time=1)
         
-        self.wait(15.0)
-        
+        self.wait(12.0)
+
         # --- PARAGRAF 3 ---
-        # Kelime sayısı: 42. Süre: 21.0 sn. Animasyon: 7 sn. Bekleme: 14.0 sn.
-        self.play(FadeOut(VGroup(line, line_label, den_text, den_desc, num_text, num_desc)), run_time=1)
+        # Kelime sayısı: 49. Süre: 49 / 2.0 = 24.5 saniye.
+        # Animasyon süresi: 7 saniye. Bekleme süresi: 17.5 saniye.
+        self.play(
+            FadeOut(line), FadeOut(payda_text), FadeOut(payda_desc),
+            FadeOut(pay_text), FadeOut(pay_desc), run_time=1
+        )
         
-        frac_line = Line(LEFT, RIGHT, color="#002B4D").scale(0.5)
-        num_3 = Tex("3", color="#333333", font_size=60).next_to(frac_line, UP, buff=0.3)
-        den_4 = Tex("4", color="#333333", font_size=60).next_to(frac_line, DOWN, buff=0.3)
-        fraction = VGroup(num_3, frac_line, den_4).shift(LEFT * 3)
+        frac_line = Line(LEFT, RIGHT, color="#333333", stroke_width=6).scale(0.5)
+        num_3 = Text("3", color="#002B4D", font_size=64).next_to(frac_line, UP, buff=0.3)
+        den_4 = Text("4", color="#002B4D", font_size=64).next_to(frac_line, DOWN, buff=0.3)
         
-        self.play(Write(fraction), run_time=2)
+        frac_group = VGroup(num_3, frac_line, den_4).shift(LEFT * 3)
+        self.play(Write(frac_group), run_time=2)
         
-        read_1 = Tex("3 bölü 4", color="#002B4D", font_size=40).next_to(fraction, RIGHT, buff=2).shift(UP*0.5)
-        arrow_down = Arrow(start=UP, end=DOWN, color="#002B4D").next_to(read_1, LEFT).scale(0.5)
+        arrow1 = Arrow(start=num_3.get_right() + RIGHT*0.5, end=den_4.get_right() + RIGHT*0.5 + DOWN*0.5, color="#333333", path_arc=-1.5)
+        read1 = Text("Üç bölü dört", color="#333333", font_size=36).next_to(arrow1, RIGHT)
+        self.play(Create(arrow1), Write(read1), run_time=2)
         
-        read_2 = Tex("4'te 3", color="#002B4D", font_size=40).next_to(fraction, RIGHT, buff=2).shift(DOWN*0.5)
-        arrow_up = Arrow(start=DOWN, end=UP, color="#002B4D").next_to(read_2, LEFT).scale(0.5)
+        arrow2 = Arrow(start=den_4.get_left() + LEFT*0.5, end=num_3.get_left() + LEFT*0.5 + UP*0.5, color="#002B4D", path_arc=-1.5)
+        read2 = Text("Dörtte üç", color="#002B4D", font_size=36).next_to(arrow2, LEFT)
+        self.play(Create(arrow2), Write(read2), run_time=2)
         
-        self.play(Create(arrow_down), Write(read_1), run_time=1)
-        self.play(Create(arrow_up), Write(read_2), run_time=1)
-        
-        rects = VGroup(*[Rectangle(height=1, width=1, color="#333333") for _ in range(4)]).arrange(RIGHT, buff=0).shift(RIGHT * 2 + DOWN * 2)
-        fills = VGroup(*[Rectangle(height=1, width=1, color="#002B4D", fill_opacity=0.8, stroke_width=0) for _ in range(3)]).arrange(RIGHT, buff=0).move_to(rects[0:3].get_center())
-        
-        self.play(Create(rects), run_time=1)
-        self.play(FadeIn(fills), run_time=1)
-        
-        self.wait(14.0)
-        
+        self.wait(17.5)
+
         # --- PARAGRAF 4 ---
-        # Kelime sayısı: 14. Süre: 7.0 sn. Animasyon: 2 sn. Bekleme: 5.0 sn.
-        self.play(FadeOut(VGroup(fraction, read_1, read_2, arrow_down, arrow_up, rects, fills)), run_time=1)
+        # Kelime sayısı: 28. Süre: 28 / 2.0 = 14.0 saniye.
+        # Animasyon süresi: 3 saniye. Bekleme süresi: 11.0 saniye.
+        self.play(
+            FadeOut(frac_group), FadeOut(arrow1), FadeOut(read1),
+            FadeOut(arrow2), FadeOut(read2), run_time=1
+        )
         
-        outro_text = Tex("Maarif Matematik", color="#002B4D", font_size=60)
-        self.play(Write(outro_text), run_time=1)
+        outro_text = Text("Maarif Matematik", color="#002B4D", font_size=60)
+        self.play(Write(outro_text), run_time=2)
         
-        self.wait(5.0)
+        self.wait(11.0)
