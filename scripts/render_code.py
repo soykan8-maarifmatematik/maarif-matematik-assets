@@ -1,69 +1,68 @@
 from manim import *
 
+config.pixel_height = 1920
+config.pixel_width = 1080
+config.frame_height = 14.22
+config.frame_width = 8.0
+
 class MaarifScene(Scene):
     def construct(self):
-        config.pixel_height = 1920
-        config.pixel_width = 1080
-        config.frame_height = 14.22
-        config.frame_width = 8.0
+        # Arka plan rengi: Maarif Laciverti
         self.camera.background_color = "#002B4D"
 
-        # KANCA (HOOK)
-        hook_text1 = Text("Payda Büyüdükçe", font_size=60, color="#FFFFFF").scale(0.8).shift(UP*2)
-        hook_text2 = Text("Kesir Küçülür mü?", font_size=70, color="#FFD700").scale(0.8).next_to(hook_text1, DOWN)
-        
-        self.play(Write(hook_text1))
-        self.play(FadeIn(hook_text2, shift=UP))
-        self.wait(3.5)
-        self.play(FadeOut(hook_text1), FadeOut(hook_text2))
+        # KANCA (HOOK) [0-5 sn]
+        hook_text = Text("Payda buyudukce\nkesir buyur mu?", font_size=70, color=WHITE).scale(0.8)
+        hook_text.shift(UP * 2)
+        self.play(Write(hook_text), run_time=1.5)
+        self.wait(1)
 
-        # GÖVDE (BODY) - Kesirler
-        frac_half = MathTex(r"\frac{1}{2}", font_size=120, color="#FFFFFF").scale(0.8).shift(UP*3 + LEFT*2)
-        frac_third = MathTex(r"\frac{1}{3}", font_size=120, color="#FFFFFF").scale(0.8).shift(UP*3)
-        frac_fourth = MathTex(r"\frac{1}{4}", font_size=120, color="#FFFFFF").scale(0.8).shift(UP*3 + RIGHT*2)
+        wrong_cross = Cross(hook_text, stroke_color=RED, stroke_width=10)
+        self.play(Create(wrong_cross), run_time=0.5)
+        self.wait(1)
 
-        self.play(Write(frac_half), Write(frac_third), Write(frac_fourth))
-        self.wait(3.5)
+        self.play(FadeOut(hook_text), FadeOut(wrong_cross))
 
-        # Pizza Mantığı
-        pizza_text = Text("1 Pizzayı...", font_size=50, color="#FFD700").scale(0.8).shift(UP*1)
-        self.play(Write(pizza_text))
+        # GOVDE (BODY) [5-50 sn]
+        # 1/2 Kesri (Pasta 2'ye bolunmus)
+        circle_half_bg = Circle(radius=1.5, color=WHITE, stroke_width=4).shift(UP * 2)
+        slice_half = Sector(radius=1.5, angle=PI, start_angle=0, color="#FFD700", fill_opacity=0.9).shift(UP * 2)
+        label_half = MathTex(r"\frac{1}{2}", font_size=90, color=WHITE).next_to(circle_half_bg, LEFT, buff=0.5)
 
-        # 1/2 Pizza
-        circle_half_bg = Circle(radius=1.5, color="#FFFFFF", stroke_width=2).shift(DOWN*1.5 + LEFT*2.2)
-        slice_half = Sector(radius=1.5, angle=PI, start_angle=PI/2, color="#FFD700", fill_opacity=0.8).shift(DOWN*1.5 + LEFT*2.2)
-        label_half = MathTex(r"\frac{1}{2}", font_size=70, color="#FFFFFF").next_to(circle_half_bg, DOWN)
-
-        # 1/10 Pizza
-        circle_ten_bg = Circle(radius=1.5, color="#FFFFFF", stroke_width=2).shift(DOWN*1.5 + RIGHT*2.2)
-        slice_ten = Sector(radius=1.5, angle=TAU/10, start_angle=PI/2, color="#FFD700", fill_opacity=0.8).shift(DOWN*1.5 + RIGHT*2.2)
-        label_ten = MathTex(r"\frac{1}{10}", font_size=70, color="#FFFFFF").next_to(circle_ten_bg, DOWN)
-
-        self.play(Create(circle_half_bg), Create(circle_ten_bg))
+        self.play(Create(circle_half_bg), Write(label_half), run_time=1)
+        self.play(Create(slice_half), run_time=1)
         self.wait(2)
-        self.play(Create(slice_half), Write(label_half))
+
+        # 1/8 Kesri (Pasta 8'e bolunmus)
+        circle_eighth_bg = Circle(radius=1.5, color=WHITE, stroke_width=4).shift(DOWN * 1.5)
+        slice_eighth = Sector(radius=1.5, angle=PI/4, start_angle=0, color="#FFD700", fill_opacity=0.9).shift(DOWN * 1.5)
+        label_eighth = MathTex(r"\frac{1}{8}", font_size=90, color=WHITE).next_to(circle_eighth_bg, LEFT, buff=0.5)
+
+        self.play(Create(circle_eighth_bg), Write(label_eighth), run_time=1)
+        self.play(Create(slice_eighth), run_time=1)
         self.wait(2)
-        self.play(Create(slice_ten), Write(label_ten))
-        self.wait(3.5)
 
-        # Karşılaştırma
-        greater_sign = MathTex(">", font_size=120, color="#FFD700").shift(DOWN*1.5)
-        self.play(Write(greater_sign))
+        # Buyuktur Isareti
+        greater_sign = MathTex(">", font_size=120, color="#FFD700").move_to(UP * 0.25)
+        self.play(Write(greater_sign), run_time=0.5)
+        self.wait(2)
+
+        # Alt Kural Metni (Guvenli Alan Sinirinda)
+        rule_text = Text("Payda Buyurse\nDilim Kuculur!", font_size=70, color="#FFD700", weight=BOLD).scale(0.8)
+        rule_bg = BackgroundRectangle(rule_text, color=BLACK, fill_opacity=0.5, buff=0.2)
+        rule_group = VGroup(rule_bg, rule_text).shift(DOWN * 4)
         
-        rule_text = Text("Parça Sayısı Artarsa\nDilim Küçülür!", font_size=50, color="#FFFFFF", text_align="CENTER").scale(0.8).shift(DOWN*4)
-        self.play(Write(rule_text))
-        self.wait(5.5)
-
-        self.play(
-            FadeOut(frac_half), FadeOut(frac_third), FadeOut(frac_fourth),
-            FadeOut(pizza_text), FadeOut(circle_half_bg), FadeOut(slice_half),
-            FadeOut(label_half), FadeOut(circle_ten_bg), FadeOut(slice_ten),
-            FadeOut(label_ten), FadeOut(greater_sign), FadeOut(rule_text)
-        )
-
-        # KAPANIŞ (CTA)
-        cta_text1 = Text("Maarif Matematik ile", font_size=60, color="#FFFFFF").scale(0.8).shift(UP*0.5)
-        cta_text2 = Text("Mantığını Kavra!", font_size=70, color="#FFD700").scale(0.8).next_to(cta_text1, DOWN)
-        self.play(Write(cta_text1))
-        self.play(FadeIn(cta_text2, shift=UP))
+        self.play(FadeIn(rule_group, shift=UP))
         self.wait(3)
+
+        # Ekranı Temizle
+        self.play(FadeOut(Group(*self.mobjects)))
+
+        # KAPANIS (CTA) [50-60 sn]
+        cta_text1 = Text("Maarif Matematik ile", font_size=65, color=WHITE).scale(0.8).shift(UP * 0.5)
+        cta_text2 = Text("mantigini kavra,", font_size=65, color="#FFD700").scale(0.8).next_to(cta_text1, DOWN)
+        cta_text3 = Text("takipte kal!", font_size=65, color=WHITE).scale(0.8).next_to(cta_text2, DOWN)
+        
+        self.play(Write(cta_text1), run_time=0.8)
+        self.play(Write(cta_text2), run_time=0.8)
+        self.play(Write(cta_text3), run_time=0.8)
+        self.wait(2)
