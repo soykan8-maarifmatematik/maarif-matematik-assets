@@ -7,48 +7,65 @@ config.frame_width = 8.0
 
 class MaarifScene(Scene):
     def construct(self):
+        # Arka plan rengi (Maarif Laciverti)
         self.camera.background_color = "#002B4D"
 
-        # KANCA (Hook)
-        title = Text("BİRİM KESİRLER", font_size=72, color="#FFD700", weight=BOLD).to_edge(UP, buff=1.5)
+        # --- KANCA (HOOK) ---
+        title = Text("HANGİSİ DAHA BÜYÜK?", font_size=60, color="#FFD700", weight=BOLD).to_edge(UP, buff=2)
+        frac1 = MathTex(r"\frac{1}{2}", font_size=150, color=WHITE)
+        vs = Text("vs", font_size=80, color="#D32F2F")
+        frac2 = MathTex(r"\frac{1}{10}", font_size=150, color=WHITE)
+        
+        hook_group = VGroup(frac1, vs, frac2).arrange(RIGHT, buff=1).next_to(title, DOWN, buff=2)
+        
         self.play(Write(title), run_time=1)
-        
-        q_text = Text("Hangisi daha büyük?", font_size=56, color="#FFFFFF").next_to(title, DOWN, buff=1)
-        self.play(Write(q_text), run_time=1)
-
-        frac_half = MathTex(r"\frac{1}{2}", font_size=144, color="#FFFFFF").move_to(LEFT * 2 + UP * 1.5)
-        frac_ten = MathTex(r"\frac{1}{10}", font_size=144, color="#FFFFFF").move_to(RIGHT * 2 + UP * 1.5)
-        vs = Text("vs", font_size=48, color="#D32F2F").move_to(UP * 1.5)
-
-        self.play(FadeIn(frac_half, shift=RIGHT), FadeIn(frac_ten, shift=LEFT), Write(vs), run_time=1)
+        self.play(FadeIn(hook_group, shift=UP), run_time=1)
         self.wait(3)
+        self.play(FadeOut(title), FadeOut(hook_group), run_time=1)
 
-        # GÖVDE (Body)
-        slice_half = Sector(outer_radius=2.5, angle=PI, color="#D32F2F", fill_opacity=0.9).next_to(frac_half, DOWN, buff=1.5)
-        self.play(Create(slice_half), run_time=1)
-        self.wait(3)
+        # --- GÖVDE (BODY) - Görselleştirme ---
+        # 1/2 Görseli
+        c1 = Circle(radius=2, color=WHITE)
+        s1 = Sector(outer_radius=2, angle=PI, start_angle=PI/2, color="#FFD700", fill_opacity=0.9)
+        l1 = Line(c1.get_top(), c1.get_bottom(), color=WHITE, stroke_width=4)
+        t1 = MathTex(r"\frac{1}{2}", font_size=90, color="#FFD700").next_to(c1, UP, buff=0.5)
+        g1 = VGroup(t1, c1, s1, l1).move_to(UP * 3)
 
-        slice_ten = Sector(outer_radius=2.5, angle=TAU/10, color="#FFD700", fill_opacity=0.9).next_to(frac_ten, DOWN, buff=1.5)
-        self.play(Create(slice_ten), run_time=1)
-        self.wait(3)
+        # 1/4 Görseli
+        c2 = Circle(radius=2, color=WHITE)
+        s2 = Sector(outer_radius=2, angle=PI/2, start_angle=PI/2, color="#D32F2F", fill_opacity=0.9)
+        l2_1 = Line(c2.get_top(), c2.get_bottom(), color=WHITE, stroke_width=4)
+        l2_2 = Line(c2.get_left(), c2.get_right(), color=WHITE, stroke_width=4)
+        t2 = MathTex(r"\frac{1}{4}", font_size=90, color="#D32F2F").next_to(c2, UP, buff=0.5)
+        g2 = VGroup(t2, c2, s2, l2_1, l2_2).move_to(DOWN * 3)
 
-        greater_sign = MathTex(">", font_size=144, color="#FFD700").move_to(vs.get_center())
-        self.play(Transform(vs, greater_sign), Indicate(slice_half, color="#FFD700", scale_factor=1.1), run_time=1)
-        self.wait(3)
+        self.play(Create(c1), Create(c2), run_time=1.5)
+        self.wait(1)
+        self.play(Create(l1), Create(l2_1), Create(l2_2), run_time=1.5)
+        self.wait(1)
+        self.play(FadeIn(s1), Write(t1), run_time=1)
+        self.play(FadeIn(s2), Write(t2), run_time=1)
+        self.wait(5)
+        self.play(FadeOut(g1), FadeOut(g2), run_time=1)
 
-        self.play(FadeOut(slice_half), FadeOut(slice_ten), FadeOut(q_text), FadeOut(frac_half), FadeOut(frac_ten), FadeOut(vs), run_time=1)
+        # --- GÖVDE (BODY) - Kural ---
+        rule1 = Text("PAYDA BÜYÜDÜKÇE", font_size=70, color=WHITE, weight=BOLD)
+        rule2 = Text("DİLİM KÜÇÜLÜR!", font_size=85, color="#D32F2F", weight=BOLD)
+        rule_group = VGroup(rule1, rule2).arrange(DOWN, buff=0.8).move_to(UP * 2)
 
-        rule_box = Rectangle(width=7, height=3, color="#FFD700", fill_color="#002B4D", fill_opacity=1)
-        rule_text1 = Text("Payda BÜYÜDÜKÇE", font_size=56, color="#FFFFFF").move_to(rule_box.get_center() + UP*0.5)
-        rule_text2 = Text("Kesir KÜÇÜLÜR!", font_size=64, color="#D32F2F", weight=BOLD).move_to(rule_box.get_center() + DOWN*0.5)
-        
-        rule_group = VGroup(rule_box, rule_text1, rule_text2).move_to(CENTER)
+        ineq = MathTex(r"\frac{1}{2} > \frac{1}{4} > \frac{1}{10}", font_size=120, color="#FFD700").next_to(rule_group, DOWN, buff=2)
 
-        self.play(Create(rule_box), Write(rule_text1), run_time=1)
-        self.play(Write(rule_text2), run_time=1)
+        self.play(Write(rule1), run_time=1)
+        self.play(Write(rule2), run_time=1)
+        self.wait(2)
+        self.play(FadeIn(ineq, shift=UP), run_time=1.5)
+        self.wait(6)
+        self.play(FadeOut(rule_group), FadeOut(ineq), run_time=1)
+
+        # --- KAPANIŞ (CTA) ---
+        logo = Text("Maarif Matematik", font_size=80, color=WHITE, weight=BOLD)
+        cta = Text("Daha fazlası için takip et!", font_size=55, color="#FFD700")
+        cta_group = VGroup(logo, cta).arrange(DOWN, buff=0.8).move_to(CENTER)
+
+        self.play(FadeIn(cta_group, scale=0.8), run_time=1.5)
         self.wait(4)
-
-        # KAPANIŞ (CTA)
-        cta = Text("Daha fazlası için takip et!", font_size=48, color="#FFD700").to_edge(DOWN, buff=2)
-        self.play(Write(cta), run_time=1)
-        self.wait(3)
