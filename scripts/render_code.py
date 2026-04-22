@@ -2,70 +2,94 @@ from manim import *
 
 class MaarifScene(Scene):
     def construct(self):
-        # Renk Paleti
+        # Arka plan rengi (Maarif Beyazı)
         self.camera.background_color = "#FFFFFF"
-        DARK_GRAY = "#333333"
-        MAARIF_NAVY = "#002B4D"
-        MAARIF_RED = "#D32F2F"
+        
+        # --- SAHNE 1: GİRİŞ ---
+        # Kelime sayısı: 41. Süre: 20.5 saniye.
+        # Animasyonlar: 2 saniye. Bekleme: 18.5 saniye.
+        intro_text = Text("Kesir Kavramı", color="#333333", font_size=48)
+        
+        self.play(Write(intro_text)) # 1 sn
+        self.wait(18.5) # 18.5 sn
+        self.play(FadeOut(intro_text)) # 1 sn
+        
+        # --- SAHNE 2: PAY, PAYDA VE KESİR ÇİZGİSİ ---
+        # Kelime sayısı: 42. Süre: 21.0 saniye.
+        # Animasyonlar: 4 saniye. Bekleme: 17.0 saniye.
+        frac_line = Line(LEFT*2, RIGHT*2, color="#333333", stroke_width=6)
+        
+        payda_text = Text("Payda", color="#002B4D", font_size=40).next_to(frac_line, DOWN, buff=0.5)
+        payda_desc = Text("(Bütünün bölündüğü eş parça sayısı)", color="#333333", font_size=24).next_to(payda_text, DOWN)
+        
+        pay_text = Text("Pay", color="#D32F2F", font_size=40).next_to(frac_line, UP, buff=0.5)
+        pay_desc = Text("(Alınan eş parça sayısı)", color="#333333", font_size=24).next_to(pay_text, UP)
 
-        # 1. Paragraf: Giriş (24 kelime / 2.5 = 9.6 saniye)
-        title = Text("Kesir Nedir?", color=MAARIF_NAVY, font_size=48).to_edge(UP)
-        self.play(Write(title), run_time=2)
-        self.wait(7.6)
+        self.play(Create(frac_line)) # 1 sn
+        self.wait(6.0) # 6 sn
 
-        # 2. Paragraf: Pay ve Payda (30 kelime / 2.5 = 12.0 saniye)
-        line = Line(LEFT*0.5, RIGHT*0.5, color=DARK_GRAY).shift(UP*1.5 + LEFT*3)
-        num = Text("3", color=MAARIF_RED, font_size=48).next_to(line, UP)
-        den = Text("4", color=MAARIF_NAVY, font_size=48).next_to(line, DOWN)
-        fraction = VGroup(num, line, den)
+        self.play(Write(VGroup(payda_text, payda_desc))) # 1 sn
+        self.wait(6.0) # 6 sn
 
-        pay_text = Text("Pay", color=MAARIF_RED, font_size=36).next_to(num, LEFT, buff=1.5)
-        payda_text = Text("Payda", color=MAARIF_NAVY, font_size=36).next_to(den, LEFT, buff=1.5)
+        self.play(Write(VGroup(pay_text, pay_desc))) # 1 sn
+        self.wait(5.0) # 5 sn
 
-        arrow_pay = Arrow(pay_text.get_right(), num.get_left(), color=MAARIF_RED, buff=0.1)
-        arrow_payda = Arrow(payda_text.get_right(), den.get_left(), color=MAARIF_NAVY, buff=0.1)
+        self.play(FadeOut(VGroup(frac_line, payda_text, payda_desc, pay_text, pay_desc))) # 1 sn
 
-        self.play(Write(fraction), run_time=2)
-        self.play(Write(pay_text), Write(payda_text), Create(arrow_pay), Create(arrow_payda), run_time=2)
-        self.wait(8.0)
+        # --- SAHNE 3: PİZZA MODELİ (SECTOR) ---
+        # Kelime sayısı: 41. Süre: 20.5 saniye.
+        # Animasyonlar: 4 saniye. Bekleme: 16.5 saniye.
+        
+        # Bütün pizza (4 eş parça çizgileriyle)
+        circle = Circle(radius=2, color="#333333", stroke_width=4).shift(LEFT*3)
+        l1 = Line(circle.get_top(), circle.get_bottom(), color="#333333")
+        l2 = Line(circle.get_left(), circle.get_right(), color="#333333")
+        pizza = VGroup(circle, l1, l2)
 
-        # 3. Paragraf: Model Üzerinde Gösterim (23 kelime / 2.5 = 9.2 saniye)
-        pie = VGroup()
-        colors = [MAARIF_RED, MAARIF_RED, MAARIF_RED, "#E0E0E0"]
-        for i in range(4):
-            # Kural 3: outer_radius ASLA kullanılmaz, sadece radius kullanılır.
-            slice_sector = Sector(start_angle=i*PI/2, angle=PI/2, radius=1.5, color=colors[i], fill_opacity=0.9, stroke_color=DARK_GRAY, stroke_width=2)
-            pie.add(slice_sector)
-        pie.shift(UP*1.5 + RIGHT*3)
+        frac_line_2 = Line(LEFT*0.5, RIGHT*0.5, color="#333333", stroke_width=6).shift(RIGHT*3)
+        denom_4 = Text("4", color="#002B4D", font_size=48).next_to(frac_line_2, DOWN)
+        num_3 = Text("3", color="#D32F2F", font_size=48).next_to(frac_line_2, UP)
 
-        self.play(Create(pie), run_time=2)
-        self.wait(7.2)
+        self.play(Create(pizza), Create(frac_line_2)) # 1 sn
+        self.wait(8.5) # 8.5 sn
 
-        # 4. Paragraf: Kesrin Okunuşu (27 kelime / 2.5 = 10.8 saniye)
-        read_down = Text("Üç bölü dört", color=DARK_GRAY, font_size=36).shift(DOWN*1 + LEFT*2)
-        arrow_down = Arrow(UP, DOWN, color=MAARIF_RED).next_to(read_down, LEFT)
+        self.play(Write(denom_4)) # 1 sn
+        self.wait(1.5) # 1.5 sn
 
-        read_up = Text("Dörtte üç", color=DARK_GRAY, font_size=36).shift(DOWN*2.5 + LEFT*2)
-        arrow_up = Arrow(DOWN, UP, color=MAARIF_NAVY).next_to(read_up, LEFT)
+        # Alınan 3 parça (Sector objesinde outer_radius YASAK, radius kullanıldı)
+        s1 = Sector(radius=2, angle=PI/2, start_angle=0, color="#D32F2F", fill_opacity=0.8).shift(LEFT*3)
+        s2 = Sector(radius=2, angle=PI/2, start_angle=PI/2, color="#D32F2F", fill_opacity=0.8).shift(LEFT*3)
+        s3 = Sector(radius=2, angle=PI/2, start_angle=PI, color="#D32F2F", fill_opacity=0.8).shift(LEFT*3)
 
-        self.play(Write(read_down), Create(arrow_down), run_time=2)
-        self.play(Write(read_up), Create(arrow_up), run_time=2)
-        self.wait(6.8)
+        self.play(Create(VGroup(s1, s2, s3)), Write(num_3)) # 1 sn
+        self.wait(6.5) # 6.5 sn
 
-        # 5. Paragraf: Sayı Doğrusu (24 kelime / 2.5 = 9.6 saniye)
-        nl = NumberLine(
-            x_range=[0, 1, 0.25],
-            length=6,
-            color=DARK_GRAY,
-            include_numbers=False
-        ).shift(DOWN*1.5 + RIGHT*3)
+        self.play(FadeOut(VGroup(pizza, frac_line_2, denom_4, num_3, s1, s2, s3))) # 1 sn
 
-        tick_0 = Text("0", color=DARK_GRAY, font_size=24).next_to(nl.number_to_point(0), DOWN)
-        tick_1 = Text("1", color=DARK_GRAY, font_size=24).next_to(nl.number_to_point(1), DOWN)
+        # --- SAHNE 4: KESRİN OKUNUŞU ---
+        # Kelime sayısı: 43. Süre: 21.5 saniye.
+        # Animasyonlar: 4 saniye. Bekleme: 17.5 saniye.
+        
+        frac_group = VGroup(
+            Text("3", color="#D32F2F", font_size=72),
+            Line(LEFT, RIGHT, color="#333333", stroke_width=6),
+            Text("4", color="#002B4D", font_size=72)
+        ).arrange(DOWN, buff=0.3)
 
-        dot = Dot(nl.number_to_point(0.75), color=MAARIF_RED, radius=0.1)
-        dot_label = Text("3/4", color=MAARIF_RED, font_size=24).next_to(dot, UP)
+        arrow_down = Arrow(start=UP*2, end=DOWN*2, color="#D32F2F", stroke_width=6, max_tip_length_to_length_ratio=0.15).next_to(frac_group, LEFT, buff=1.5)
+        text_down = Text("Üç bölü dört", color="#D32F2F", font_size=36).next_to(arrow_down, LEFT)
 
-        self.play(Create(nl), Write(tick_0), Write(tick_1), run_time=2)
-        self.play(Create(dot), Write(dot_label), run_time=1)
-        self.wait(6.6)
+        arrow_up = Arrow(start=DOWN*2, end=UP*2, color="#002B4D", stroke_width=6, max_tip_length_to_length_ratio=0.15).next_to(frac_group, RIGHT, buff=1.5)
+        text_up = Text("Dörtte üç", color="#002B4D", font_size=36).next_to(arrow_up, RIGHT)
+
+        self.play(Write(frac_group)) # 1 sn
+        self.wait(4.0) # 4 sn
+
+        self.play(Create(arrow_down), Write(text_down)) # 1 sn
+        self.wait(4.0) # 4 sn
+
+        self.play(Create(arrow_up), Write(text_up)) # 1 sn
+        self.wait(6.5) # 6.5 sn
+
+        self.play(Indicate(frac_group, color="#333333")) # 1 sn
+        self.wait(3.0) # 3 sn
