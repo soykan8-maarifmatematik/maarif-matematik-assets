@@ -7,57 +7,80 @@ config.frame_width = 8.0
 
 class MaarifScene(Scene):
     def construct(self):
-        # Arka plan rengi Maarif Laciverti
+        # Arka plan rengi (Maarif Laciverti)
         self.camera.background_color = "#002B4D"
 
-        # KANCA (0-5 sn)
-        hook_q = Text("1 Pastayı...", font_size=70, color=WHITE).scale(0.8).shift(UP*3)
-        hook_opt1 = Text("3 Kişi mi?", font_size=80, color="#FFD700").scale(0.8).next_to(hook_q, DOWN, buff=1)
-        hook_opt2 = Text("100 Kişi mi?", font_size=80, color="#D32F2F").scale(0.8).next_to(hook_opt1, DOWN, buff=1)
-        
-        self.play(Write(hook_q), run_time=1)
-        self.play(FadeIn(hook_opt1, shift=UP), run_time=1)
-        self.play(FadeIn(hook_opt2, shift=UP), run_time=1)
+        # --- KANCA (HOOK) ---
+        title = Text("HANGİSİ DAHA BÜYÜK?", font_size=48, color="#FFD700").to_edge(UP, buff=1.5)
+        self.play(Write(title), run_time=1)
+        self.wait(1)
+
+        frac1 = MathTex(r"\frac{1}{2}", font_size=120, color=WHITE).move_to(UP*2 + LEFT*1.5)
+        vs = Text("vs", font_size=48, color="#D32F2F").move_to(UP*2)
+        frac2 = MathTex(r"\frac{1}{10}", font_size=120, color=WHITE).move_to(UP*2 + RIGHT*1.5)
+
+        self.play(FadeIn(frac1, shift=UP), FadeIn(vs), FadeIn(frac2, shift=UP), run_time=1.5)
+        self.wait(2.5)
+
+        # --- GÖVDE (BODY) ---
+        self.play(FadeOut(title), FadeOut(vs))
+        self.play(
+            frac1.animate.scale(0.6).move_to(UP*4 + LEFT*2),
+            frac2.animate.scale(0.6).move_to(UP*4 + RIGHT*2),
+            run_time=1
+        )
+
+        # Pasta/Çubuk Mantığı
+        bar_bg_1 = Rectangle(width=6, height=1, color=WHITE)
+        bar_fill_1 = Rectangle(width=3, height=1, color="#FFD700", fill_opacity=1)
+        bar_fill_1.align_to(bar_bg_1, LEFT)
+        bar_1 = VGroup(bar_bg_1, bar_fill_1).move_to(UP*1.5)
+
+        bar_bg_2 = Rectangle(width=6, height=1, color=WHITE)
+        bar_fill_2 = Rectangle(width=0.6, height=1, color="#D32F2F", fill_opacity=1)
+        bar_fill_2.align_to(bar_bg_2, LEFT)
+        bar_2 = VGroup(bar_bg_2, bar_fill_2).move_to(DOWN*1.5)
+
+        label1 = Text("2 Parçadan 1'i", font_size=36, color=WHITE).next_to(bar_1, UP)
+        label2 = Text("10 Parçadan 1'i", font_size=36, color=WHITE).next_to(bar_2, UP)
+
+        self.play(Create(bar_bg_1), Create(bar_bg_2), run_time=1.5)
+        self.play(Write(label1), Write(label2), run_time=1.5)
         self.wait(2)
-        self.play(FadeOut(hook_q, hook_opt1, hook_opt2))
 
-        # GÖVDE - Tanım (5-20 sn)
-        def_title = Text("BİRİM KESİR", font_size=70, color="#FFD700").scale(0.8).shift(UP*4)
-        def_desc = Text("Payı 1 olan kesirdir.", font_size=50, color=WHITE).scale(0.8).next_to(def_title, DOWN, buff=0.5)
-        
-        frac1 = MathTex(r"\frac{1}{3}", color=WHITE).scale(3).shift(UP*0.5)
-        frac2 = MathTex(r"\frac{1}{10}", color=WHITE).scale(3).next_to(frac1, DOWN, buff=1.5)
-        
-        self.play(Write(def_title), Write(def_desc), run_time=1.5)
-        self.play(FadeIn(frac1), FadeIn(frac2), run_time=1.5)
-        self.wait(3)
-        self.play(FadeOut(def_title, def_desc, frac1, frac2))
+        self.play(FadeIn(bar_fill_1), run_time=1)
+        self.wait(2)
+        self.play(FadeIn(bar_fill_2), run_time=1)
+        self.wait(2.5)
 
-        # GÖVDE - Kural ve İspat (20-45 sn)
-        rule1 = Text("PAYDA BÜYÜDÜKÇE", font_size=60, color=WHITE).scale(0.8).shift(UP*3)
-        rule2 = Text("(Kişi Sayısı Artar)", font_size=45, color="#FFD700").scale(0.8).next_to(rule1, DOWN, buff=0.3)
-        rule3 = Text("DİLİM KÜÇÜLÜR!", font_size=75, color="#D32F2F").scale(0.8).next_to(rule2, DOWN, buff=1)
-        
-        self.play(Write(rule1), run_time=1)
-        self.play(FadeIn(rule2), run_time=1)
-        self.play(Write(rule3), run_time=1)
-        self.wait(1.5)
-        
-        comp_group = VGroup(
-            MathTex(r"\frac{1}{3}", color=WHITE).scale(3.5),
-            MathTex(">", color="#FFD700").scale(3.5),
-            MathTex(r"\frac{1}{10}", color=WHITE).scale(3.5)
-        ).arrange(RIGHT, buff=0.8).next_to(rule3, DOWN, buff=1.5)
-        
-        self.play(FadeIn(comp_group, scale=0.5), run_time=1.5)
-        self.wait(3)
-        self.play(FadeOut(rule1, rule2, rule3, comp_group))
+        # Kural Ekranı
+        self.play(
+            FadeOut(bar_1), FadeOut(bar_2), 
+            FadeOut(label1), FadeOut(label2), 
+            FadeOut(frac1), FadeOut(frac2)
+        )
 
-        # KAPANIŞ (45-55 sn)
-        cta1 = Text("Artık Karıştırmak Yok!", font_size=60, color=WHITE).scale(0.8).shift(UP*1)
-        cta2 = Text("Daha Fazlası İçin", font_size=50, color=WHITE).scale(0.8).next_to(cta1, DOWN, buff=0.5)
-        cta3 = Text("TAKİP ET!", font_size=80, color="#FFD700").scale(0.8).next_to(cta2, DOWN, buff=0.5)
+        rule_title = Text("ALTIN KURAL", font_size=60, color="#FFD700").move_to(UP*2)
+        rule_text1 = Text("Payda Büyüdükçe", font_size=48, color=WHITE).next_to(rule_title, DOWN, buff=1)
+        rule_text2 = Text("Değer KÜÇÜLÜR!", font_size=56, color="#D32F2F").next_to(rule_text1, DOWN, buff=0.5)
+
+        self.play(Write(rule_title), run_time=1)
+        self.wait(1)
+        self.play(FadeIn(rule_text1, shift=UP), run_time=1)
+        self.wait(1)
+        self.play(FadeIn(rule_text2, scale=1.5), run_time=1)
+        self.wait(2)
+
+        ineq = MathTex(r"\frac{1}{2} > \frac{1}{3} > \frac{1}{10}", font_size=80, color="#FFD700").next_to(rule_text2, DOWN, buff=1.5)
+        self.play(Write(ineq), run_time=1.5)
+        self.wait(3.5)
+
+        # --- KAPANIŞ (CTA) ---
+        self.play(FadeOut(rule_title), FadeOut(rule_text1), FadeOut(rule_text2), FadeOut(ineq))
         
+        cta1 = Text("Daha fazlası için", font_size=48, color=WHITE).move_to(UP*0.5)
+        cta2 = Text("TAKİPTE KAL!", font_size=64, color="#FFD700").next_to(cta1, DOWN, buff=0.5)
+
         self.play(Write(cta1), run_time=1)
-        self.play(FadeIn(cta2, shift=UP), FadeIn(cta3, shift=UP), run_time=1)
+        self.play(FadeIn(cta2, scale=1.2), run_time=1)
         self.wait(2)
