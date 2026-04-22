@@ -2,86 +2,102 @@ from manim import *
 
 class MaarifScene(Scene):
     def construct(self):
-        # Renk Paleti
-        bg_color = "#FFFFFF"
-        text_color = "#333333"
-        maarif_navy = "#002B4D"
-        maarif_red = "#D32F2F"
-
-        self.camera.background_color = bg_color
-
-        # --- Paragraf 1: Giriş (23 kelime / 2.5 = 9.2 saniye) ---
-        title = Text("Kesir Nedir?", color=maarif_navy, font_size=48, weight=BOLD)
-        self.play(Write(title), run_time=2)
-        self.wait(7.2) # Toplam 9.2s
-        self.play(FadeOut(title))
-
-        # --- Paragraf 2: Sektör / Pizza Modeli (38 kelime / 2.5 = 15.2 saniye) ---
-        # 4 eş parça, 1'i kırmızı (alınan), 3'ü lacivert
-        sector1 = Sector(radius=2, angle=PI/2, start_angle=0, color=maarif_red, fill_opacity=0.8, stroke_color=bg_color, stroke_width=2)
-        sector2 = Sector(radius=2, angle=PI/2, start_angle=PI/2, color=maarif_navy, fill_opacity=0.8, stroke_color=bg_color, stroke_width=2)
-        sector3 = Sector(radius=2, angle=PI/2, start_angle=PI, color=maarif_navy, fill_opacity=0.8, stroke_color=bg_color, stroke_width=2)
-        sector4 = Sector(radius=2, angle=PI/2, start_angle=3*PI/2, color=maarif_navy, fill_opacity=0.8, stroke_color=bg_color, stroke_width=2)
-
-        pie_chart = VGroup(sector1, sector2, sector3, sector4).shift(LEFT * 3)
-
-        self.play(FadeIn(pie_chart), run_time=2)
-        self.wait(13.2) # Toplam 15.2s
-
-        # --- Paragraf 3: Pay ve Payda (37 kelime / 2.5 = 14.8 saniye) ---
-        fraction_line = Line(LEFT, RIGHT, color=text_color).set_length(1.5).shift(RIGHT * 3)
-        numerator = MathTex("1", color=maarif_red, font_size=64).next_to(fraction_line, UP, buff=0.3)
-        denominator = MathTex("4", color=maarif_navy, font_size=64).next_to(fraction_line, DOWN, buff=0.3)
-
-        pay_text = Text("Pay", color=maarif_red, font_size=32).next_to(numerator, RIGHT, buff=1)
-        payda_text = Text("Payda", color=maarif_navy, font_size=32).next_to(denominator, RIGHT, buff=1)
-
-        arrow_pay = Arrow(start=pay_text.get_left(), end=numerator.get_right(), color=maarif_red, buff=0.1)
-        arrow_payda = Arrow(start=payda_text.get_left(), end=denominator.get_right(), color=maarif_navy, buff=0.1)
-
-        fraction_group = VGroup(fraction_line, numerator, denominator, pay_text, payda_text, arrow_pay, arrow_payda)
-
-        self.play(Write(fraction_line), Write(numerator), Write(denominator), run_time=2)
-        self.play(Write(pay_text), GrowArrow(arrow_pay), Write(payda_text), GrowArrow(arrow_payda), run_time=2)
-        self.wait(10.8) # Toplam 14.8s
-        self.play(FadeOut(pie_chart), FadeOut(fraction_group))
-
-        # --- Paragraf 4: Okunuş (36 kelime / 2.5 = 14.4 saniye) ---
-        read_frac_line = Line(LEFT, RIGHT, color=text_color).set_length(1.5)
-        read_num = MathTex("1", color=maarif_red, font_size=64).next_to(read_frac_line, UP, buff=0.3)
-        read_den = MathTex("4", color=maarif_navy, font_size=64).next_to(read_frac_line, DOWN, buff=0.3)
-        read_group = VGroup(read_frac_line, read_num, read_den)
-
-        down_arrow = Arrow(start=UP*1.5, end=DOWN*1.5, color=text_color).next_to(read_group, LEFT, buff=1)
-        up_arrow = Arrow(start=DOWN*1.5, end=UP*1.5, color=text_color).next_to(read_group, RIGHT, buff=1)
-
-        read_down_text = Text("Bir bölü dört", color=text_color, font_size=32).next_to(down_arrow, LEFT, buff=0.5)
-        read_up_text = Text("Dörtte bir", color=text_color, font_size=32).next_to(up_arrow, RIGHT, buff=0.5)
-
-        self.play(FadeIn(read_group), run_time=1)
-        self.play(GrowArrow(down_arrow), Write(read_down_text), run_time=2)
-        self.play(GrowArrow(up_arrow), Write(read_up_text), run_time=2)
-        self.wait(9.4) # Toplam 14.4s
-        self.play(FadeOut(read_group), FadeOut(down_arrow), FadeOut(up_arrow), FadeOut(read_down_text), FadeOut(read_up_text))
-
-        # --- Paragraf 5: Sayı Doğrusu (37 kelime / 2.5 = 14.8 saniye) ---
-        number_line = NumberLine(
+        # Arka plan rengi (Kural 1: Beyaz)
+        self.camera.background_color = "#FFFFFF"
+        
+        # --- BÖLÜM 1: GİRİŞ ---
+        # Kelime sayısı: 30. Süre: 30 / 2.5 = 12 saniye.
+        title = Text("Kesirler: Pay ve Payda", color="#002B4D").scale(1.2).to_edge(UP)
+        subtitle = Text("Bir bütünün eş parçaları", color="#333333").scale(0.8).next_to(title, DOWN)
+        
+        self.play(Write(title), run_time=1.5)
+        self.play(FadeIn(subtitle), run_time=0.5)
+        # Kalan süre: 12 - 2 = 10 saniye
+        self.wait(10)
+        
+        # --- BÖLÜM 2: PAY VE PAYDA KAVRAMI ---
+        # Kelime sayısı: 30. Süre: 30 / 2.5 = 12 saniye.
+        fraction = MathTex(r"\frac{3}{4}", color="#333333").scale(3).shift(LEFT*3)
+        pay_text = Text("Pay (Alınan Parça)", color="#D32F2F").scale(0.6).next_to(fraction, UP, buff=1)
+        payda_text = Text("Payda (Toplam Parça)", color="#002B4D").scale(0.6).next_to(fraction, DOWN, buff=1)
+        
+        arrow_pay = Arrow(pay_text.get_bottom(), fraction.get_top(), color="#D32F2F", buff=0.1)
+        arrow_payda = Arrow(payda_text.get_top(), fraction.get_bottom(), color="#002B4D", buff=0.1)
+        
+        self.play(Write(fraction), run_time=1)
+        self.play(FadeIn(pay_text), GrowArrow(arrow_pay), run_time=1)
+        self.play(FadeIn(payda_text), GrowArrow(arrow_payda), run_time=1)
+        # Kalan süre: 12 - 3 = 9 saniye
+        self.wait(9)
+        
+        # --- BÖLÜM 3: PASTA DİLİMİ MODELİ (SECTOR) ---
+        # Kelime sayısı: 27. Süre: 27 / 2.5 = 10.8 saniye.
+        pie = VGroup()
+        colors = ["#D32F2F", "#D32F2F", "#D32F2F", "#E0E0E0"]
+        for i in range(4):
+            # Kural 3: outer_radius ASLA kullanılmaz, radius kullanılır.
+            sector = Sector(radius=1.5, angle=PI/2, start_angle=i*PI/2, color=colors[i], fill_opacity=0.9, stroke_color="#FFFFFF", stroke_width=3)
+            pie.add(sector)
+        pie.shift(RIGHT*3)
+        
+        self.play(DrawBorderThenFill(pie), run_time=1.8)
+        # Kalan süre: 10.8 - 1.8 = 9 saniye
+        self.wait(9)
+        
+        # --- BÖLÜM 4: KESRİN OKUNUŞU ---
+        # Kelime sayısı: 31. Süre: 31 / 2.5 = 12.4 saniye.
+        self.play(
+            FadeOut(pie),
+            FadeOut(pay_text),
+            FadeOut(payda_text),
+            FadeOut(arrow_pay),
+            FadeOut(arrow_payda),
+            run_time=1
+        )
+        
+        self.play(fraction.animate.move_to(ORIGIN), run_time=1)
+        
+        read1 = Text("3 bölü 4", color="#D32F2F").scale(0.8).next_to(fraction, RIGHT, buff=2).shift(UP*0.5)
+        read2 = Text("4'te 3", color="#002B4D").scale(0.8).next_to(fraction, RIGHT, buff=2).shift(DOWN*0.5)
+        
+        arrow_down = Arrow(fraction.get_top() + RIGHT*0.5, fraction.get_bottom() + RIGHT*0.5, color="#D32F2F")
+        arrow_up = Arrow(fraction.get_bottom() + LEFT*0.5, fraction.get_top() + LEFT*0.5, color="#002B4D")
+        
+        self.play(GrowArrow(arrow_down), Write(read1), run_time=1)
+        self.play(GrowArrow(arrow_up), Write(read2), run_time=1)
+        # Kalan süre: 12.4 - 4 = 8.4 saniye
+        self.wait(8.4)
+        
+        # --- BÖLÜM 5: SAYI DOĞRUSU (NUMBERLINE) ---
+        # Kelime sayısı: 27. Süre: 27 / 2.5 = 10.8 saniye.
+        self.play(
+            FadeOut(fraction),
+            FadeOut(read1),
+            FadeOut(read2),
+            FadeOut(arrow_down),
+            FadeOut(arrow_up),
+            run_time=1
+        )
+        
+        nl = NumberLine(
             x_range=[0, 1, 0.25],
             length=8,
-            color=maarif_navy,
+            color="#333333",
             include_numbers=False,
-            tick_size=0.15
+            label_direction=DOWN
+        ).shift(DOWN*1)
+        
+        labels = VGroup(
+            MathTex("0", color="#333333").next_to(nl.n2p(0), DOWN),
+            MathTex("1", color="#333333").next_to(nl.n2p(1), DOWN)
         )
-        nl_0 = MathTex("0", color=text_color).next_to(number_line.n2p(0), DOWN)
-        nl_1 = MathTex("1", color=text_color).next_to(number_line.n2p(1), DOWN)
-
-        point_1_4 = Dot(number_line.n2p(0.25), color=maarif_red, radius=0.1)
-        label_1_4 = MathTex("\\frac{1}{4}", color=maarif_red).next_to(point_1_4, UP, buff=0.5)
-        arrow_1_4 = Arrow(start=label_1_4.get_bottom(), end=point_1_4.get_top(), color=maarif_red, buff=0.1)
-
-        nl_group = VGroup(number_line, nl_0, nl_1)
-
-        self.play(Create(nl_group), run_time=2)
-        self.play(FadeIn(point_1_4), GrowArrow(arrow_1_4), Write(label_1_4), run_time=2)
-        self.wait(10.8) # Toplam 14.8s
-        self.play(FadeOut(nl_group), FadeOut(point_1_4), FadeOut(arrow_1_4), FadeOut(label_1_4))
+        
+        dot = Dot(nl.n2p(0.75), color="#D32F2F", radius=0.15)
+        dot_label = MathTex(r"\frac{3}{4}", color="#D32F2F").next_to(dot, UP)
+        jump_arrow = CurvedArrow(nl.n2p(0), nl.n2p(0.75), angle=-TAU/4, color="#002B4D")
+        
+        self.play(Create(nl), Write(labels), run_time=1)
+        self.play(Create(jump_arrow), run_time=1)
+        self.play(FadeIn(dot), Write(dot_label), run_time=0.8)
+        # Kalan süre: 10.8 - 3.8 = 7 saniye
+        self.wait(7)
