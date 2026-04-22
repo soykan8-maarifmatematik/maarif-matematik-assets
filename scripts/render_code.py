@@ -8,66 +8,66 @@ class MaarifScene(Scene):
         config.frame_width = 8.0
         self.camera.background_color = "#002B4D"
 
-        # KANCA (0-7 sn) - 15 kelime
-        hook_text = Text("Payda büyüdükçe\nkesir küçülür mü?", font_size=60, color="#FFFFFF").scale(0.8)
-        hook_text[0][0:5].set_color("#FFD700")
-        self.play(Write(hook_text), run_time=1.5)
-        self.wait(5.5)
-        self.play(FadeOut(hook_text), run_time=0.5)
+        # Title
+        title = Text("BİRİM KESİRLER", font_size=60, color="#FFD700", weight=BOLD).move_to(UP * 6)
 
-        # GÖVDE 1 (7-17 sn) - 23 kelime
-        title = Text("BİRİM KESİRLER", font_size=70, color="#FFD700").to_edge(UP, buff=1.5).scale(0.8)
-        self.play(FadeIn(title), run_time=1.0)
-
-        pizza1_group = VGroup()
-        pizza1 = Circle(radius=2, color="#FFFFFF", stroke_width=4)
-        line1 = Line(pizza1.get_top(), pizza1.get_bottom(), color="#FFFFFF")
-        frac1 = MathTex(r"\frac{1}{2}", font_size=90, color="#FFFFFF").next_to(pizza1, RIGHT, buff=0.5)
-        pizza1_group.add(pizza1, line1, frac1)
-        pizza1_group.move_to(UP * 2.5)
-
-        pizza2_group = VGroup()
-        pizza2 = Circle(radius=2, color="#FFFFFF", stroke_width=4)
-        line2_1 = Line(pizza2.get_top(), pizza2.get_bottom(), color="#FFFFFF")
-        line2_2 = Line(pizza2.get_left(), pizza2.get_right(), color="#FFFFFF")
-        frac2 = MathTex(r"\frac{1}{4}", font_size=90, color="#FFFFFF").next_to(pizza2, RIGHT, buff=0.5)
-        pizza2_group.add(pizza2, line2_1, line2_2, frac2)
-        pizza2_group.move_to(DOWN * 2.5)
-
-        pizza1_group.scale(0.7)
-        pizza2_group.scale(0.7)
-
-        self.play(Create(pizza1_group), Create(pizza2_group), run_time=2.0)
-        self.wait(7.2)
-
-        # GÖVDE 2 (17-26 sn) - 20 kelime
-        slice1 = Sector(arc_center=pizza1.get_center(), radius=1.4, angle=PI, start_angle=PI/2, color="#FFD700", fill_opacity=0.8)
-        slice2 = Sector(arc_center=pizza2.get_center(), radius=1.4, angle=PI/2, start_angle=PI/2, color="#D32F2F", fill_opacity=0.8)
-
-        self.play(Create(slice1), Create(slice2), run_time=2.0)
-        self.wait(7.0)
-
-        # GÖVDE 3 (26-34 sn) - 16 kelime
-        comp_text = Text("Hangisinin dilimi\ndaha büyük?", font_size=50, color="#FFFFFF").move_to(DOWN * 6).scale(0.8)
-        self.play(Write(comp_text), run_time=1.0)
-        self.wait(6.4)
-        self.play(FadeOut(comp_text), run_time=0.5)
-
-        # GÖVDE 4 (34-43 sn) - 20 kelime
-        rule_text = Text("Kişi sayısı artarsa,\ndilim küçülür!", font_size=55, color="#FFD700").move_to(DOWN * 6).scale(0.8)
-        self.play(Write(rule_text), run_time=1.0)
-        self.wait(2.0)
-
-        math_comp = MathTex(r"\frac{1}{2} > \frac{1}{4}", font_size=100, color="#FFFFFF").move_to(CENTER)
-        math_comp[0][3].set_color("#D32F2F")
+        # Pizza 1 (1/2)
+        pizza1_outline = Circle(radius=1.5, color=WHITE, stroke_width=4)
+        pizza1_lines = Line(pizza1_outline.get_top(), pizza1_outline.get_bottom(), color=WHITE)
+        pizza1_sector = Sector(radius=1.5, angle=PI, start_angle=PI/2, color="#D32F2F", fill_opacity=0.8)
+        pizza1_group = VGroup(pizza1_outline, pizza1_lines, pizza1_sector).move_to(UP * 2.5 + LEFT * 1.5)
         
-        self.play(FadeOut(pizza1_group), FadeOut(pizza2_group), FadeOut(slice1), FadeOut(slice2), FadeOut(rule_text), FadeOut(title), run_time=1.0)
-        self.play(Write(math_comp), run_time=1.0)
-        self.wait(4.0)
+        label1 = MathTex(r"\frac{1}{2}", font_size=90, color=WHITE).next_to(pizza1_group, RIGHT, buff=1)
 
-        # KAPANIŞ (43-50 sn) - 14 kelime
-        self.play(FadeOut(math_comp), run_time=0.5)
-        cta1 = Text("Maarif Matematik ile", font_size=60, color="#FFFFFF").move_to(UP*0.5).scale(0.8)
-        cta2 = Text("Mantığını Kavra!", font_size=70, color="#FFD700").next_to(cta1, DOWN, buff=0.3).scale(0.8)
-        self.play(FadeIn(cta1), FadeIn(cta2), run_time=1.0)
-        self.wait(5.1)
+        # Pizza 2 (1/8)
+        pizza2_outline = Circle(radius=1.5, color=WHITE, stroke_width=4)
+        pizza2_lines = VGroup(
+            Line(pizza2_outline.get_top(), pizza2_outline.get_bottom(), color=WHITE),
+            Line(pizza2_outline.get_left(), pizza2_outline.get_right(), color=WHITE),
+            Line(pizza2_outline.point_at_angle(PI/4), pizza2_outline.point_at_angle(5*PI/4), color=WHITE),
+            Line(pizza2_outline.point_at_angle(3*PI/4), pizza2_outline.point_at_angle(7*PI/4), color=WHITE)
+        )
+        pizza2_sector = Sector(radius=1.5, angle=PI/4, start_angle=PI/2, color="#FFD700", fill_opacity=0.8)
+        pizza2_group = VGroup(pizza2_outline, pizza2_lines, pizza2_sector).move_to(DOWN * 1.5 + LEFT * 1.5)
+        
+        label2 = MathTex(r"\frac{1}{8}", font_size=90, color=WHITE).next_to(pizza2_group, RIGHT, buff=1)
+
+        # Comparison & Rule
+        comparison = MathTex(r"\frac{1}{2} > \frac{1}{8}", font_size=90, color="#FFD700").move_to(DOWN * 4.5)
+        rule = Text("Payda Büyürse, Değer Küçülür!", font_size=40, color=WHITE).next_to(comparison, DOWN, buff=0.5)
+
+        # CTA
+        cta = Text("Maarif Matematik ile Mantığını Kavra!", font_size=35, color="#D32F2F", weight=BOLD).move_to(DOWN * 6.5)
+
+        # --- ANIMATIONS ---
+        # Hook (7.2s)
+        self.play(Write(title), run_time=1)
+        self.wait(6.2)
+
+        # Body 1 (10.4s)
+        self.play(Create(pizza1_outline), run_time=1)
+        self.play(Create(pizza1_lines), run_time=1)
+        self.play(FadeIn(pizza1_sector), run_time=1)
+        self.play(Write(label1), run_time=1)
+        self.wait(6.4)
+
+        # Body 2 (7.6s)
+        self.play(Create(pizza2_outline), run_time=1)
+        self.play(Create(pizza2_lines), run_time=1)
+        self.play(FadeIn(pizza2_sector), run_time=1)
+        self.play(Write(label2), run_time=1)
+        self.wait(3.6)
+
+        # Body 3 (10.0s)
+        self.play(Indicate(label1, color="#FFD700", scale_factor=1.2), run_time=1)
+        self.play(Indicate(label2, color="#FFD700", scale_factor=1.2), run_time=1)
+        self.wait(8.0)
+
+        # Body 4 (10.4s)
+        self.play(Write(comparison), run_time=1)
+        self.play(Write(rule), run_time=1)
+        self.wait(8.4)
+
+        # CTA (7.6s)
+        self.play(Write(cta), run_time=1)
+        self.wait(6.6)
