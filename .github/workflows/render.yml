@@ -1,12 +1,12 @@
 name: Maarif Matematik Video Render ve Youtube
 concurrency:
   group: maarif-render
-  cancel-in-progress: true # İkinci bir istek gelirse ilkini iptal etmez, sıraya sokar veya durdurur.
+  cancel-in-progress: true # Yeni bir tetikleme gelirse eskisini durdurur veya sıraya sokar.
 
 on:
   push:
     paths:
-      - 'metadata.json' # SADECE bu dosya değiştiğinde çalışır.
+      - 'metadata.json' # SADECE bu dosya değiştiğinde fırın çalışır.
 
 jobs:
   render:
@@ -35,7 +35,6 @@ jobs:
           VIDEO_PATH=$(find media -name "*.mp4" | grep -v "final_output" | head -n 1)
           AUDIO_PATH=$(find . -name "*.mp3" | head -n 1)
           if [ -n "$VIDEO_PATH" ] && [ -n "$AUDIO_PATH" ]; then
-            # -shortest kaldırıldı, senkron için genpts eklendi
             ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -fflags +genpts \
             -c:v libx264 -c:a aac -map 0:v:0 -map 1:a:0 -y media/videos/final_output.mp4
           fi
