@@ -1,13 +1,13 @@
 name: Maarif Matematik Video Render ve Youtube
 concurrency:
   group: maarif-render
-  cancel-in-progress: true
+  cancel-in-progress: true # Aynı anda iki video gelirse sıraya sokar veya eskisini durdurur.
 
 on:
   push:
     paths:
-      - 'metadata.json'
-  workflow_dispatch:
+      - 'metadata.json' # Sadece bu dosya güncellendiğinde fırın ısınır (Çift videoyu önler).
+  workflow_dispatch: # Manuel başlatma yetkisi.
 
 jobs:
   render:
@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install System Dependencies (LATEK VE FORMÜL DESTEKLİ)
+      - name: Install System Dependencies (HIZLI VE TAM DESTEK)
         run: |
           sudo apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -34,13 +34,21 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install manim numpy google-api-python-client google-auth-oauthlib google-auth-httplib2
 
-      - name: Render ve Merge
+      - name: Render ve Merge (Zırhlı Senkronizasyon)
         run: |
           mkdir -p media/videos
-          manim -qm --media_dir ./media scripts/render_code.py MaarifScene
+          
+          # Gemini'nin yazdığı sınıfı (MaarifScene) çalıştırır.
+          # Eğer isim değişirse diye hata toleransı ekledik.
+          manim -qm --media_dir ./media scripts/render_code.py MaarifScene || \
+          manim -qm --media_dir ./media scripts/render_code.py
+          
           VIDEO_PATH=$(find media -name "*.mp4" | grep -v "final_output" | head -n 1)
           AUDIO_PATH=$(find . -name "*.mp3" | head -n 1)
+          
           if [ -n "$VIDEO_PATH" ] && [ -n "$AUDIO_PATH" ]; then
+            # fflags +genpts: Ses ve görüntü kaymasını (lag) önler.
+            # -shortest kaldırıldı: Video görüntü bittikten sonra ses için siyah ekranda bekler (6 sn hatasını bitirir).
             ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -fflags +genpts \
             -c:v libx264 -c:a aac -map 0:v:0 -map 1:a:0 -y media/videos/final_output.mp4
           fi
