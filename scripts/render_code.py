@@ -8,66 +8,68 @@ class MaarifScene(Scene):
         config.frame_width = 8.0
         self.camera.background_color = "#002B4D"
 
-        # Title
-        title = Text("BİRİM KESİRLER", font_size=60, color="#FFD700", weight=BOLD).move_to(UP * 6)
-
-        # Pizza 1 (1/2)
-        pizza1_outline = Circle(radius=1.5, color=WHITE, stroke_width=4)
-        pizza1_lines = Line(pizza1_outline.get_top(), pizza1_outline.get_bottom(), color=WHITE)
-        pizza1_sector = Sector(radius=1.5, angle=PI, start_angle=PI/2, color="#D32F2F", fill_opacity=0.8)
-        pizza1_group = VGroup(pizza1_outline, pizza1_lines, pizza1_sector).move_to(UP * 2.5 + LEFT * 1.5)
+        # Kanca (0-8s)
+        frac1 = MathTex(r"\frac{1}{2}", font_size=144, color="#FFD700").move_to(UP*2)
+        question = Text("Mİ BÜYÜK?", font_size=72, color="#FFFFFF").scale(0.8)
+        frac2 = MathTex(r"\frac{1}{10}", font_size=144, color="#D32F2F").move_to(DOWN*2)
         
-        label1 = MathTex(r"\frac{1}{2}", font_size=90, color=WHITE).next_to(pizza1_group, RIGHT, buff=1)
-
-        # Pizza 2 (1/8)
-        pizza2_outline = Circle(radius=1.5, color=WHITE, stroke_width=4)
-        pizza2_lines = VGroup(
-            Line(pizza2_outline.get_top(), pizza2_outline.get_bottom(), color=WHITE),
-            Line(pizza2_outline.get_left(), pizza2_outline.get_right(), color=WHITE),
-            Line(pizza2_outline.point_at_angle(PI/4), pizza2_outline.point_at_angle(5*PI/4), color=WHITE),
-            Line(pizza2_outline.point_at_angle(3*PI/4), pizza2_outline.point_at_angle(7*PI/4), color=WHITE)
+        self.play(Write(frac1), run_time=1)
+        self.play(Write(question), run_time=1)
+        self.play(Write(frac2), run_time=1)
+        self.wait(5)
+        
+        # Kural (8-15s)
+        self.play(FadeOut(frac1, question, frac2))
+        rule1 = Text("PAYDA BÜYÜRSE", font_size=72, color="#FFD700", weight=BOLD).move_to(UP).scale(0.8)
+        rule2 = Text("DEĞER KÜÇÜLÜR!", font_size=72, color="#D32F2F", weight=BOLD).move_to(DOWN).scale(0.8)
+        
+        self.play(FadeIn(rule1, shift=UP), run_time=1)
+        self.play(FadeIn(rule2, shift=UP), run_time=1)
+        self.wait(5)
+        
+        # Pizzalar (15-28s)
+        self.play(FadeOut(rule1, rule2))
+        
+        pizza1_group = VGroup()
+        circle1 = Circle(radius=2, color="#FFFFFF")
+        line1 = Line(circle1.get_top(), circle1.get_bottom(), color="#FFFFFF")
+        pizza1_group.add(circle1, line1).move_to(UP*3)
+        
+        pizza2_group = VGroup()
+        circle2 = Circle(radius=2, color="#FFFFFF")
+        lines2 = VGroup(*[Line(circle2.get_center(), circle2.point_at_angle(i * TAU / 10), color="#FFFFFF") for i in range(10)])
+        pizza2_group.add(circle2, lines2).move_to(DOWN*3)
+        
+        self.play(Create(pizza1_group), run_time=1.5)
+        self.play(Create(pizza2_group), run_time=1.5)
+        self.wait(9.5)
+        
+        # Dilimler (28-40s)
+        sector1 = Sector(arc_center=circle1.get_center(), radius=2, angle=PI, start_angle=PI/2, color="#FFD700", fill_opacity=0.8)
+        sector2 = Sector(arc_center=circle2.get_center(), radius=2, angle=TAU/10, start_angle=PI/2, color="#D32F2F", fill_opacity=0.8)
+        
+        pizza1_full = VGroup(pizza1_group, sector1)
+        pizza2_full = VGroup(pizza2_group, sector2)
+        
+        self.play(FadeIn(sector1), run_time=1)
+        self.play(FadeIn(sector2), run_time=1)
+        self.wait(9.5)
+        
+        # Sonuc (40-49s)
+        conclusion = MathTex(r"\frac{1}{2} > \frac{1}{10}", font_size=120, color="#FFFFFF").move_to(ORIGIN)
+        
+        self.play(
+            pizza1_full.animate.scale(0.6).move_to(UP*4 + LEFT*2),
+            pizza2_full.animate.scale(0.6).move_to(UP*4 + RIGHT*2),
         )
-        pizza2_sector = Sector(radius=1.5, angle=PI/4, start_angle=PI/2, color="#FFD700", fill_opacity=0.8)
-        pizza2_group = VGroup(pizza2_outline, pizza2_lines, pizza2_sector).move_to(DOWN * 1.5 + LEFT * 1.5)
+        self.play(Write(conclusion), run_time=1)
+        self.wait(8.5)
         
-        label2 = MathTex(r"\frac{1}{8}", font_size=90, color=WHITE).next_to(pizza2_group, RIGHT, buff=1)
-
-        # Comparison & Rule
-        comparison = MathTex(r"\frac{1}{2} > \frac{1}{8}", font_size=90, color="#FFD700").move_to(DOWN * 4.5)
-        rule = Text("Payda Büyürse, Değer Küçülür!", font_size=40, color=WHITE).next_to(comparison, DOWN, buff=0.5)
-
-        # CTA
-        cta = Text("Maarif Matematik ile Mantığını Kavra!", font_size=35, color="#D32F2F", weight=BOLD).move_to(DOWN * 6.5)
-
-        # --- ANIMATIONS ---
-        # Hook (7.2s)
-        self.play(Write(title), run_time=1)
-        self.wait(6.2)
-
-        # Body 1 (10.4s)
-        self.play(Create(pizza1_outline), run_time=1)
-        self.play(Create(pizza1_lines), run_time=1)
-        self.play(FadeIn(pizza1_sector), run_time=1)
-        self.play(Write(label1), run_time=1)
-        self.wait(6.4)
-
-        # Body 2 (7.6s)
-        self.play(Create(pizza2_outline), run_time=1)
-        self.play(Create(pizza2_lines), run_time=1)
-        self.play(FadeIn(pizza2_sector), run_time=1)
-        self.play(Write(label2), run_time=1)
-        self.wait(3.6)
-
-        # Body 3 (10.0s)
-        self.play(Indicate(label1, color="#FFD700", scale_factor=1.2), run_time=1)
-        self.play(Indicate(label2, color="#FFD700", scale_factor=1.2), run_time=1)
-        self.wait(8.0)
-
-        # Body 4 (10.4s)
-        self.play(Write(comparison), run_time=1)
-        self.play(Write(rule), run_time=1)
-        self.wait(8.4)
-
-        # CTA (7.6s)
-        self.play(Write(cta), run_time=1)
-        self.wait(6.6)
+        # CTA (49-55s)
+        self.play(FadeOut(pizza1_full, pizza2_full, conclusion))
+        cta1 = Text("MAARİF MATEMATİK", font_size=80, color="#FFD700", weight=BOLD).move_to(UP).scale(0.8)
+        cta2 = Text("Mantığını Kavra!", font_size=60, color="#FFFFFF").move_to(DOWN).scale(0.8)
+        
+        self.play(Write(cta1), run_time=1)
+        self.play(Write(cta2), run_time=1)
+        self.wait(4.5)
