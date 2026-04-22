@@ -1,68 +1,51 @@
 from manim import *
 
-config.pixel_height = 1920
-config.pixel_width = 1080
-config.frame_height = 14.22
-config.frame_width = 8.0
-
-class MaarifScene(Scene):
+class BirimKesirler(Scene):
     def construct(self):
-        # Arka plan rengi: Maarif Laciverti
-        self.camera.background_color = "#002B4D"
+        config.pixel_height = 1920
+        config.pixel_width = 1080
+        config.frame_height = 14.22
+        config.frame_width = 8.0
 
-        # KANCA (HOOK) [0-5 sn]
-        hook_text = Text("Payda buyudukce\nkesir buyur mu?", font_size=70, color=WHITE).scale(0.8)
-        hook_text.shift(UP * 2)
-        self.play(Write(hook_text), run_time=1.5)
-        self.wait(1)
+        # Hook (21 kelime -> 8.4 saniye)
+        hook_text = Text("Payda Buyurse\nKesir Buyur mu?", font_size=60).scale(0.8).shift(UP * 2)
+        cross = Cross(hook_text, stroke_color=RED, stroke_width=8)
+        self.play(Write(hook_text), run_time=1)
+        self.play(Create(cross), run_time=1)
+        self.wait(6.4)
+        self.play(FadeOut(hook_text), FadeOut(cross))
 
-        wrong_cross = Cross(hook_text, stroke_color=RED, stroke_width=10)
-        self.play(Create(wrong_cross), run_time=0.5)
-        self.wait(1)
+        # Body 1 (37 kelime -> 14.8 saniye)
+        pizza_text = Text("1 Butun Pizza", font_size=50, color=YELLOW).scale(0.8).shift(UP * 3)
+        pizza = Circle(radius=2.5, color=ORANGE, fill_opacity=0.5).scale(0.8)
+        self.play(Write(pizza_text), run_time=1)
+        self.play(Create(pizza), run_time=1)
+        self.wait(12.8)
 
-        self.play(FadeOut(hook_text), FadeOut(wrong_cross))
-
-        # GOVDE (BODY) [5-50 sn]
-        # 1/2 Kesri (Pasta 2'ye bolunmus)
-        circle_half_bg = Circle(radius=1.5, color=WHITE, stroke_width=4).shift(UP * 2)
-        slice_half = Sector(radius=1.5, angle=PI, start_angle=0, color="#FFD700", fill_opacity=0.9).shift(UP * 2)
-        label_half = MathTex(r"\frac{1}{2}", font_size=90, color=WHITE).next_to(circle_half_bg, LEFT, buff=0.5)
-
-        self.play(Create(circle_half_bg), Write(label_half), run_time=1)
-        self.play(Create(slice_half), run_time=1)
-        self.wait(2)
-
-        # 1/8 Kesri (Pasta 8'e bolunmus)
-        circle_eighth_bg = Circle(radius=1.5, color=WHITE, stroke_width=4).shift(DOWN * 1.5)
-        slice_eighth = Sector(radius=1.5, angle=PI/4, start_angle=0, color="#FFD700", fill_opacity=0.9).shift(DOWN * 1.5)
-        label_eighth = MathTex(r"\frac{1}{8}", font_size=90, color=WHITE).next_to(circle_eighth_bg, LEFT, buff=0.5)
-
-        self.play(Create(circle_eighth_bg), Write(label_eighth), run_time=1)
-        self.play(Create(slice_eighth), run_time=1)
-        self.wait(2)
-
-        # Buyuktur Isareti
-        greater_sign = MathTex(">", font_size=120, color="#FFD700").move_to(UP * 0.25)
-        self.play(Write(greater_sign), run_time=0.5)
-        self.wait(2)
-
-        # Alt Kural Metni (Guvenli Alan Sinirinda)
-        rule_text = Text("Payda Buyurse\nDilim Kuculur!", font_size=70, color="#FFD700", weight=BOLD).scale(0.8)
-        rule_bg = BackgroundRectangle(rule_text, color=BLACK, fill_opacity=0.5, buff=0.2)
-        rule_group = VGroup(rule_bg, rule_text).shift(DOWN * 4)
+        # Body 2 (29 kelime -> 11.6 saniye)
+        half_pizza = Sector(radius=2.0, angle=PI, color=RED, fill_opacity=0.8)
+        half_text = MathTex(r"\frac{1}{2}", font_size=80).scale(0.8).shift(UP * 1.5 + LEFT * 1)
         
-        self.play(FadeIn(rule_group, shift=UP))
-        self.wait(3)
+        eighth_pizza = Sector(radius=2.0, angle=PI/4, color=BLUE, fill_opacity=0.8)
+        eighth_text = MathTex(r"\frac{1}{8}", font_size=80).scale(0.8).shift(UP * 1.5 + RIGHT * 1)
 
-        # Ekranı Temizle
-        self.play(FadeOut(Group(*self.mobjects)))
+        self.play(Transform(pizza, half_pizza), Write(half_text), run_time=1)
+        self.wait(4.8)
+        self.play(Transform(pizza, eighth_pizza), Transform(half_text, eighth_text), run_time=1)
+        self.wait(4.8)
+        self.play(FadeOut(pizza), FadeOut(half_text), FadeOut(pizza_text))
 
-        # KAPANIS (CTA) [50-60 sn]
-        cta_text1 = Text("Maarif Matematik ile", font_size=65, color=WHITE).scale(0.8).shift(UP * 0.5)
-        cta_text2 = Text("mantigini kavra,", font_size=65, color="#FFD700").scale(0.8).next_to(cta_text1, DOWN)
-        cta_text3 = Text("takipte kal!", font_size=65, color=WHITE).scale(0.8).next_to(cta_text2, DOWN)
-        
-        self.play(Write(cta_text1), run_time=0.8)
-        self.play(Write(cta_text2), run_time=0.8)
-        self.play(Write(cta_text3), run_time=0.8)
-        self.wait(2)
+        # Body 3 (31 kelime -> 12.4 saniye)
+        rule_text1 = Text("Payda Buyurse", font_size=60, color=GREEN).scale(0.8).shift(UP * 1)
+        rule_text2 = Text("Dilim Kuculur!", font_size=60, color=RED).scale(0.8).shift(DOWN * 1)
+        tiny_text = MathTex(r"\frac{1}{100} = \text{Tek Lokma!}", font_size=50).scale(0.8).shift(DOWN * 3)
+
+        self.play(Write(rule_text1), Write(rule_text2), run_time=1)
+        self.play(Write(tiny_text), run_time=1)
+        self.wait(10.4)
+        self.play(FadeOut(rule_text1), FadeOut(rule_text2), FadeOut(tiny_text))
+
+        # CTA (7 kelime -> 2.8 saniye)
+        cta_text = Text("Maarif Matematik ile\nmantigini kavra!", font_size=60, color=YELLOW).scale(0.8)
+        self.play(Write(cta_text), run_time=1)
+        self.wait(1.8)
