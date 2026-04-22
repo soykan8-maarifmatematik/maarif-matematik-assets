@@ -9,55 +9,72 @@ class MaarifScene(Scene):
     def construct(self):
         # Arka plan rengi (Maarif Laciverti)
         self.camera.background_color = "#002B4D"
+
+        # 1. KANCA (HOOK)
+        hook_text1 = Text("PAYDA BÜYÜDÜKÇE", font_size=56, color=WHITE).shift(UP*2)
+        hook_text2 = Text("KESİR KÜÇÜLÜR MÜ?", font_size=64, color="#FFD700").next_to(hook_text1, DOWN)
         
-        # Başlık ve Kanca
-        title = Text("BİRİM KESİRLER", color="#FFD700", font_size=64).to_edge(UP, buff=1.0)
-        hook = Text("1/3 mü büyük,\nyoksa 1/10 mu?", color="#FFFFFF", font_size=48, text_alignment=CENTER).next_to(title, DOWN, buff=0.5)
-        
-        self.play(Write(title), run_time=1)
-        self.play(Write(hook), run_time=1.5)
-        self.wait(2.5) # Kanca süresi (Toplam 5 sn)
-        
-        self.play(FadeOut(hook), run_time=0.5)
-        
-        # 1/3 Kesri ve Görseli
-        frac_1_3 = MathTex(r"\frac{1}{3}", font_size=96, color="#FFD700").move_to(UP * 2.5)
-        pizza_1_3 = Circle(radius=1.5, color="#FFFFFF").next_to(frac_1_3, DOWN, buff=0.5)
-        slice_1_3 = Sector(radius=1.5, angle=TAU/3, start_angle=PI/2, color="#D32F2F", fill_opacity=0.9).move_to(pizza_1_3.get_center())
-        
-        self.play(Write(frac_1_3), run_time=1)
+        self.play(Write(hook_text1), run_time=1)
+        self.play(FadeIn(hook_text2, shift=UP), run_time=1)
         self.wait(2)
+        self.play(FadeOut(hook_text1, hook_text2), run_time=0.5)
+
+        # 2. GÖVDE (BODY)
+        def_text = Text("BİRİM KESİR: Payı 1 olan kesir", font_size=40, color=WHITE).shift(UP*6)
+        self.play(FadeIn(def_text, shift=DOWN), run_time=1)
+        self.wait(1.5)
+
+        # Pizza 1 (1/2)
+        pizza1 = Circle(radius=2, color=WHITE, fill_opacity=0.1).shift(UP*2.5)
+        # outer_radius KULLANILMADI, sadece radius kullanıldı.
+        slice1 = Sector(radius=2, angle=PI, start_angle=PI/2, color="#D32F2F", fill_opacity=0.9).shift(UP*2.5)
+        frac1 = MathTex(r"\frac{1}{2}", font_size=96, color=WHITE).next_to(pizza1, LEFT, buff=0.5)
         
-        self.play(Create(pizza_1_3), run_time=1)
-        self.play(Create(slice_1_3), run_time=1)
-        self.wait(5) # 3 arkadaş paylaşımı anlatımı
+        self.play(Create(pizza1), run_time=1)
+        self.play(Create(slice1), run_time=1)
+        self.play(Write(frac1), run_time=0.5)
+        self.wait(2)
+
+        # Pizza 2 (1/8)
+        pizza2 = Circle(radius=2, color=WHITE, fill_opacity=0.1).shift(DOWN*2.5)
+        slice2 = Sector(radius=2, angle=TAU/8, start_angle=PI/2, color="#FFD700", fill_opacity=0.9).shift(DOWN*2.5)
+        frac2 = MathTex(r"\frac{1}{8}", font_size=96, color=WHITE).next_to(pizza2, LEFT, buff=0.5)
+
+        self.play(Create(pizza2), run_time=1)
+        self.play(Create(slice2), run_time=1)
+        self.play(Write(frac2), run_time=0.5)
+        self.wait(2)
+
+        # Karşılaştırma
+        comp_text = MathTex(r"\frac{1}{2} > \frac{1}{8}", font_size=120, color=WHITE).move_to(ORIGIN)
+        comp_text[0][3].set_color("#FFD700") # Büyüktür işareti sarı
         
-        # 1/10 Kesri ve Görseli
-        frac_1_10 = MathTex(r"\frac{1}{10}", font_size=96, color="#FFD700").move_to(DOWN * 1.5)
-        pizza_1_10 = Circle(radius=1.5, color="#FFFFFF").next_to(frac_1_10, DOWN, buff=0.5)
-        slice_1_10 = Sector(radius=1.5, angle=TAU/10, start_angle=PI/2, color="#D32F2F", fill_opacity=0.9).move_to(pizza_1_10.get_center())
-        
-        self.play(Write(frac_1_10), run_time=1)
-        self.play(Create(pizza_1_10), run_time=1)
-        self.play(Create(slice_1_10), run_time=1)
-        self.wait(4) # 10 arkadaş paylaşımı anlatımı
-        
-        # Kural Metni
-        rule = Text("Payda büyürse,\ndilim küçülür!", color="#FFD700", font_size=56, text_alignment=CENTER).move_to(DOWN * 5.5)
-        self.play(Write(rule), run_time=1)
-        self.wait(6) # Kuralın açıklanması
-        
-        # Sonuç ve Kapanış
+        # Pizzaları hafif sağa kaydırıp ortayı açalım
         self.play(
-            FadeOut(pizza_1_3), FadeOut(slice_1_3), 
-            FadeOut(pizza_1_10), FadeOut(slice_1_10), 
-            FadeOut(rule), run_time=1
+            pizza1.animate.shift(RIGHT*1.5),
+            slice1.animate.shift(RIGHT*1.5),
+            pizza2.animate.shift(RIGHT*1.5),
+            slice2.animate.shift(RIGHT*1.5),
+            FadeOut(frac1, frac2),
+            run_time=1
+        )
+        self.play(Write(comp_text), run_time=1)
+        self.wait(2.5)
+
+        # Kural Metni
+        rule_text = Text("Payda Küçük = Dilim Büyük!", font_size=48, color="#FFD700").shift(DOWN*6)
+        self.play(FadeIn(rule_text, scale=0.5), run_time=1)
+        self.wait(3)
+
+        # 3. KAPANIŞ (CTA)
+        self.play(
+            FadeOut(def_text, pizza1, slice1, pizza2, slice2, comp_text, rule_text),
+            run_time=0.5
         )
         
-        final_math = MathTex(r"\frac{1}{3} > \frac{1}{10}", font_size=144, color="#FFFFFF").move_to(CENTER)
-        self.play(Transform(frac_1_3, final_math), FadeOut(frac_1_10), run_time=1)
-        self.wait(3) # Son kural vurgusu
+        cta1 = Text("Mantığını Ezberlemeden Öğren!", font_size=40, color=WHITE).shift(UP*0.5)
+        cta2 = Text("Maarif Matematik'i Takip Et!", font_size=56, color="#FFD700").next_to(cta1, DOWN)
         
-        cta = Text("Daha fazlası için\ntakip et!", color="#FFD700", font_size=56, text_alignment=CENTER).next_to(final_math, DOWN, buff=1.5)
-        self.play(Write(cta), run_time=1)
-        self.wait(4) # Kapanış beklemesi
+        self.play(Write(cta1), run_time=1)
+        self.play(FadeIn(cta2, shift=UP), run_time=1)
+        self.wait(3)
