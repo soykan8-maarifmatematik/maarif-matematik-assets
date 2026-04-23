@@ -7,59 +7,71 @@ config.frame_height = 16.0
 
 class MaarifScene(Scene):
     def construct(self):
-        # 1. GİRİŞ (13 kelime -> 4.3 saniye)
-        title = Text("Maarif Matematik", font="DejaVu Sans", color=YELLOW)
-        title.scale_to_fit_width(7.0)
-        subtitle = Text("Birim Kesirler", font="DejaVu Sans", color=WHITE)
-        subtitle.scale_to_fit_width(7.0)
-        
-        group1 = VGroup(title, subtitle).arrange(DOWN, buff=1.2)
-        self.play(Write(group1), run_time=1.0)
-        self.wait(4.3)
-        self.play(FadeOut(group1), run_time=0.5)
+        # Intro
+        text_intro = Text("Merhaba, Maarif Matematik'e hoş geldiniz.", font="DejaVu Sans", font_size=40, text_align="center").to_edge(UP, buff=1)
+        self.play(Write(text_intro))
+        self.wait(1.67)
+        self.play(FadeOut(text_intro))
 
-        # 2. SORU VE TANIM (21 kelime -> 7.0 saniye)
-        q_text = Text("Hangisi Daha Büyük?", font="DejaVu Sans", color=BLUE)
-        q_text.scale_to_fit_width(7.0)
-        
-        frac1 = MathTex(r"\frac{1}{2}").scale(4)
-        q_mark = Text("?", font="DejaVu Sans", color=RED).scale(3)
-        frac2 = MathTex(r"\frac{1}{8}").scale(4)
-        
-        frac_group = VGroup(frac1, q_mark, frac2).arrange(RIGHT, buff=1.5)
-        group2 = VGroup(q_text, frac_group).arrange(DOWN, buff=1.2)
-        
-        self.play(FadeIn(group2, shift=UP), run_time=1.0)
-        self.wait(7.0)
-        self.play(FadeOut(group2, shift=DOWN), run_time=0.5)
+        # Hook
+        text_hook = Text("Birim kesirlerde payda büyüdükçe\nkesrin değeri neden küçülür?", font="DejaVu Sans", font_size=40, text_align="center").to_edge(UP, buff=1)
+        self.play(Write(text_hook))
+        self.wait(2.67)
+        self.play(FadeOut(text_hook))
 
-        # 3. KURAL VE AÇIKLAMA (59 kelime -> 19.6 saniye)
-        pizza_text = Text("Pizza Dilimleri", font="DejaVu Sans", color=ORANGE)
-        pizza_text.scale_to_fit_width(7.0)
-        
-        rule_text1 = Text("Payda Büyüdükçe", font="DejaVu Sans", color=WHITE)
-        rule_text1.scale_to_fit_width(7.0)
-        
-        rule_text2 = Text("Değer Küçülür", font="DejaVu Sans", color=GREEN)
-        rule_text2.scale_to_fit_width(7.0)
-        
-        greater_sign = MathTex(">").scale(4).set_color(YELLOW)
-        final_frac = VGroup(
-            MathTex(r"\frac{1}{2}").scale(4),
-            greater_sign,
-            MathTex(r"\frac{1}{8}").scale(4)
-        ).arrange(RIGHT, buff=1.0)
-        
-        group3 = VGroup(pizza_text, rule_text1, rule_text2, final_frac).arrange(DOWN, buff=1.2)
-        
-        self.play(Write(group3), run_time=1.5)
-        self.wait(19.6)
-        self.play(FadeOut(group3), run_time=0.5)
+        # Setup circles
+        circle1 = Circle(radius=2.0, color=WHITE)
+        circle2 = Circle(radius=2.0, color=WHITE)
+        circles = VGroup(circle1, circle2).arrange(DOWN, buff=1.2)
+        c1 = circle1.get_center()
+        c2 = circle2.get_center()
 
-        # 4. ÇIKIŞ (7 kelime -> 2.3 saniye)
-        outro_text = Text("Hoşça Kalın", font="DejaVu Sans", color=YELLOW)
-        outro_text.scale_to_fit_width(7.0)
+        # 1/2 Model
+        text_1 = Text("Bir pizzayı iki eş parçaya bölelim ve\nbir dilimini alalım. Bu bir bölü ikidir.", font="DejaVu Sans", font_size=36, text_align="center").to_edge(DOWN, buff=1)
+        self.play(Write(text_1))
+        self.play(Create(circle1))
+        line1 = Line(c1 + UP*2.0, c1 + DOWN*2.0, color=WHITE)
+        self.play(Create(line1))
+        sector1 = Sector(outer_radius=2.0, angle=PI, start_angle=PI/2, color=YELLOW, fill_opacity=0.7, arc_center=c1)
+        label1 = MathTex(r"\frac{1}{2}").scale(2).next_to(circle1, LEFT, buff=0.5)
+        self.play(FadeIn(sector1), Write(label1))
+        self.wait(4.67)
+        self.play(FadeOut(text_1))
+
+        # 1/8 Model
+        text_2 = Text("Aynı pizzayı sekiz eş parçaya bölersek\nalacağımız bir dilim çok daha küçük olur.\nBu da bir bölü sekizdir.", font="DejaVu Sans", font_size=36, text_align="center").to_edge(DOWN, buff=1)
+        self.play(Write(text_2))
+        self.play(Create(circle2))
+        lines2 = VGroup()
+        for i in range(4):
+            angle = i * PI / 4
+            lines2.add(Line(c2 + np.array([np.cos(angle), np.sin(angle), 0])*2.0,
+                            c2 - np.array([np.cos(angle), np.sin(angle), 0])*2.0, color=WHITE))
+        self.play(Create(lines2))
+        sector2 = Sector(outer_radius=2.0, angle=PI/4, start_angle=PI/2, color=RED, fill_opacity=0.7, arc_center=c2)
+        label2 = MathTex(r"\frac{1}{8}").scale(2).next_to(circle2, LEFT, buff=0.5)
+        self.play(FadeIn(sector2), Write(label2))
+        self.wait(6.0)
+        self.play(FadeOut(text_2))
+
+        # Comparison
+        text_comp = Text("Gördüğünüz gibi payda parça sayısını gösterir.\nParça sayısı artarsa dilim küçülür.", font="DejaVu Sans", font_size=36, text_align="center").to_edge(DOWN, buff=1)
+        self.play(Write(text_comp))
+        self.wait(3.67)
+        self.play(FadeOut(text_comp))
+
+        # Rule
+        text_rule = Text("Yani bir bölü iki büyüktür bir bölü sekizden.", font="DejaVu Sans", font_size=36, text_align="center").to_edge(DOWN, buff=1)
+        self.play(Write(text_rule))
+        sign = MathTex(">").scale(3).move_to((c1+c2)/2)
+        self.play(Write(sign))
+        self.wait(2.67)
+        self.play(FadeOut(text_rule))
+
+        # Outro
+        text_outro = Text("Bir sonraki derste görüşmek üzere, hoşça kalın.", font="DejaVu Sans", font_size=40, text_align="center").to_edge(DOWN, buff=1)
+        self.play(Write(text_outro))
+        self.wait(2.33)
         
-        self.play(FadeIn(outro_text, scale=1.2), run_time=1.0)
-        self.wait(2.3)
-        self.play(FadeOut(outro_text), run_time=0.5)
+        # Ending Fix
+        self.wait(5)
