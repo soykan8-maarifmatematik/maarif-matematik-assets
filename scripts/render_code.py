@@ -2,57 +2,57 @@ from manim import *
 
 config.pixel_height = 1920
 config.pixel_width = 1080
-config.frame_height = 14.22
-config.frame_width = 8.0
+config.frame_height = 16.0
+config.frame_width = 9.0
 
-class BirimKesirler(Scene):
+class BirimKesir(Scene):
     def construct(self):
-        # Giriş (8 kelime -> 3.33s)
-        title = Text("Maarif Matematik", font_size=85).move_to(UP * 4.5)
-        title.scale_to_fit_width(7.0)
-        self.play(Write(title))
+        baslik = Text("Birim Kesirler", color=YELLOW)
+        baslik.scale_to_fit_width(6.8)
+        baslik.to_edge(UP, buff=1)
+        self.play(Write(baslik))
         self.wait(3.33)
 
-        # Soru ve Kanca (12 kelime -> 5.0s)
-        q_text = Text("Birim Kesirler Neden Küçülür?", font_size=85).move_to(DOWN * 4.5)
-        q_text.scale_to_fit_width(7.0)
-        self.play(Write(q_text))
+        alt_yazi = Text("Pizza Mantigi", color=WHITE)
+        alt_yazi.scale_to_fit_width(6.8)
+        alt_yazi.next_to(baslik, DOWN, buff=0.5)
+        self.play(FadeIn(alt_yazi))
+        self.wait(4.58)
+
+        daire = Circle(radius=3, color=WHITE, fill_opacity=0.1)
+        self.play(Create(daire))
+        self.wait(3.33)
+
+        dilim_iki = Sector(arc_center=daire.get_center(), radius=3, angle=PI, start_angle=0, color=ORANGE, fill_opacity=0.8)
+        self.play(Create(dilim_iki))
+        self.wait(7.5)
+
+        yazi_iki = Text("1 / 2", color=WHITE)
+        yazi_iki.scale_to_fit_width(6.8)
+        yazi_iki.move_to(UP * 1.5)
+        self.play(Write(yazi_iki))
+        self.wait(1.25)
+
+        self.play(FadeOut(dilim_iki), FadeOut(yazi_iki))
+
+        dilim_sekiz = Sector(arc_center=daire.get_center(), radius=3, angle=PI/4, start_angle=0, color=RED, fill_opacity=0.8)
+        self.play(Create(dilim_sekiz))
+        self.wait(7.5)
+
+        yazi_sekiz = Text("1 / 8", color=WHITE)
+        yazi_sekiz.scale_to_fit_width(6.8)
+        yazi_sekiz.move_to(RIGHT * 1.5 + UP * 0.6)
+        self.play(Write(yazi_sekiz))
         self.wait(5.0)
 
-        # Pizzaların ortaya çıkışı (12 kelime -> 5.0s)
-        self.play(FadeOut(title), FadeOut(q_text))
-        circle1 = Circle(radius=1.8, color=WHITE)
-        circle2 = Circle(radius=1.8, color=WHITE)
-        pizzas = VGroup(circle1, circle2).arrange(DOWN, buff=1.2)
-        self.play(Create(pizzas))
-        self.wait(5.0)
+        kural = Text("Payda Buyudukce Deger Kuculur", color=GREEN)
+        kural.scale_to_fit_width(6.8)
+        kural.to_edge(DOWN, buff=2)
+        self.play(Write(kural))
+        self.wait(5.83)
 
-        # İlk Pizza 1/2 (15 kelime -> 6.25s)
-        slice1 = Sector(radius=1.8, angle=PI, color=YELLOW, fill_opacity=0.8, arc_center=circle1.get_center())
-        frac1 = MathTex(r"\frac{1}{2}").next_to(circle1, LEFT, buff=0.5).scale(2)
-        self.play(Create(slice1), Write(frac1))
-        self.wait(6.25)
-
-        # İkinci Pizza 1/10 (19 kelime -> 7.91s)
-        slice2 = Sector(radius=1.8, angle=TAU/10, color=ORANGE, fill_opacity=0.8, arc_center=circle2.get_center())
-        frac2 = MathTex(r"\frac{1}{10}").next_to(circle2, LEFT, buff=0.5).scale(2)
-        self.play(Create(slice2), Write(frac2))
-        self.wait(7.91)
-
-        # Mantık Açıklaması (20 kelime -> 8.33s)
-        exp_text = Text("Payda Büyüdükçe Dilim Küçülür", font_size=85).move_to(UP * 4.5)
-        exp_text.scale_to_fit_width(7.0)
-        self.play(Write(exp_text))
-        self.wait(8.33)
-
-        # Sonuç (17 kelime -> 7.08s)
-        comp_text = MathTex(r"\frac{1}{2} > \frac{1}{10}").move_to(DOWN * 4.5).scale(2.5)
-        self.play(Write(comp_text))
-        self.wait(7.08)
-
-        # Kapanış (7 kelime -> 2.91s)
-        self.play(FadeOut(comp_text))
-        outro_text = Text("Görüşmek Üzere!", font_size=85).move_to(DOWN * 4.5)
-        outro_text.scale_to_fit_width(7.0)
-        self.play(Write(outro_text))
+        veda = Text("Maarif Matematik", color=BLUE)
+        veda.scale_to_fit_width(6.8)
+        self.play(FadeOut(daire), FadeOut(dilim_sekiz), FadeOut(yazi_sekiz), FadeOut(baslik), FadeOut(alt_yazi), FadeOut(kural))
+        self.play(FadeIn(veda))
         self.wait(2.91)
