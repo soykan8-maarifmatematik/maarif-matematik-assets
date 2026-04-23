@@ -7,53 +7,79 @@ config.frame_width = 8.0
 
 class BirimKesirler(Scene):
     def construct(self):
-        # KANCA [0-5 sn]
-        hook_text = Text("1/2 mi büyük 1/8 mi?", font_size=85)
-        hook_text.scale_to_fit_width(7)
-        hook_text.to_edge(UP, buff=1)
-        self.play(Write(hook_text))
-        self.wait(2)
+        # Captions
+        cap1 = Text("1/2 mi daha büyük yoksa 1/10 mu?", font_size=85, weight=BOLD).scale_to_fit_width(7).to_edge(DOWN, buff=1.0)
+        cap2 = Text("Payda büyüdükçe kesir neden küçülür?", font_size=85, weight=BOLD).scale_to_fit_width(7).to_edge(DOWN, buff=1.0)
+        cap3 = Text("Gelin bunu bir pizza üzerinden düşünelim.", font_size=85, weight=BOLD).scale_to_fit_width(7).to_edge(DOWN, buff=1.0)
+        cap4 = Text("1/2 demek, pizzayı 2 eş parçaya bölüp", font_size=85, weight=BOLD).scale_to_fit_width(7).to_edge(DOWN, buff=1.0)
+        cap5 = Text("1 dilimini almak demektir.", font_size=85, weight=BOLD).scale_to_fit_width(7).to_edge(DOWN, buff=1.0)
+        cap6 = Text("1/10 ise, 10 eş parçaya bölüp", font_size=85, weight=BOLD).scale_to_fit_width(7).to_edge(DOWN, buff=1.0)
+        cap7 = Text("1 dilimini almaktır.", font_size=85, weight=BOLD).scale_to_fit_width(7).to_edge(DOWN, buff=1.0)
+        cap8 = Text("İkiye böldüğümüz dilim kocaman!", font_size=85, weight=BOLD).scale_to_fit_width(7).to_edge(DOWN, buff=1.0)
+        cap9 = Text("Ona böldüğümüz dilim ise küçücük.", font_size=85, weight=BOLD).scale_to_fit_width(7).to_edge(DOWN, buff=1.0)
+        cap10 = Text("Birim kesirlerde payda büyüdükçe", font_size=85, weight=BOLD).scale_to_fit_width(7).to_edge(DOWN, buff=1.0)
+        cap11 = Text("değer küçülür.", font_size=85, weight=BOLD).scale_to_fit_width(7).to_edge(DOWN, buff=1.0)
+        cap12 = Text("Maarif Matematik ile mantığını kavra,\ntakipte kal!", font_size=85, weight=BOLD, text_align="center").scale_to_fit_width(7).to_edge(DOWN, buff=1.0)
 
-        # GÖVDE [5-50 sn]
-        circle1 = Circle(radius=1.8, color=WHITE)
-        sector1 = Sector(radius=1.8, angle=PI, color=BLUE, fill_opacity=0.7)
-        sector1.move_to(circle1.get_center())
-        line1 = Line(circle1.get_top(), circle1.get_bottom(), color=WHITE)
-        c1_group = VGroup(circle1, sector1, line1)
+        # Objects
         frac1 = MathTex(r"\frac{1}{2}", font_size=110)
-        group1 = VGroup(frac1, c1_group).arrange(RIGHT, buff=1)
+        circle1 = Circle(radius=1.5, color=WHITE)
+        sector1 = Sector(radius=1.5, angle=PI, start_angle=PI/2, color=YELLOW, fill_opacity=0.8)
+        line1 = Line(circle1.get_boundary_point(PI/2), circle1.get_boundary_point(3*PI/2), color=WHITE)
+        pizza1 = VGroup(circle1, line1)
 
-        circle2 = Circle(radius=1.8, color=WHITE)
-        sector2 = Sector(radius=1.8, angle=TAU/8, color=RED, fill_opacity=0.7)
+        frac2 = MathTex(r"\frac{1}{10}", font_size=110)
+        circle2 = Circle(radius=1.5, color=WHITE)
+        sector2 = Sector(radius=1.5, angle=TAU/10, start_angle=PI/2, color=RED, fill_opacity=0.8)
+        lines2 = VGroup(*[Line(circle2.get_center(), circle2.get_boundary_point(i*TAU/10 + PI/2), color=WHITE) for i in range(10)])
+        pizza2 = VGroup(circle2, lines2)
+
+        item1 = VGroup(frac1, pizza1).arrange(RIGHT, buff=1.0)
+        item2 = VGroup(frac2, pizza2).arrange(RIGHT, buff=1.0)
+        comparison = VGroup(item1, item2).arrange(DOWN, buff=1.5).shift(UP*0.5)
+
+        sector1.move_to(circle1.get_center())
         sector2.move_to(circle2.get_center())
-        lines2 = VGroup(*[Line(circle2.get_center(), circle2.get_boundary_point(angle), color=WHITE) for angle in [i * TAU/8 for i in range(8)]])
-        c2_group = VGroup(circle2, sector2, lines2)
-        frac2 = MathTex(r"\frac{1}{8}", font_size=110)
-        group2 = VGroup(frac2, c2_group).arrange(RIGHT, buff=1)
 
-        comparison_group = VGroup(group1, group2).arrange(DOWN, buff=1.5)
-        comparison_group.next_to(hook_text, DOWN, buff=1)
+        # Animations
+        self.play(Write(cap1), run_time=1.5)
+        self.play(FadeIn(frac1, shift=DOWN), FadeIn(frac2, shift=UP), run_time=1)
+        self.play(Transform(cap1, cap2), run_time=1.5)
+        self.play(Indicate(frac2, color=RED), run_time=1)
 
-        self.play(FadeIn(c1_group), FadeIn(c2_group))
-        self.wait(3)
+        self.play(Transform(cap1, cap3), run_time=1.5)
+        self.play(FadeOut(frac1), FadeOut(frac2), run_time=0.5)
 
-        self.play(Write(frac1), Write(frac2))
-        self.wait(4)
+        self.play(Transform(cap1, cap4), FadeIn(frac1), Create(pizza1), run_time=2)
+        self.play(Transform(cap1, cap5), run_time=1.5)
+        self.play(FadeIn(sector1), run_time=0.5)
+        self.play(Indicate(sector1, scale_factor=1.1), run_time=1)
 
-        self.play(Indicate(sector2, color=YELLOW))
-        self.wait(4)
+        self.play(Transform(cap1, cap6), FadeIn(frac2), Create(pizza2), run_time=2)
+        self.play(Transform(cap1, cap7), run_time=1.5)
+        self.play(FadeIn(sector2), run_time=0.5)
+        self.play(Indicate(sector2, scale_factor=1.1), run_time=1)
 
-        result = MathTex(r"\frac{1}{2} > \frac{1}{8}", font_size=110, color=GREEN)
-        result.next_to(comparison_group, DOWN, buff=1)
+        self.play(Transform(cap1, cap8), run_time=1.5)
+        self.play(Wiggle(sector1), Circumscribe(sector1, color=YELLOW), run_time=1.5)
+
+        self.play(Transform(cap1, cap9), run_time=1.5)
+        self.play(Wiggle(sector2), Circumscribe(sector2, color=RED), run_time=1.5)
+
+        self.play(Transform(cap1, cap10), run_time=1.5)
+        label_big = Text("BÜYÜK", font_size=60, color=GREEN).next_to(item1, LEFT, buff=0.5)
+        label_small = Text("KÜÇÜK", font_size=60, color=RED).next_to(item2, LEFT, buff=0.5)
+        self.play(Write(label_big), Write(label_small), run_time=1)
         
-        self.play(Write(result))
-        self.wait(5)
+        self.play(Transform(cap1, cap11), run_time=1)
+        self.play(Indicate(label_big), Indicate(label_small), run_time=1)
 
-        self.wait(3)
-
-        # KAPANIŞ [50-60 sn]
-        self.play(FadeOut(comparison_group), FadeOut(hook_text), FadeOut(result))
-        cta_text = Text("Maarif Matematik ile mantığını kavra takipte kal", font_size=85)
-        cta_text.scale_to_fit_width(7)
-        self.play(Write(cta_text))
-        self.wait(3)
+        self.play(Transform(cap1, cap12), run_time=1.5)
+        self.play(
+            FadeOut(comparison), FadeOut(sector1), FadeOut(sector2),
+            FadeOut(label_big), FadeOut(label_small),
+            run_time=1
+        )
+        logo = Text("Maarif Matematik", font_size=100, weight=BOLD, color=BLUE)
+        self.play(Write(logo), run_time=1)
+        self.play(Circumscribe(logo), run_time=1)
