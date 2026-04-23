@@ -2,69 +2,64 @@ from manim import *
 
 config.pixel_width = 1080
 config.pixel_height = 1920
-config.frame_width = 8.0
-config.frame_height = 14.22
+config.frame_width = 9.0
+config.frame_height = 16.0
 
 class MaarifScene(Scene):
     def construct(self):
-        title = Text("Birim Kesirler", font="DejaVu Sans", color=YELLOW)
-        title.scale_to_fit_width(6.5)
-        title.to_edge(UP, buff=1)
-        self.play(Write(title))
-        self.wait(2.08)
+        # 1. GİRİŞ (13 kelime -> 4.3 saniye)
+        title = Text("Maarif Matematik", font="DejaVu Sans", color=YELLOW)
+        title.scale_to_fit_width(7.0)
+        subtitle = Text("Birim Kesirler", font="DejaVu Sans", color=WHITE)
+        subtitle.scale_to_fit_width(7.0)
+        
+        group1 = VGroup(title, subtitle).arrange(DOWN, buff=1.2)
+        self.play(Write(group1), run_time=1.0)
+        self.wait(4.3)
+        self.play(FadeOut(group1), run_time=0.5)
 
-        question = Text("Payda buyudukce kesir kuculur mu?", font="DejaVu Sans", color=WHITE)
-        question.scale_to_fit_width(6.5)
-        question.next_to(title, DOWN, buff=0.5)
-        self.play(FadeIn(question))
-        self.wait(12.08)
-        self.play(FadeOut(question))
+        # 2. SORU VE TANIM (21 kelime -> 7.0 saniye)
+        q_text = Text("Hangisi Daha Büyük?", font="DejaVu Sans", color=BLUE)
+        q_text.scale_to_fit_width(7.0)
+        
+        frac1 = MathTex(r"\frac{1}{2}").scale(4)
+        q_mark = Text("?", font="DejaVu Sans", color=RED).scale(3)
+        frac2 = MathTex(r"\frac{1}{8}").scale(4)
+        
+        frac_group = VGroup(frac1, q_mark, frac2).arrange(RIGHT, buff=1.5)
+        group2 = VGroup(q_text, frac_group).arrange(DOWN, buff=1.2)
+        
+        self.play(FadeIn(group2, shift=UP), run_time=1.0)
+        self.wait(7.0)
+        self.play(FadeOut(group2, shift=DOWN), run_time=0.5)
 
-        pizza1 = Circle(radius=2, color=ORANGE, fill_opacity=0.2)
-        pizza2 = Circle(radius=2, color=ORANGE, fill_opacity=0.2)
-        pizza1.move_to(UP * 2.5)
-        pizza2.move_to(DOWN * 3.5)
-        self.play(Create(pizza1), Create(pizza2))
-        self.wait(2.92)
+        # 3. KURAL VE AÇIKLAMA (59 kelime -> 19.6 saniye)
+        pizza_text = Text("Pizza Dilimleri", font="DejaVu Sans", color=ORANGE)
+        pizza_text.scale_to_fit_width(7.0)
+        
+        rule_text1 = Text("Payda Büyüdükçe", font="DejaVu Sans", color=WHITE)
+        rule_text1.scale_to_fit_width(7.0)
+        
+        rule_text2 = Text("Değer Küçülür", font="DejaVu Sans", color=GREEN)
+        rule_text2.scale_to_fit_width(7.0)
+        
+        greater_sign = MathTex(">").scale(4).set_color(YELLOW)
+        final_frac = VGroup(
+            MathTex(r"\frac{1}{2}").scale(4),
+            greater_sign,
+            MathTex(r"\frac{1}{8}").scale(4)
+        ).arrange(RIGHT, buff=1.0)
+        
+        group3 = VGroup(pizza_text, rule_text1, rule_text2, final_frac).arrange(DOWN, buff=1.2)
+        
+        self.play(Write(group3), run_time=1.5)
+        self.wait(19.6)
+        self.play(FadeOut(group3), run_time=0.5)
 
-        line1 = Line(pizza1.get_top(), pizza1.get_bottom(), color=WHITE)
-        self.play(Create(line1))
-        slice1 = Sector(radius=2, angle=PI, start_angle=PI/2, color=YELLOW, fill_opacity=0.8, arc_center=pizza1.get_center())
-        label1 = Text("1/2", font="DejaVu Sans", color=BLACK)
-        label1.move_to(pizza1.get_center() + LEFT*1)
-        self.play(Create(slice1))
-        self.play(Write(label1))
-        self.wait(5.83)
-
-        lines2 = VGroup()
-        for i in range(4):
-            angle = i * PI / 4
-            start = pizza2.get_center() + np.array([np.cos(angle), np.sin(angle), 0]) * 2
-            end = pizza2.get_center() + np.array([np.cos(angle + PI), np.sin(angle + PI), 0]) * 2
-            lines2.add(Line(start, end, color=WHITE))
-        self.play(Create(lines2))
-        slice2 = Sector(radius=2, angle=PI/4, start_angle=PI/2, color=YELLOW, fill_opacity=0.8, arc_center=pizza2.get_center())
-        label2 = Text("1/8", font="DejaVu Sans", color=BLACK)
-        label2.scale(0.6)
-        label2.move_to(pizza2.get_center() + UP*1 + LEFT*0.4)
-        self.play(Create(slice2))
-        self.play(Write(label2))
-        self.wait(7.08)
-
-        comp_text = Text("1/2 > 1/8", font="DejaVu Sans", color=GREEN)
-        comp_text.scale_to_fit_width(6.5)
-        comp_text.move_to(DOWN * 0.5)
-        self.play(Write(comp_text))
-        self.wait(5.42)
-
-        rule_text = Text("Payda buyudukce deger kuculur", font="DejaVu Sans", color=RED)
-        rule_text.scale_to_fit_width(6.5)
-        rule_text.next_to(comp_text, DOWN, buff=0.5)
-        self.play(FadeIn(rule_text))
-        self.wait(10.00)
-
-        outro_text = Text("Maarif Matematik", font="DejaVu Sans", color=BLUE)
-        outro_text.scale_to_fit_width(6.5)
-        self.play(FadeOut(VGroup(pizza1, pizza2, line1, lines2, slice1, slice2, label1, label2, comp_text, rule_text, title)))
-        self.play(Write(outro_text))
-        self.wait(2.92)
+        # 4. ÇIKIŞ (7 kelime -> 2.3 saniye)
+        outro_text = Text("Hoşça Kalın", font="DejaVu Sans", color=YELLOW)
+        outro_text.scale_to_fit_width(7.0)
+        
+        self.play(FadeIn(outro_text, scale=1.2), run_time=1.0)
+        self.wait(2.3)
+        self.play(FadeOut(outro_text), run_time=0.5)
