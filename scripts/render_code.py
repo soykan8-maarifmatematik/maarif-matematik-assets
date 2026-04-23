@@ -1,65 +1,47 @@
 from manim import *
 
-config.pixel_height = 1920
-config.pixel_width = 1080
-config.frame_height = 14.22
-config.frame_width = 8.0
-
-class BirimKesir(Scene):
+class BirimKesirler(Scene):
     def construct(self):
-        # Kanca [0-5 sn]
-        hook_text = Text("1/3 mü daha büyük, 1/5 mi?", font="sans-serif").move_to(UP * 5).scale_to_fit_width(7.2)
+        config.pixel_height = 1920
+        config.pixel_width = 1080
+        config.frame_height = 14.22
+        config.frame_width = 8.0
+
+        hook_text = Text("2 kişi mi 8 kişi mi", font="sans-serif", font_size=48).to_edge(UP, buff=1)
         self.play(Write(hook_text))
-        self.wait(2.8) # 7 kelime / 2.5 = 2.8 sn
+        self.wait(6.0)
+        self.play(FadeOut(hook_text))
 
-        # Gövde 1 [5-25 sn]
-        body1_text = Text("Bir pizzayı 3 eş parçaya bölelim.", font="sans-serif").move_to(UP * 5).scale_to_fit_width(7.2)
-        self.play(Transform(hook_text, body1_text))
-        
-        circle1 = Circle(radius=2.0, color=ORANGE, fill_opacity=0.2)
-        slice1 = Sector(radius=2.0, angle=TAU/3, color=ORANGE, fill_opacity=0.8, arc_center=circle1.get_center())
-        circle_group1 = VGroup(circle1, slice1)
-        frac1 = MathTex(r"\frac{1}{3}", font_size=120)
-        
-        visual1 = VGroup(circle_group1, frac1).arrange(DOWN, buff=1.0).move_to(ORIGIN)
-        self.play(FadeIn(visual1))
-        self.wait(2.4) # 6 kelime / 2.5 = 2.4 sn
+        pizza1 = Circle(radius=2, color=WHITE).shift(UP*2.5)
+        pizza2 = Circle(radius=2, color=WHITE).shift(DOWN*2.5)
+        self.play(Create(pizza1), Create(pizza2))
+        self.wait(5.0)
 
-        body1_text_b = Text("Her bir dilim oldukça doyurucu olur.", font="sans-serif").move_to(UP * 5).scale_to_fit_width(7.2)
-        self.play(Transform(hook_text, body1_text_b))
-        self.wait(2.4) # 6 kelime / 2.5 = 2.4 sn
+        line1 = Line(pizza1.get_top(), pizza1.get_bottom(), color=WHITE)
+        lines2 = VGroup(*[Line(pizza2.get_center(), pizza2.get_center() + 2*UP).rotate(i*PI/4, about_point=pizza2.get_center()) for i in range(8)])
+        self.play(Create(line1), Create(lines2))
+        self.wait(5.8)
 
-        # Gövde 2 [25-40 sn]
-        body2_text = Text("Aynı pizzayı 5 eş parçaya bölersek...", font="sans-serif").move_to(UP * 5).scale_to_fit_width(7.2)
-        self.play(Transform(hook_text, body2_text))
-        
-        circle2 = Circle(radius=2.0, color=BLUE, fill_opacity=0.2)
-        slice2 = Sector(radius=2.0, angle=TAU/5, color=BLUE, fill_opacity=0.8, arc_center=circle2.get_center())
-        circle_group2 = VGroup(circle2, slice2)
-        frac2 = MathTex(r"\frac{1}{5}", font_size=120)
-        
-        visual2 = VGroup(circle_group2, frac2).arrange(DOWN, buff=1.0).move_to(ORIGIN)
-        self.play(Transform(visual1, visual2))
-        self.wait(2.4) # 6 kelime / 2.5 = 2.4 sn
+        label1 = MathTex(r"\frac{1}{2}", font_size=96).next_to(pizza1, LEFT, buff=0.5)
+        slice1 = Sector(outer_radius=2, angle=PI, color=ORANGE, fill_opacity=0.8, arc_center=pizza1.get_center())
+        self.play(Write(label1), Create(slice1))
+        self.wait(4.0)
 
-        body2_text_b = Text("Dilimler küçülür, çünkü çok kişiye paylaştırıyorsun.", font="sans-serif").move_to(UP * 5).scale_to_fit_width(7.2)
-        self.play(Transform(hook_text, body2_text_b))
-        self.wait(2.4) # 6 kelime / 2.5 = 2.4 sn
+        label2 = MathTex(r"\frac{1}{8}", font_size=96).next_to(pizza2, LEFT, buff=0.5)
+        slice2 = Sector(outer_radius=2, angle=PI/4, color=ORANGE, fill_opacity=0.8, arc_center=pizza2.get_center())
+        self.play(Write(label2), Create(slice2))
+        self.wait(6.4)
 
-        # Gövde 3 [40-55 sn]
-        body3_text = Text("Yani, birim kesirlerde payda büyüdükçe...", font="sans-serif").move_to(UP * 5).scale_to_fit_width(7.2)
-        self.play(Transform(hook_text, body3_text))
-        
-        final_math = MathTex(r"\frac{1}{3} > \frac{1}{5}", font_size=120).move_to(ORIGIN)
-        self.play(Transform(visual1, final_math))
-        self.wait(2.0) # 5 kelime / 2.5 = 2.0 sn
+        rule_text = Text("Payda büyüdükçe dilim küçülür", font="sans-serif", font_size=45, color=YELLOW).move_to(ORIGIN)
+        self.play(Write(rule_text))
+        self.wait(2.0)
 
-        body3_text_b = Text("Parça küçülür. Mantık çok basit!", font="sans-serif").move_to(UP * 5).scale_to_fit_width(7.2)
-        self.play(Transform(hook_text, body3_text_b))
-        self.wait(2.0) # 5 kelime / 2.5 = 2.0 sn
+        result_text = MathTex(r"\frac{1}{2} > \frac{1}{8}", font_size=96, color=GREEN).move_to(ORIGIN)
+        self.play(ReplacementTransform(rule_text, result_text))
+        self.wait(4.0)
 
-        # Kapanış (CTA) [55-60 sn]
-        self.play(FadeOut(visual1), FadeOut(hook_text))
-        cta_text = Text("Maarif Matematik ile mantığını kavra, takipte kal!", font="sans-serif").move_to(UP * 5).scale_to_fit_width(7.2)
-        self.play(Write(cta_text))
-        self.wait(2.8) # 7 kelime / 2.5 = 2.8 sn
+        self.play(FadeOut(pizza1), FadeOut(pizza2), FadeOut(line1), FadeOut(lines2), FadeOut(label1), FadeOut(label2), FadeOut(slice1), FadeOut(slice2), FadeOut(result_text))
+
+        outro_text = Text("Daha fazlası için Sen Maarif Matematik", font="sans-serif", font_size=40).move_to(ORIGIN)
+        self.play(Write(outro_text))
+        self.wait(4.4)
