@@ -5,62 +5,40 @@ config.pixel_width = 1080
 config.frame_height = 14.22
 config.frame_width = 8.0
 
-class BirimKesirler(Scene):
+class BirimKesir(Scene):
     def construct(self):
-        # KANCA
-        hook_text = Text("Hangisi Daha Büyük?", font="sans-serif", font_size=60, color=YELLOW)
+        hook_text = Text("1/2 mi büyük 1/10 mu", color=WHITE).move_to(UP * 5)
+        hook_text.scale_to_fit_width(6.5)
         self.play(Write(hook_text))
-        self.wait(4.8)
-        self.play(FadeOut(hook_text))
+        self.wait(5.2)
 
-        # GÖVDE
-        body_text1 = Text("Birim Kesirler", font="sans-serif", font_size=50, color=BLUE).shift(UP*5)
-        self.play(Write(body_text1))
-        self.wait(2.0)
+        c1 = Circle(radius=1.5, color=WHITE).move_to(UP * 1.5)
+        l1 = VGroup(*[Line(c1.get_center(), c1.get_boundary_point(i * TAU / 2), color=WHITE) for i in range(2)])
+        s1 = Sector(radius=1.5, angle=TAU/2, start_angle=0, color=BLUE, fill_opacity=0.8, arc_center=c1.get_center())
+        label1 = MathTex("1 / 2", font_size=72, color=BLUE).next_to(c1, RIGHT, buff=0.5)
         
-        body_text2 = Text("Payı 1 olan kesirler", font="sans-serif", font_size=40).next_to(body_text1, DOWN)
-        self.play(Write(body_text2))
+        self.play(Create(c1))
+        self.play(Create(l1))
+        self.play(FadeIn(s1), Write(label1))
+        self.wait(2.0)
+
+        c2 = Circle(radius=1.5, color=WHITE).move_to(DOWN * 2)
+        l2 = VGroup(*[Line(c2.get_center(), c2.get_boundary_point(i * TAU / 10), color=WHITE) for i in range(10)])
+        s2 = Sector(radius=1.5, angle=TAU/10, start_angle=0, color=RED, fill_opacity=0.8, arc_center=c2.get_center())
+        label2 = MathTex("1 / 10", font_size=72, color=RED).next_to(c2, RIGHT, buff=0.5)
+
+        self.play(Create(c2))
+        self.play(Create(l2))
+        self.play(FadeIn(s2), Write(label2))
         self.wait(2.8)
 
-        circle_half = Circle(radius=1.8, color=WHITE).shift(UP*1.5)
-        circle_tenth = Circle(radius=1.8, color=WHITE).shift(DOWN*2.5)
-        
-        label_half = MathTex("\\frac{1}{2}", font_size=96).next_to(circle_half, LEFT, buff=0.5)
-        label_tenth = MathTex("\\frac{1}{10}", font_size=96).next_to(circle_tenth, LEFT, buff=0.5)
+        exp_text = Text("Payda Büyüdükçe Parça Küçülür", color=YELLOW).move_to(DOWN * 4.5)
+        exp_text.scale_to_fit_width(6.5)
+        self.play(Write(exp_text))
+        self.wait(2.4)
 
-        self.play(Create(circle_half), Create(circle_tenth), Write(label_half), Write(label_tenth))
+        self.play(FadeOut(exp_text))
+        cta_text = Text("Daha fazlası için takip et", color=GREEN).move_to(DOWN * 4.5)
+        cta_text.scale_to_fit_width(6.5)
+        self.play(Write(cta_text))
         self.wait(4.0)
-
-        sector_half = Sector(radius=1.8, angle=PI, color=YELLOW, arc_center=circle_half.get_center())
-        self.play(Create(sector_half))
-        self.wait(4.8)
-
-        sector_tenth = Sector(radius=1.8, angle=TAU/10, color=RED, arc_center=circle_tenth.get_center())
-        self.play(Create(sector_tenth))
-        self.wait(3.6)
-        
-        self.wait(1.2)
-
-        rule_text = Text("Payda Büyüdükçe Dilim Küçülür", font="sans-serif", font_size=45, color=GREEN).shift(DOWN*5.5)
-        self.play(Write(rule_text))
-        self.wait(2.0)
-        
-        comp_text = MathTex("\\frac{1}{2} > \\frac{1}{10}", font_size=72, color=YELLOW).next_to(rule_text, UP)
-        self.play(Write(comp_text))
-        self.wait(3.6)
-        
-        self.wait(3.6)
-
-        self.play(
-            FadeOut(circle_half), FadeOut(circle_tenth), 
-            FadeOut(sector_half), FadeOut(sector_tenth),
-            FadeOut(label_half), FadeOut(label_tenth),
-            FadeOut(body_text1), FadeOut(body_text2),
-            FadeOut(rule_text), FadeOut(comp_text)
-        )
-
-        # KAPANIŞ
-        closing_text1 = Text("Sen Maarif Matematik", font="sans-serif", font_size=60, color=YELLOW)
-        closing_text2 = Text("Abone Ol", font="sans-serif", font_size=50, color=WHITE).next_to(closing_text1, DOWN)
-        self.play(Write(closing_text1), Write(closing_text2))
-        self.wait(3.2)
