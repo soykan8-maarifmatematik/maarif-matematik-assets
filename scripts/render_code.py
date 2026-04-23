@@ -1,77 +1,75 @@
 from manim import *
 
-config.pixel_width = 1080
-config.pixel_height = 1920
-config.frame_width = 9.0
-config.frame_height = 16.0
-
 class MaarifScene(Scene):
     def construct(self):
-        # Intro
-        text_intro = Text("Merhaba, Maarif Matematik'e hoş geldiniz.", font="DejaVu Sans", font_size=40, text_align="center").to_edge(UP, buff=1)
-        self.play(Write(text_intro))
+        # Ekran ayarları (Dikey format)
+        self.camera.frame_width = 9
+        self.camera.frame_height = 16
+
+        # Altyazı fonksiyonu
+        subtitle = Text("", font="DejaVu Sans", font_size=36).to_edge(DOWN, buff=1)
+        self.add(subtitle)
+
+        def update_sub(text):
+            new_sub = Text(text, font="DejaVu Sans", font_size=36).to_edge(DOWN, buff=1)
+            subtitle.become(new_sub)
+
+        # 1. GİRİŞ (5 kelime -> 1.67 sn)
+        update_sub("Merhaba, Maarif Matematik'e hoş geldiniz.")
         self.wait(1.67)
-        self.play(FadeOut(text_intro))
 
-        # Hook
-        text_hook = Text("Birim kesirlerde payda büyüdükçe\nkesrin değeri neden küçülür?", font="DejaVu Sans", font_size=40, text_align="center").to_edge(UP, buff=1)
-        self.play(Write(text_hook))
+        # 2. KANCA (8 kelime -> 2.67 sn)
+        update_sub("Birim kesirlerde payda büyüdükçe kesrin değeri neden küçülür?")
         self.wait(2.67)
-        self.play(FadeOut(text_hook))
 
-        # Setup circles
-        circle1 = Circle(radius=2.0, color=WHITE)
-        circle2 = Circle(radius=2.0, color=WHITE)
-        circles = VGroup(circle1, circle2).arrange(DOWN, buff=1.2)
-        c1 = circle1.get_center()
-        c2 = circle2.get_center()
+        # Temel objelerin oluşturulması ve dikey istiflenmesi
+        circle1 = Circle(radius=1.5, color=WHITE)
+        label1 = MathTex(r"\frac{1}{2}", font_size=72)
+        group1 = VGroup(label1, circle1).arrange(DOWN, buff=0.5)
 
-        # 1/2 Model
-        text_1 = Text("Bir pizzayı iki eş parçaya bölelim ve\nbir dilimini alalım. Bu bir bölü ikidir.", font="DejaVu Sans", font_size=36, text_align="center").to_edge(DOWN, buff=1)
-        self.play(Write(text_1))
-        self.play(Create(circle1))
-        line1 = Line(c1 + UP*2.0, c1 + DOWN*2.0, color=WHITE)
-        self.play(Create(line1))
-        sector1 = Sector(outer_radius=2.0, angle=PI, start_angle=PI/2, color=YELLOW, fill_opacity=0.7, arc_center=c1)
-        label1 = MathTex(r"\frac{1}{2}").scale(2).next_to(circle1, LEFT, buff=0.5)
-        self.play(FadeIn(sector1), Write(label1))
-        self.wait(4.67)
-        self.play(FadeOut(text_1))
+        circle2 = Circle(radius=1.5, color=WHITE)
+        label2 = MathTex(r"\frac{1}{10}", font_size=72)
+        group2 = VGroup(label2, circle2).arrange(DOWN, buff=0.5)
 
-        # 1/8 Model
-        text_2 = Text("Aynı pizzayı sekiz eş parçaya bölersek\nalacağımız bir dilim çok daha küçük olur.\nBu da bir bölü sekizdir.", font="DejaVu Sans", font_size=36, text_align="center").to_edge(DOWN, buff=1)
-        self.play(Write(text_2))
-        self.play(Create(circle2))
+        pizzas = VGroup(group1, group2).arrange(DOWN, buff=1.2).shift(UP*0.5)
+
+        # Çember merkezlerine göre çizgi ve dilimlerin ayarlanması
+        line1 = Line(circle1.get_top(), circle1.get_bottom(), color=WHITE)
+        sector1 = Sector(radius=1.5, angle=PI, start_angle=PI/2, color=YELLOW, fill_opacity=0.7, arc_center=circle1.get_center())
+
         lines2 = VGroup()
-        for i in range(4):
-            angle = i * PI / 4
-            lines2.add(Line(c2 + np.array([np.cos(angle), np.sin(angle), 0])*2.0,
-                            c2 - np.array([np.cos(angle), np.sin(angle), 0])*2.0, color=WHITE))
-        self.play(Create(lines2))
-        sector2 = Sector(outer_radius=2.0, angle=PI/4, start_angle=PI/2, color=RED, fill_opacity=0.7, arc_center=c2)
-        label2 = MathTex(r"\frac{1}{8}").scale(2).next_to(circle2, LEFT, buff=0.5)
-        self.play(FadeIn(sector2), Write(label2))
-        self.wait(6.0)
-        self.play(FadeOut(text_2))
-
-        # Comparison
-        text_comp = Text("Gördüğünüz gibi payda parça sayısını gösterir.\nParça sayısı artarsa dilim küçülür.", font="DejaVu Sans", font_size=36, text_align="center").to_edge(DOWN, buff=1)
-        self.play(Write(text_comp))
-        self.wait(3.67)
-        self.play(FadeOut(text_comp))
-
-        # Rule
-        text_rule = Text("Yani bir bölü iki büyüktür bir bölü sekizden.", font="DejaVu Sans", font_size=36, text_align="center").to_edge(DOWN, buff=1)
-        self.play(Write(text_rule))
-        sign = MathTex(">").scale(3).move_to((c1+c2)/2)
-        self.play(Write(sign))
-        self.wait(2.67)
-        self.play(FadeOut(text_rule))
-
-        # Outro
-        text_outro = Text("Bir sonraki derste görüşmek üzere, hoşça kalın.", font="DejaVu Sans", font_size=40, text_align="center").to_edge(DOWN, buff=1)
-        self.play(Write(text_outro))
-        self.wait(2.33)
+        for i in range(5):
+            angle = i * PI / 5 + PI/2
+            start = circle2.get_center() + np.array([np.cos(angle), np.sin(angle), 0]) * 1.5
+            end = circle2.get_center() + np.array([np.cos(angle + PI), np.sin(angle + PI), 0]) * 1.5
+            lines2.add(Line(start, end, color=WHITE))
         
-        # Ending Fix
+        sector2 = Sector(radius=1.5, angle=TAU/10, start_angle=PI/2, color=RED, fill_opacity=0.7, arc_center=circle2.get_center())
+
+        # 3. PİZZA 1/2 (12 kelime -> 4.0 sn)
+        update_sub("Bunu bir pizza ile düşünelim. Bir pizzayı ikiye bölersek, yarım pizza yeriz.")
+        self.play(Create(circle1), Write(label1), run_time=1.0)
+        self.play(Create(line1), run_time=1.0)
+        self.play(FadeIn(sector1), run_time=1.0)
+        self.wait(1.0)
+
+        # 4. PİZZA 1/10 (9 kelime -> 3.0 sn)
+        update_sub("Ama aynı pizzayı on parçaya bölersek, dilimler küçücük kalır.")
+        self.play(Create(circle2), Write(label2), run_time=0.5)
+        self.play(Create(lines2), run_time=1.0)
+        self.play(FadeIn(sector2), run_time=0.5)
+        self.wait(1.0)
+
+        # 5. SONUÇ (9 kelime -> 3.0 sn)
+        update_sub("Yani payda parça sayısını gösterir, parça arttıkça dilim ufalır.")
+        self.play(Indicate(sector1, color=YELLOW), Indicate(sector2, color=RED), run_time=1.5)
+        self.wait(1.5)
+
+        # 6. ÇIKIŞ (7 kelime -> 2.33 sn)
+        update_sub("Bir sonraki derste görüşmek üzere, hoşça kalın.")
+        outro_text = Text("Maarif Matematik", font="DejaVu Sans", font_size=60, color=YELLOW).move_to(pizzas.get_center())
+        self.play(FadeOut(pizzas), FadeOut(sector1), FadeOut(sector2), FadeOut(line1), FadeOut(lines2), FadeIn(outro_text), run_time=1.0)
+        self.wait(1.33)
+
+        # Kapanış yazısı çivili kalır
         self.wait(5)
