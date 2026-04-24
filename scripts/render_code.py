@@ -1,72 +1,59 @@
 from manim import *
 
-config.pixel_width = 1080
-config.pixel_height = 1920
-config.frame_width = 9.0
-config.frame_height = 16.0
-
 class BirimKesirler(Scene):
     def construct(self):
-        # 1. GİRİŞ VE BAŞLIK (iPHONE 16 ZIRHI)
-        title = Text("Birim Kesirlerin Büyüklüğü", font="DejaVu Sans", font_size=42).to_edge(UP, buff=2.0)
+        config.pixel_width = 1080
+        config.pixel_height = 1920
+        config.frame_width = 9
+        config.frame_height = 16
+
+        title = Text("Birim Kesirler", font="DejaVu Sans", font_size=45).to_edge(UP, buff=2.0)
+
+        c1_base = Circle(radius=1.5, color=WHITE)
+        c1_line = Line(c1_base.get_top(), c1_base.get_bottom(), color=WHITE)
+        c1_fill = Sector(radius=1.5, angle=PI, start_angle=PI/2, color=BLUE, fill_opacity=0.7)
+        c1_label = MathTex(r"\frac{1}{2}", font_size=70).next_to(c1_base, RIGHT, buff=0.8)
+        c1_group = VGroup(c1_base, c1_line, c1_fill, c1_label)
+
+        c2_base = Circle(radius=1.5, color=WHITE)
+        c2_line1 = Line(c2_base.get_top(), c2_base.get_bottom(), color=WHITE)
+        c2_line2 = Line(c2_base.get_left(), c2_base.get_right(), color=WHITE)
+        c2_fill = Sector(radius=1.5, angle=PI/2, start_angle=PI/2, color=RED, fill_opacity=0.7)
+        c2_label = MathTex(r"\frac{1}{4}", font_size=70).next_to(c2_base, RIGHT, buff=0.8)
+        c2_group = VGroup(c2_base, c2_line1, c2_line2, c2_fill, c2_label)
+
+        comp_text = MathTex(r"\frac{1}{2} > \frac{1}{4}", font_size=90, color=YELLOW)
+
+        content = VGroup(c1_group, c2_group, comp_text).arrange(DOWN, buff=1.8)
+        content.move_to(UP * 2.0, aligned_edge=UP)
+
+        # Merhaba, Maarif Matematik'e hoş geldiniz. (5 kelime -> 1.67s)
         self.play(Write(title))
-        self.wait(5 / 3.0) # Merhaba, Maarif Matematik’e hoş geldiniz.
+        self.wait(1.67)
 
-        concept = Text("Payda Büyüdükçe Değer Küçülür", font="DejaVu Sans", font_size=32, color=YELLOW).next_to(title, DOWN, buff=0.5)
-        self.play(FadeIn(concept))
-        self.wait(7 / 3.0) # Birim kesirlerde payda büyüdükçe kesrin değeri küçülür.
+        # Bugün birim kesirlerin büyüklüğünü karşılaştırıyoruz. (5 kelime -> 1.67s)
+        self.wait(1.67)
 
-        # 2. MODEL 1: 1/2 (İLK MODEL KESİNLİKLE UP * 2.0)
-        rect1 = Rectangle(width=6, height=1.5, color=WHITE)
-        line1 = Line(rect1.get_top(), rect1.get_bottom(), color=WHITE)
-        fill1 = Rectangle(width=3, height=1.5, color=BLUE).set_fill(BLUE, 0.8).align_to(rect1, LEFT)
-        label1 = MathTex(r"\frac{1}{2}", font_size=72).next_to(rect1, RIGHT, buff=0.5)
-        
-        group1 = VGroup(rect1, line1, fill1, label1).move_to(UP * 2.0)
-        
-        self.play(Create(rect1), Create(line1))
-        self.play(FadeIn(fill1), Write(label1))
-        self.wait(7 / 3.0) # Örneğin, bir bütünü iki eş parçaya bölelim.
+        # Bir pastayı ikiye böldüğümüzde elde ettiğimiz dilim, ikide birdir. (9 kelime -> 3.0s)
+        self.play(FadeIn(c1_base), Create(c1_line), FadeIn(c1_fill), Write(c1_label))
+        self.wait(3.0)
 
-        # 3. MODEL 2: 1/4 (DOWN, buff=1.8 KURALI)
-        rect2 = Rectangle(width=6, height=1.5, color=WHITE)
-        lines2 = VGroup(*[
-            Line(rect2.get_top() + LEFT * (3 - i*1.5), rect2.get_bottom() + LEFT * (3 - i*1.5), color=WHITE)
-            for i in range(1, 4)
-        ])
-        fill2 = Rectangle(width=1.5, height=1.5, color=RED).set_fill(RED, 0.8).align_to(rect2, LEFT)
-        label2 = MathTex(r"\frac{1}{4}", font_size=72).next_to(rect2, RIGHT, buff=0.5)
-        
-        group2 = VGroup(rect2, lines2, fill2, label2).next_to(group1, DOWN, buff=1.8)
-        
-        self.play(Create(rect2), Create(lines2))
-        self.play(FadeIn(fill2), Write(label2))
-        self.wait(8 / 3.0) # Aynı bütünü dört eş parçaya bölersek dilimler küçülür.
+        # Aynı pastayı dörde bölersek, dilimler küçülür ve dörtte bir olur. (10 kelime -> 3.33s)
+        self.play(FadeIn(c2_base), Create(c2_line1), Create(c2_line2), FadeIn(c2_fill), Write(c2_label))
+        self.wait(3.33)
 
-        # 4. MODEL 3: 1/8 (DOWN, buff=1.8 KURALI)
-        rect3 = Rectangle(width=6, height=1.5, color=WHITE)
-        lines3 = VGroup(*[
-            Line(rect3.get_top() + LEFT * (3 - i*0.75), rect3.get_bottom() + LEFT * (3 - i*0.75), color=WHITE)
-            for i in range(1, 8)
-        ])
-        fill3 = Rectangle(width=0.75, height=1.5, color=GREEN).set_fill(GREEN, 0.8).align_to(rect3, LEFT)
-        label3 = MathTex(r"\frac{1}{8}", font_size=72).next_to(rect3, RIGHT, buff=0.5)
-        
-        group3 = VGroup(rect3, lines3, fill3, label3).next_to(group2, DOWN, buff=1.8)
-        
-        self.play(Create(rect3), Create(lines3))
-        self.play(FadeIn(fill3), Write(label3))
-        self.wait(9 / 3.0) # Sekiz eş parçaya böldüğümüzde ise dilimler daha da küçülür.
+        # Yani payda büyüdükçe, parça sayısı artar ve birim kesir küçülür. (10 kelime -> 3.33s)
+        self.play(Indicate(c1_label), Indicate(c2_label))
+        self.wait(3.33)
 
-        # 5. SONUÇ VE VURGU
-        box = SurroundingRectangle(VGroup(label1, label2, label3), color=YELLOW, buff=0.2)
-        self.play(Create(box))
-        self.wait(6 / 3.0) # Yani payda büyüdükçe, birim kesir küçülür.
+        # İkide bir, dörtte birden büyüktür. (5 kelime -> 1.67s)
+        self.play(Write(comp_text))
+        self.wait(1.67)
 
-        # 6. OUTRO KİLİDİ (MUTLAK SENKRONİZASYON)
+        # Outro Kilidi: Matematik anlatımı tamamen bitmeden asla gelmez
         self.wait(2.0)
         self.play(*[FadeOut(mob) for mob in self.mobjects])
-        
-        outro = Text("Maarif Matematik ile\nmantığını kavra,\ntakipte kal!", font="DejaVu Sans", font_size=48, color=WHITE)
+
+        outro = Text("Maarif Matematik ile\nmantığını kavra,\ntakipte kal!", font="DejaVu Sans", font_size=50)
         self.play(Write(outro))
         self.wait(4.0)
