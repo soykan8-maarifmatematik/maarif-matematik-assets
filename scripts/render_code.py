@@ -1,116 +1,63 @@
 from manim import *
 
+config.pixel_width = 1080
+config.pixel_height = 1920
+config.frame_width = 1080 / 1920 * 14.22
+config.frame_height = 14.22
+
 class MaarifScene(Scene):
     def construct(self):
-        # Arka plan rengi
-        self.camera.background_color = "#FFFFFF"
+        # 1. GİRİŞ VE BAŞLIK (Güvenli Alan: buff=2.0)
+        title = Text("Birim Kesirler", font="DejaVu Sans", color=WHITE).scale(1.5).to_edge(UP, buff=2.0)
+        self.play(Write(title))
+        self.wait(1.7) # Merhaba, Maarif Matematik’e hoş geldiniz.
         
-        # Maarif Matematik Renk Paleti
-        dark_gray = "#333333"
-        navy_blue = "#002B4D"
-        maarif_red = "#D32F2F"
-
-        # --- BÖLÜM 1: GİRİŞ VE TANIM ---
-        # "Merhaba, Maarif Matematik’e hoş geldiniz." (5 kelime = 2.77s)
-        title = Text("Birim Kesir", color=navy_blue, font_size=48).to_edge(UP)
-        self.play(Write(title), run_time=1)
-        self.wait(1.77)
-
-        # "Bugün sizlerle kesirlerin en temel yapı taşı olan birim kesirleri öğreneceğiz." (11 kelime = 6.11s)
-        subtitle = Text("Payı 1 olan kesirler", color=dark_gray, font_size=36).next_to(title, DOWN)
-        self.play(Write(subtitle), run_time=1)
-        self.wait(5.11)
-
-        # "Bir bütünü eş parçalara ayırdığımızda, bu eş parçalardan sadece bir tanesini ifade eden kesre birim kesir diyoruz." (17 kelime = 9.44s)
-        circle = Circle(radius=1.5, color=navy_blue, stroke_width=4)
-        lines = VGroup(*[Line(circle.get_center(), circle.point_at_angle(i * PI / 2), color=navy_blue) for i in range(4)])
-        self.play(Create(circle), Create(lines), run_time=2)
-        self.wait(7.44)
-
-        # "Yani payı her zaman bir olan kesirlerdir." (7 kelime = 3.88s)
-        fraction = MathTex(r"\frac{1}{4}", color=dark_gray, font_size=64).next_to(circle, RIGHT, buff=1)
-        fraction[0][0].set_color(maarif_red) # Pay kısmını kırmızı yap
-        self.play(Write(fraction), run_time=1)
-        self.wait(2.88)
-
-        # "Örneğin, bir bütünü dört eş parçaya bölerseniz, her bir parça dörtte bir kesrini ifade eder." (15 kelime = 8.33s)
-        slice_1 = Sector(radius=1.5, angle=PI/2, start_angle=0, color=maarif_red, fill_opacity=0.5)
-        self.play(FadeIn(slice_1), run_time=1)
-        self.wait(7.33)
-
-        # --- BÖLÜM 2: SAYI DOĞRUSU ---
-        # "Peki, birim kesirleri sayı doğrusunda nasıl gösteririz?" (7 kelime = 3.88s)
-        self.play(FadeOut(Group(title, subtitle, circle, lines, fraction, slice_1)), run_time=0.5)
-        title2 = Text("Sayı Doğrusunda Gösterim", color=navy_blue, font_size=48).to_edge(UP)
-        self.play(Write(title2), run_time=0.5)
-        self.wait(2.88)
-
-        # "Birim kesirler her zaman sıfır ile bir tam sayıları arasında yer alır." (12 kelime = 6.66s)
-        nl = NumberLine(x_range=[0, 1, 0.25], length=8, color=dark_gray, include_numbers=False)
-        nl_labels = VGroup(
-            MathTex("0", color=dark_gray).next_to(nl.n2p(0), DOWN),
-            MathTex("1", color=dark_gray).next_to(nl.n2p(1), DOWN)
-        )
-        self.play(Create(nl), Write(nl_labels), run_time=2)
-        self.wait(4.66)
-
-        # "Çünkü bir bütünden daha küçüktürler." (5 kelime = 2.77s)
-        self.wait(2.77)
-
-        # "Sayı doğrusunda sıfır ile bir arasını, kesrimizin paydası kadar eş parçaya böleriz." (12 kelime = 6.66s)
-        ticks = VGroup(*[Line(UP*0.2, DOWN*0.2, color=navy_blue).move_to(nl.n2p(i*0.25)) for i in range(1,4)])
-        self.play(Create(ticks), run_time=2)
-        self.wait(4.66)
-
-        # "Sıfırdan sonraki ilk adımımız, bize birim kesrimizin yerini gösterir." (9 kelime = 5.00s)
-        dot = Dot(nl.n2p(0.25), color=maarif_red, radius=0.15)
-        label_14 = MathTex(r"\frac{1}{4}", color=maarif_red).next_to(dot, UP)
-        self.play(FadeIn(dot), Write(label_14), run_time=1)
-        self.wait(4.00)
-
-        # --- BÖLÜM 3: KARŞILAŞTIRMA ---
-        # "Şimdi en kritik noktaya gelelim." (5 kelime = 2.77s)
-        self.play(FadeOut(Group(title2, nl, nl_labels, ticks, dot, label_14)), run_time=1)
-        self.wait(1.77)
-
-        # "Birim kesirleri nasıl karşılaştırırız?" (4 kelime = 2.22s)
-        title3 = Text("Birim Kesirleri Karşılaştırma", color=navy_blue, font_size=48).to_edge(UP)
-        self.play(Write(title3), run_time=1)
-        self.wait(1.22)
-
-        # "Ezberlemek yerine mantığını düşünelim." (4 kelime = 2.22s)
-        self.wait(2.22)
-
-        # "Bir bütünü iki parçaya böldüğünüzde mi daha büyük bir parça elde edersiniz, yoksa on parçaya böldüğünüzde mi?" (17 kelime = 9.44s)
-        rect1 = Rectangle(width=4, height=1, color=navy_blue).shift(LEFT*3 + UP)
-        rect2 = Rectangle(width=4, height=1, color=navy_blue).shift(RIGHT*3 + UP)
+        self.wait(2.3) # Birim kesirlerde payda büyüdükçe kesir neden küçülür?
+        self.wait(2.0) # Gelin mantığını bir pasta üzerinden anlayalım.
         
-        line1 = Line(rect1.get_top(), rect1.get_bottom(), color=navy_blue)
-        fill1 = Rectangle(width=2, height=1, color=maarif_red, fill_opacity=0.5).align_to(rect1, LEFT).align_to(rect1, UP)
+        # 2. PASTALAR (Merkez 6x10 alanına mıhlanmış)
+        cake1_base = Circle(radius=1.5, color=WHITE).shift(UP*1.5 + LEFT*2.2)
+        cake2_base = Circle(radius=1.5, color=WHITE).shift(UP*1.5 + RIGHT*2.2)
         
-        lines2 = VGroup(*[Line(rect2.get_corner(UL) + RIGHT*(i*0.4), rect2.get_corner(DL) + RIGHT*(i*0.4), color=navy_blue) for i in range(1,10)])
-        fill2 = Rectangle(width=0.4, height=1, color=maarif_red, fill_opacity=0.5).align_to(rect2, LEFT).align_to(rect2, UP)
+        self.play(Create(cake1_base), Create(cake2_base))
+        self.wait(2.3) # Elimizde aynı boyutta iki nefis pasta var.
         
-        self.play(Create(rect1), Create(line1), Create(rect2), Create(lines2), run_time=2)
-        self.wait(7.44)
-
-        # "Elbette iki parçaya böldüğünüzde." (4 kelime = 2.22s)
-        self.play(FadeIn(fill1), FadeIn(fill2), run_time=1)
-        self.wait(1.22)
-
-        # "Bu yüzden payda büyüdükçe, yani parça sayısı arttıkça, birim kesrin değeri küçülür." (12 kelime = 6.66s)
-        comp_text = MathTex(r"\frac{1}{2}", ">", r"\frac{1}{10}", color=dark_gray, font_size=64).shift(DOWN*1.5)
-        comp_text[0].set_color(maarif_red)
-        comp_text[2].set_color(maarif_red)
-        self.play(Write(comp_text), run_time=1)
-        self.wait(5.66)
-
-        # "İkide bir, onda birden her zaman daha büyüktür." (8 kelime = 4.44s)
-        self.play(comp_text[1].animate.scale(1.5).set_color(navy_blue), run_time=0.5)
-        self.play(comp_text[1].animate.scale(1/1.5), run_time=0.5)
-        self.wait(3.44)
-
-        # "Bir sonraki derste görüşmek üzere, hoşça kalın." (7 kelime = 3.88s)
-        outro = Text("Maarif Matematik", color=maarif_red, font_size=48).shift(DOWN*3)
-        self.play(Write(outro), run_time=1)
-        self.wait(2.88)
+        # 3. DİLİMLER VE KESİRLER (outer_radius KESİNLİKLE YOK, sadece radius)
+        slice1 = Sector(radius=1.5, angle=PI, color=ORANGE, fill_opacity=0.8).move_arc_center_to(cake1_base.get_center())
+        frac1 = MathTex(r"\frac{1}{2}").scale(2.5).next_to(cake1_base, DOWN, buff=0.5)
+        
+        self.play(Create(slice1), Write(frac1))
+        self.wait(3.0) # İlk pastayı iki kişiye paylaştıralım, yani bir bölü iki.
+        
+        slice2 = Sector(radius=1.5, angle=PI/2, color=BLUE, fill_opacity=0.8).move_arc_center_to(cake2_base.get_center())
+        frac2 = MathTex(r"\frac{1}{4}").scale(2.5).next_to(cake2_base, DOWN, buff=0.5)
+        
+        self.play(Create(slice2), Write(frac2))
+        self.wait(3.3) # İkinci pastayı ise dört kişiye paylaştıralım, yani bir bölü dört.
+        
+        self.wait(2.3) # Hangisinde tabağınıza daha büyük bir dilim düşer?
+        
+        self.play(Indicate(slice1, scale_factor=1.2, color=YELLOW))
+        self.wait(2.0) # Tabii ki iki kişiye bölünen pastada!
+        
+        # 4. PEDAGOJİK AÇIKLAMA (Yazılar KESİNLİKLE scale(1.5) ve alignment parametresi YOK)
+        exp_text1 = Text("Payda = Kisi Sayisi", font="DejaVu Sans", color=YELLOW).scale(1.5).shift(DOWN*2.5)
+        self.play(Write(exp_text1))
+        self.wait(2.0) # Payda, pastayı kaç kişiye böldüğümüzü gösterir.
+        
+        exp_text2 = Text("Kisi artarsa\ndilim kuculur", font="DejaVu Sans", color=RED_B).scale(1.5).next_to(exp_text1, DOWN, buff=0.8)
+        self.play(Write(exp_text2))
+        self.wait(2.3) # Kişi sayısı artarsa, sana düşen dilim küçülür.
+        
+        # 5. BÜYÜKTÜR SEMBOLÜ (Devasa ve YELLOW)
+        comp_sign = Text(">", font="DejaVu Sans", color=YELLOW).scale(4).move_to(UP*1.5)
+        self.play(Write(comp_sign))
+        self.wait(3.0) # Bu yüzden bir bölü iki, bir bölü dörtten büyüktür.
+        
+        # 6. KAPANIŞ VE TEMİZLİK
+        self.wait(1.5) # Son cümle bittikten sonra 1.5 saniye bekle
+        self.play(*[FadeOut(mob) for mob in self.mobjects])
+        
+        cta = Text("Maarif Matematik ile\nmantigini kavra,\ntakipte kal", font="DejaVu Sans", color=BLUE).scale(1.5)
+        self.play(Write(cta))
+        self.wait(2.3) # Maarif Matematik ile mantığını kavra, takipte kal!
