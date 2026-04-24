@@ -5,69 +5,63 @@ config.pixel_width = 1080
 config.frame_height = 14.22
 config.frame_width = 8.0
 
-class BirimKesirler(Scene):
+class MaarifScene(Scene):
     def construct(self):
-        # 1. GÜVENLİ ALAN: Üst Sınır (UP * 3.5)
-        title = Text("BİRİM KESİRLER", font="DejaVu Sans", color=YELLOW, weight=BOLD).scale(1.2)
-        title.move_to(UP * 3.2)
+        # 1. Merhaba, Maarif Matematik’e hoş geldiniz. (1.67s)
+        self.wait(1.67)
 
-        # 2. GÜVENLİ ALAN: Alt Sınır (DOWN * 4.0)
-        conclusion = Text("Payda büyüdükçe değer küçülür", font="DejaVu Sans", color=GREEN).scale(0.8)
-        conclusion.move_to(DOWN * 3.8)
+        # Objeleri oluştur
+        title = Text("Birim Kesirler", font="DejaVu Sans", color=YELLOW)
+        title.scale_to_fit_width(6.0)
 
-        # 3. GÖRSEL İSPAT MÜHRÜ: 1/2 Modeli
-        frac1 = MathTex(r"\frac{1}{2}").scale(2.0)
-        circle1 = Circle(radius=1.3, color=WHITE)
-        line1 = Line(UP*1.3, DOWN*1.3, color=WHITE)
-        slice1 = Sector(outer_radius=1.3, angle=PI, start_angle=PI/2, color=BLUE, fill_opacity=0.7)
-        model1_parts = VGroup(circle1, line1, slice1)
-        group1 = VGroup(frac1, model1_parts).arrange(RIGHT, buff=1.0)
+        c1 = Circle(radius=1.3, color=WHITE)
+        l1 = Line(c1.get_top(), c1.get_bottom(), color=WHITE)
+        s1 = Sector(radius=1.3, angle=PI, start_angle=PI/2, color=BLUE, fill_opacity=0.6)
+        m1 = VGroup(c1, l1, s1)
 
-        # 4. GÖRSEL İSPAT MÜHRÜ: 1/4 Modeli
-        frac2 = MathTex(r"\frac{1}{4}").scale(2.0)
-        circle2 = Circle(radius=1.3, color=WHITE)
-        line2_v = Line(UP*1.3, DOWN*1.3, color=WHITE)
-        line2_h = Line(LEFT*1.3, RIGHT*1.3, color=WHITE)
-        slice2 = Sector(outer_radius=1.3, angle=PI/2, start_angle=PI/2, color=RED, fill_opacity=0.7)
-        model2_parts = VGroup(circle2, line2_v, line2_h, slice2)
-        group2 = VGroup(frac2, model2_parts).arrange(RIGHT, buff=1.0)
+        c2 = Circle(radius=1.3, color=WHITE)
+        l2_1 = Line(c2.get_top(), c2.get_bottom(), color=WHITE)
+        l2_2 = Line(c2.get_left(), c2.get_right(), color=WHITE)
+        s2 = Sector(radius=1.3, angle=PI/2, start_angle=PI/2, color=RED, fill_opacity=0.6)
+        m2 = VGroup(c2, l2_1, l2_2, s2)
 
-        # 5. DİKEY DİZİLİM MÜHRÜ: Jilet gibi aralık
-        main_group = VGroup(group1, group2).arrange(DOWN, buff=1.5)
-        main_group.move_to(DOWN * 0.3)
+        models_row = VGroup(m1, m2).arrange(RIGHT, buff=1.0)
 
-        # --- MİLİMETRİK SENKRONİZASYON --- 
-        
-        # GİRİŞ: "Merhaba, Maarif Matematik’e hoş geldiniz." (5 kelime -> 1.67s)
+        comp_1 = MathTex(r"\frac{1}{2}").scale(2)
+        comp_sign = MathTex(">").scale(2).set_color(YELLOW)
+        comp_2 = MathTex(r"\frac{1}{4}").scale(2)
+        compare_label = VGroup(comp_1, comp_sign, comp_2).arrange(RIGHT, buff=0.8)
+
+        # Dikey Dizilim Kuralı ve Güvenli Alan Hizalaması
+        main_group = VGroup(title, models_row, compare_label).arrange(DOWN, buff=1.6)
+        main_group.move_to(DOWN * 0.25)
+
+        # 2. Birim kesirlerde payda büyüdükçe kesrin değeri küçülür. (2.33s)
         self.play(Write(title), run_time=1.0)
-        self.wait(0.67)
-
-        # KONSEPT: "Birim kesirlerde payda büyüdükçe kesrin değeri küçülür." (7 kelime -> 2.33s)
-        self.play(Write(conclusion), run_time=1.0)
         self.wait(1.33)
 
-        # ÖRNEK 1: "Örneğin bir bölü iki kesrini düşünelim. Bir bütünü iki eş parçaya böldük ve birini aldık." (15 kelime -> 5.0s)
-        self.play(Write(frac1), run_time=0.5)
-        self.play(Create(circle1), run_time=1.0)
-        self.play(Create(line1), run_time=0.5)
-        self.play(FadeIn(slice1), run_time=1.0)
-        self.wait(2.0)
-
-        # ÖRNEK 2: "Şimdi de bir bölü dört kesrine bakalım. Aynı bütünü dört eş parçaya böldük ve birini aldık." (16 kelime -> 5.33s)
-        self.play(Write(frac2), run_time=0.5)
-        self.play(Create(circle2), run_time=1.0)
-        self.play(Create(line2_v), Create(line2_h), run_time=0.5)
-        self.play(FadeIn(slice2), run_time=1.0)
+        # 3. Örneğin bir bölü iki ve bir bölü dört kesirlerini karşılaştıralım. (3.33s)
+        self.play(Write(comp_1), Write(comp_2), run_time=1.0)
         self.wait(2.33)
 
-        # KARŞILAŞTIRMA: "Gördüğünüz gibi bir bölü iki, bir bölü dörtten daha büyüktür. Parça sayısı arttıkça dilimler küçülür." (15 kelime -> 5.0s)
-        self.play(Indicate(slice1, color=YELLOW, scale_factor=1.1), run_time=1.0)
-        self.play(Indicate(slice2, color=YELLOW, scale_factor=1.1), run_time=1.0)
-        self.wait(3.0)
+        # 4. Bir bütün pastayı ikiye böldüğümüzde elde ettiğimiz dilim oldukça büyüktür. (3.33s)
+        self.play(Create(c1), run_time=0.5)
+        self.play(Create(l1), run_time=0.5)
+        self.play(FadeIn(s1), run_time=0.5)
+        self.wait(1.83)
 
-        # ÇIKIŞ: "Bir sonraki derste görüşmek üzere, hoşça kalın." (7 kelime -> 2.33s)
-        self.play(FadeOut(VGroup(title, conclusion, main_group)), run_time=1.0)
-        self.wait(1.33)
+        # 5. Aynı pastayı dörde böldüğümüzde ise her bir dilim daha küçük olur. (3.67s)
+        self.play(Create(c2), run_time=0.5)
+        self.play(Create(l2_1), Create(l2_2), run_time=0.5)
+        self.play(FadeIn(s2), run_time=0.5)
+        self.wait(2.17)
 
-        # EKRAN KARARMAMASI İÇİN GÜVENLİK BEKLEMESİ
+        # 6. Bu yüzden bir bölü iki büyüktür bir bölü dört diyebiliriz. (3.33s)
+        self.play(Write(comp_sign), run_time=1.0)
+        self.wait(2.33)
+
+        # 7. Bir sonraki derste görüşmek üzere, hoşça kalın. (2.33s)
+        self.wait(2.33)
+
+        # Kapanış
         self.wait(5)
