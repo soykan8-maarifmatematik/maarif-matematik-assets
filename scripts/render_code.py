@@ -2,65 +2,71 @@ from manim import *
 
 config.pixel_width = 1080
 config.pixel_height = 1920
-config.frame_width = 1080 / 100
-config.frame_height = 1920 / 100
+config.frame_width = 9.0
+config.frame_height = 16.0
 
 class BirimKesirler(Scene):
     def construct(self):
-        # 1. GİRİŞ VE BAŞLIK
-        title = Text("Birim Kesirler", font="DejaVu Sans").to_edge(UP, buff=0.8)
+        # 1. GİRİŞ VE BAŞLIK (iPHONE 16 ZIRHI)
+        title = Text("Birim Kesirlerin Büyüklüğü", font="DejaVu Sans", font_size=42).to_edge(UP, buff=2.0)
         self.play(Write(title))
-        self.wait(1.67)  # 5 kelime / 3.0 = 1.67s
+        self.wait(5 / 3.0) # Merhaba, Maarif Matematik’e hoş geldiniz.
 
-        # 2. MATEMATİKSEL MODELLERİ OLUŞTURMA
-        def create_fraction_model(denominator, color):
-            group = VGroup()
-            rect_width = 6.0 / denominator
-            for i in range(denominator):
-                rect = Rectangle(width=rect_width, height=1.0, color=WHITE)
-                if i == 0:
-                    rect.set_fill(color, opacity=0.8)
-                group.add(rect)
-            group.arrange(RIGHT, buff=0)
-            label = MathTex(f"\\frac{{1}}{{{denominator}}}").scale(1.5)
-            res = VGroup(group, label).arrange(RIGHT, buff=0.5)
-            return res
+        concept = Text("Payda Büyüdükçe Değer Küçülür", font="DejaVu Sans", font_size=32, color=YELLOW).next_to(title, DOWN, buff=0.5)
+        self.play(FadeIn(concept))
+        self.wait(7 / 3.0) # Birim kesirlerde payda büyüdükçe kesrin değeri küçülür.
 
-        model_1_2 = create_fraction_model(2, BLUE)
-        model_1_3 = create_fraction_model(3, GREEN)
-        model_1_4 = create_fraction_model(4, RED)
+        # 2. MODEL 1: 1/2 (İLK MODEL KESİNLİKLE UP * 2.0)
+        rect1 = Rectangle(width=6, height=1.5, color=WHITE)
+        line1 = Line(rect1.get_top(), rect1.get_bottom(), color=WHITE)
+        fill1 = Rectangle(width=3, height=1.5, color=BLUE).set_fill(BLUE, 0.8).align_to(rect1, LEFT)
+        label1 = MathTex(r"\frac{1}{2}", font_size=72).next_to(rect1, RIGHT, buff=0.5)
+        
+        group1 = VGroup(rect1, line1, fill1, label1).move_to(UP * 2.0)
+        
+        self.play(Create(rect1), Create(line1))
+        self.play(FadeIn(fill1), Write(label1))
+        self.wait(7 / 3.0) # Örneğin, bir bütünü iki eş parçaya bölelim.
 
-        models = VGroup(model_1_2, model_1_3, model_1_4)
-        models.arrange(DOWN, buff=2.0)
-        models.scale_to_fit_width(6.5)
+        # 3. MODEL 2: 1/4 (DOWN, buff=1.8 KURALI)
+        rect2 = Rectangle(width=6, height=1.5, color=WHITE)
+        lines2 = VGroup(*[
+            Line(rect2.get_top() + LEFT * (3 - i*1.5), rect2.get_bottom() + LEFT * (3 - i*1.5), color=WHITE)
+            for i in range(1, 4)
+        ])
+        fill2 = Rectangle(width=1.5, height=1.5, color=RED).set_fill(RED, 0.8).align_to(rect2, LEFT)
+        label2 = MathTex(r"\frac{1}{4}", font_size=72).next_to(rect2, RIGHT, buff=0.5)
+        
+        group2 = VGroup(rect2, lines2, fill2, label2).next_to(group1, DOWN, buff=1.8)
+        
+        self.play(Create(rect2), Create(lines2))
+        self.play(FadeIn(fill2), Write(label2))
+        self.wait(8 / 3.0) # Aynı bütünü dört eş parçaya bölersek dilimler küçülür.
 
-        # İLK ŞEKİL KESİNLİKLE UP * 2.5 NOKTASINDAN BAŞLAMALIDIR
-        shift_amount = (UP * 2.5) - models[0].get_center()
-        models.shift(shift_amount)
+        # 4. MODEL 3: 1/8 (DOWN, buff=1.8 KURALI)
+        rect3 = Rectangle(width=6, height=1.5, color=WHITE)
+        lines3 = VGroup(*[
+            Line(rect3.get_top() + LEFT * (3 - i*0.75), rect3.get_bottom() + LEFT * (3 - i*0.75), color=WHITE)
+            for i in range(1, 8)
+        ])
+        fill3 = Rectangle(width=0.75, height=1.5, color=GREEN).set_fill(GREEN, 0.8).align_to(rect3, LEFT)
+        label3 = MathTex(r"\frac{1}{8}", font_size=72).next_to(rect3, RIGHT, buff=0.5)
+        
+        group3 = VGroup(rect3, lines3, fill3, label3).next_to(group2, DOWN, buff=1.8)
+        
+        self.play(Create(rect3), Create(lines3))
+        self.play(FadeIn(fill3), Write(label3))
+        self.wait(9 / 3.0) # Sekiz eş parçaya böldüğümüzde ise dilimler daha da küçülür.
 
-        # 3. ANLATIM VE ANİMASYONLAR
-        # "Birim kesirlerde payda büyüdükçe kesrin değeri küçülür."
-        self.play(FadeIn(model_1_2))
-        self.wait(2.33)  # 7 kelime / 3.0 = 2.33s
+        # 5. SONUÇ VE VURGU
+        box = SurroundingRectangle(VGroup(label1, label2, label3), color=YELLOW, buff=0.2)
+        self.play(Create(box))
+        self.wait(6 / 3.0) # Yani payda büyüdükçe, birim kesir küçülür.
 
-        # "Örneğin, bir bütünün ikide biri, üçte birinden daha büyüktür."
-        self.play(FadeIn(model_1_3))
-        self.wait(3.00)  # 9 kelime / 3.0 = 3.00s
-
-        # "Dörtte biri ise en küçüğüdür."
-        self.play(FadeIn(model_1_4))
-        self.wait(1.67)  # 5 kelime / 3.0 = 1.67s
-
-        # "Çünkü aynı pastayı daha çok kişiye paylaştırıyorsunuz."
-        # FORMÜL UYGULAMASI: (7 kelime / 3.0) + 1.5 = 3.83 saniye bekleme
-        colored_parts = VGroup(model_1_2[0][0], model_1_3[0][0], model_1_4[0][0])
-        self.play(Indicate(colored_parts, color=YELLOW, scale_factor=1.1)) # 1.0 saniye sürer
-        self.wait(2.83)  # Toplam 3.83 saniye olması için 2.83 saniye daha bekle
-
-        # 4. MUTLAK SENKRONİZASYON (TEMİZLİK VE ÇIKIŞ)
-        self.play(FadeOut(models), FadeOut(title))
-
-        # CTA: "Maarif Matematik ile mantığını kavra, takipte kal!"
-        cta = Text("Maarif Matematik ile mantığını kavra,\ntakipte kal!", font="DejaVu Sans", color=YELLOW).scale_to_fit_width(6.5)
-        self.play(Write(cta))
-        self.wait(2.33)  # 7 kelime / 3.0 = 2.33s
+        # 6. OUTRO KİLİDİ (MUTLAK SENKRONİZASYON)
+        self.wait(2.0)
+        self.play(*[FadeOut(mob) for mob in self.mobjects])
+        
+        outro = Text("Maarif Matematik ile\nmantığını kavra,\ntakipte kal!", font="DejaVu Sans", font_size=48, color=WHITE)
+        self.play(Write(outro))
+        self.wait(4.0)
