@@ -1,61 +1,65 @@
 from manim import *
 
-config.pixel_height = 1920
 config.pixel_width = 1080
-config.frame_height = 14.22
-config.frame_width = 8.0
+config.pixel_height = 1920
+config.frame_width = 9
+config.frame_height = 16
 
 class MaarifScene(Scene):
     def construct(self):
-        # 1. BÖLÜM: Giriş (16 kelime / 3.0 = 5.33 saniye)
-        title = Text("Birim Kesirler", font="DejaVu Sans", color=YELLOW).to_edge(UP, buff=2.0)
-        self.play(Write(title))
-        self.wait(5.33)
+        # 1. GİRİŞ (5 kelime -> 1.67 saniye)
+        intro_text = Text("Maarif Matematik", font_size=60, color=YELLOW, weight=BOLD).to_edge(UP, buff=1.5)
+        self.play(Write(intro_text), run_time=0.5)
+        self.wait(1.67)
 
-        # 2. BÖLÜM: 1/2 Kesri (19 kelime / 3.0 = 6.33 saniye)
-        circle1 = Circle(radius=1.3, color=WHITE)
-        line1 = Line(circle1.get_top(), circle1.get_bottom(), color=WHITE)
-        sector1 = Sector(outer_radius=1.3, angle=PI, start_angle=PI/2, color=BLUE, fill_opacity=0.7)
-        label1 = MathTex(r"\frac{1}{2}").scale(1.5)
+        # 2. KANCA / SORU (9 kelime -> 3.0 saniye)
+        hook_text = Text("Payda büyüdükçe\nkesir neden küçülür?", font_size=45, text_alignment="CENTER").next_to(intro_text, DOWN, buff=0.8)
+        self.play(FadeIn(hook_text, shift=UP), run_time=0.5)
+        self.wait(3.0)
+
+        # 3. ÖRNEK 1: 1/2 (13 kelime -> 4.33 saniye)
+        circle_half = Circle(radius=1.5, color=WHITE, stroke_width=4).shift(UP * 1.5)
+        line_half = Line(circle_half.get_top(), circle_half.get_bottom(), color=WHITE, stroke_width=4)
+        fill_half = AnnularSector(inner_radius=0, outer_radius=1.5, angle=PI, start_angle=PI/2, color=BLUE, fill_opacity=0.8).shift(UP * 1.5)
+        label_half = MathTex(r"\frac{1}{2}", font_size=80).next_to(circle_half, LEFT, buff=0.8)
         
-        pizza1_group = VGroup(label1, VGroup(circle1, line1, sector1)).arrange(RIGHT, buff=0.8)
+        self.play(Create(circle_half), Create(line_half), run_time=0.5)
+        self.play(FadeIn(fill_half), Write(label_half), run_time=0.5)
+        self.wait(4.33)
 
-        # 3. BÖLÜM: 1/4 Kesri Hazırlığı
-        circle2 = Circle(radius=1.3, color=WHITE)
-        line2_v = Line(circle2.get_top(), circle2.get_bottom(), color=WHITE)
-        line2_h = Line(circle2.get_left(), circle2.get_right(), color=WHITE)
-        sector2 = Sector(outer_radius=1.3, angle=PI/2, start_angle=PI/2, color=RED, fill_opacity=0.7)
-        label2 = MathTex(r"\frac{1}{4}").scale(1.5)
+        # 4. ÖRNEK 2: 1/4 (10 kelime -> 3.33 saniye)
+        circle_quarter = Circle(radius=1.5, color=WHITE, stroke_width=4).shift(DOWN * 2.5)
+        line_q1 = Line(circle_quarter.get_top(), circle_quarter.get_bottom(), color=WHITE, stroke_width=4)
+        line_q2 = Line(circle_quarter.get_left(), circle_quarter.get_right(), color=WHITE, stroke_width=4)
+        fill_quarter = AnnularSector(inner_radius=0, outer_radius=1.5, angle=PI/2, start_angle=PI/2, color=RED, fill_opacity=0.8).shift(DOWN * 2.5)
+        label_quarter = MathTex(r"\frac{1}{4}", font_size=80).next_to(circle_quarter, LEFT, buff=0.8)
+
+        self.play(Create(circle_quarter), Create(line_q1), Create(line_q2), run_time=0.5)
+        self.play(FadeIn(fill_quarter), Write(label_quarter), run_time=0.5)
+        self.wait(3.33)
+
+        # 5. KARŞILAŞTIRMA (10 kelime -> 3.33 saniye)
+        comp_text = MathTex(r"\frac{1}{2} > \frac{1}{4}", font_size=100, color=GREEN).move_to(DOWN * 6)
+        self.play(Write(comp_text), run_time=0.5)
+        self.wait(3.33)
+
+        # 6. KURAL VE MANTIK (11 kelime -> 3.67 saniye)
+        self.play(
+            FadeOut(hook_text), FadeOut(circle_half), FadeOut(line_half), 
+            FadeOut(fill_half), FadeOut(label_half), FadeOut(circle_quarter), 
+            FadeOut(line_q1), FadeOut(line_q2), FadeOut(fill_quarter), 
+            FadeOut(label_quarter), comp_text.animate.shift(UP * 6).scale(1.2),
+            run_time=0.5
+        )
         
-        pizza2_group = VGroup(label2, VGroup(circle2, line2_v, line2_h, sector2)).arrange(RIGHT, buff=0.8)
+        rule_text = Text("Kişi artarsa,\ndilim küçülür!", font_size=70, color=ORANGE, text_alignment="CENTER", weight=BOLD).next_to(comp_text, DOWN, buff=1.5)
+        self.play(Write(rule_text), run_time=0.5)
+        self.wait(3.67)
 
-        # Grupları ekrana hizalama
-        pizzas = VGroup(pizza1_group, pizza2_group).arrange(DOWN, buff=1.6).move_to(ORIGIN)
-
-        # 1/2 Animasyonu
-        self.play(Create(circle1))
-        self.play(Create(line1))
-        self.play(FadeIn(sector1))
-        self.play(Write(label1))
-        self.wait(6.33)
-
-        # 1/4 Animasyonu (15 kelime / 3.0 = 5.00 saniye)
-        self.play(Create(circle2))
-        self.play(Create(line2_v), Create(line2_h))
-        self.play(FadeIn(sector2))
-        self.play(Write(label2))
-        self.wait(5.00)
-
-        # 4. BÖLÜM: Karşılaştırma (18 kelime / 3.0 = 6.00 saniye)
-        comp = MathTex(r"\frac{1}{2} > \frac{1}{4}").scale(2).next_to(pizzas, DOWN, buff=1.0)
-        self.play(Write(comp))
-        self.wait(6.00)
-
-        # 5. BÖLÜM: Çıkış (Mühür) (7 kelime / 3.0 = 2.33 saniye)
-        self.play(FadeOut(Group(*self.mobjects)))
-        outro = Text("Maarif Matematik ile\nmantığını kavra,\ntakipte kal!", font="DejaVu Sans", text_alignment="CENTER").scale(1.2)
-        self.play(Write(outro))
+        # 7. ÇIKIŞ (MÜHÜR) (7 kelime -> 2.33 saniye)
+        outro_text = Text("Maarif Matematik ile\nmantığını kavra,\ntakipte kal!", font_size=55, color=YELLOW, text_alignment="CENTER").next_to(rule_text, DOWN, buff=1.5)
+        self.play(Write(outro_text), run_time=0.5)
         self.wait(2.33)
-        
-        # Final sabitleme
+
+        # 8. FİNAL SABİTLEME
         self.wait(4)
