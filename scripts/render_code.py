@@ -1,72 +1,116 @@
 from manim import *
 
-config.pixel_height = 1920
-config.pixel_width = 1080
-config.frame_width = 9.0
-config.frame_height = 16.0
-
-class BirimKesirler(Scene):
+class MaarifScene(Scene):
     def construct(self):
-        # 1. Merhaba, Maarif Matematik'e hoş geldiniz.
-        intro_text = Text("Maarif Matematik", color=BLUE).scale(1.5)
-        self.play(Write(intro_text))
-        self.wait(1.7)
-        self.play(FadeOut(intro_text))
-
-        # 2. Birim kesirlerde payda büyüdükçe kesir neden küçülür?
-        hook_text = Text("Payda büyüdükçe\nkesir neden küçülür?", text_alignment="CENTER").scale(1.5).shift(UP*4)
-        self.play(Write(hook_text))
-        self.wait(2.3)
-
-        # 3. Düşünün ki elinizde harika bir pizza var.
-        pizza1 = Circle(radius=1.5, color=WHITE, fill_opacity=0).shift(UP*1)
-        self.play(Create(pizza1))
-        self.wait(2.3)
-
-        # 4. Eğer bu pizzayı iki kişi paylaşırsanız, kocaman bir dilim yersiniz.
-        slice1 = Sector(outer_radius=1.5, angle=PI, color=ORANGE, fill_opacity=0.8).shift(UP*1)
-        self.play(Create(slice1))
-        self.wait(3.3)
-
-        # 5. İşte bu ikide birdir.
-        frac1 = MathTex(r"\frac{1}{2}").scale(2.5).next_to(pizza1, LEFT, buff=0.5)
-        self.play(Write(frac1))
-        self.wait(1.3)
-
-        # 6. Ama aynı pizzayı sekiz kişi paylaşırsanız, diliminiz küçücük kalır.
-        pizza2 = Circle(radius=1.5, color=WHITE, fill_opacity=0).shift(DOWN*2.5)
-        slice2 = Sector(outer_radius=1.5, angle=PI/4, color=RED, fill_opacity=0.8).shift(DOWN*2.5)
-        self.play(Create(pizza2))
-        self.play(Create(slice2))
-        self.wait(3.0)
-
-        # 7. Bu da sekizde birdir.
-        frac2 = MathTex(r"\frac{1}{8}").scale(2.5).next_to(pizza2, LEFT, buff=0.5)
-        self.play(Write(frac2))
-        self.wait(1.3)
-
-        # 8. Yani payda kişi sayısıdır, kişi artarsa dilim küçülür.
-        self.play(FadeOut(pizza1), FadeOut(slice1), FadeOut(pizza2), FadeOut(slice2), FadeOut(hook_text))
+        # Arka plan rengi
+        self.camera.background_color = "#FFFFFF"
         
-        final_frac1 = MathTex(r"\frac{1}{2}").scale(3.5).shift(LEFT*2)
-        final_frac2 = MathTex(r"\frac{1}{8}").scale(3.5).shift(RIGHT*2)
-        greater_than = MathTex(">").scale(5.0).set_color(YELLOW).move_to(ORIGIN)
+        # Maarif Matematik Renk Paleti
+        dark_gray = "#333333"
+        navy_blue = "#002B4D"
+        maarif_red = "#D32F2F"
 
-        self.play(
-            Transform(frac1, final_frac1),
-            Transform(frac2, final_frac2)
+        # --- BÖLÜM 1: GİRİŞ VE TANIM ---
+        # "Merhaba, Maarif Matematik’e hoş geldiniz." (5 kelime = 2.77s)
+        title = Text("Birim Kesir", color=navy_blue, font_size=48).to_edge(UP)
+        self.play(Write(title), run_time=1)
+        self.wait(1.77)
+
+        # "Bugün sizlerle kesirlerin en temel yapı taşı olan birim kesirleri öğreneceğiz." (11 kelime = 6.11s)
+        subtitle = Text("Payı 1 olan kesirler", color=dark_gray, font_size=36).next_to(title, DOWN)
+        self.play(Write(subtitle), run_time=1)
+        self.wait(5.11)
+
+        # "Bir bütünü eş parçalara ayırdığımızda, bu eş parçalardan sadece bir tanesini ifade eden kesre birim kesir diyoruz." (17 kelime = 9.44s)
+        circle = Circle(radius=1.5, color=navy_blue, stroke_width=4)
+        lines = VGroup(*[Line(circle.get_center(), circle.point_at_angle(i * PI / 2), color=navy_blue) for i in range(4)])
+        self.play(Create(circle), Create(lines), run_time=2)
+        self.wait(7.44)
+
+        # "Yani payı her zaman bir olan kesirlerdir." (7 kelime = 3.88s)
+        fraction = MathTex(r"\frac{1}{4}", color=dark_gray, font_size=64).next_to(circle, RIGHT, buff=1)
+        fraction[0][0].set_color(maarif_red) # Pay kısmını kırmızı yap
+        self.play(Write(fraction), run_time=1)
+        self.wait(2.88)
+
+        # "Örneğin, bir bütünü dört eş parçaya bölerseniz, her bir parça dörtte bir kesrini ifade eder." (15 kelime = 8.33s)
+        slice_1 = Sector(radius=1.5, angle=PI/2, start_angle=0, color=maarif_red, fill_opacity=0.5)
+        self.play(FadeIn(slice_1), run_time=1)
+        self.wait(7.33)
+
+        # --- BÖLÜM 2: SAYI DOĞRUSU ---
+        # "Peki, birim kesirleri sayı doğrusunda nasıl gösteririz?" (7 kelime = 3.88s)
+        self.play(FadeOut(Group(title, subtitle, circle, lines, fraction, slice_1)), run_time=0.5)
+        title2 = Text("Sayı Doğrusunda Gösterim", color=navy_blue, font_size=48).to_edge(UP)
+        self.play(Write(title2), run_time=0.5)
+        self.wait(2.88)
+
+        # "Birim kesirler her zaman sıfır ile bir tam sayıları arasında yer alır." (12 kelime = 6.66s)
+        nl = NumberLine(x_range=[0, 1, 0.25], length=8, color=dark_gray, include_numbers=False)
+        nl_labels = VGroup(
+            MathTex("0", color=dark_gray).next_to(nl.n2p(0), DOWN),
+            MathTex("1", color=dark_gray).next_to(nl.n2p(1), DOWN)
         )
-        self.play(Write(greater_than))
+        self.play(Create(nl), Write(nl_labels), run_time=2)
+        self.wait(4.66)
+
+        # "Çünkü bir bütünden daha küçüktürler." (5 kelime = 2.77s)
+        self.wait(2.77)
+
+        # "Sayı doğrusunda sıfır ile bir arasını, kesrimizin paydası kadar eş parçaya böleriz." (12 kelime = 6.66s)
+        ticks = VGroup(*[Line(UP*0.2, DOWN*0.2, color=navy_blue).move_to(nl.n2p(i*0.25)) for i in range(1,4)])
+        self.play(Create(ticks), run_time=2)
+        self.wait(4.66)
+
+        # "Sıfırdan sonraki ilk adımımız, bize birim kesrimizin yerini gösterir." (9 kelime = 5.00s)
+        dot = Dot(nl.n2p(0.25), color=maarif_red, radius=0.15)
+        label_14 = MathTex(r"\frac{1}{4}", color=maarif_red).next_to(dot, UP)
+        self.play(FadeIn(dot), Write(label_14), run_time=1)
+        self.wait(4.00)
+
+        # --- BÖLÜM 3: KARŞILAŞTIRMA ---
+        # "Şimdi en kritik noktaya gelelim." (5 kelime = 2.77s)
+        self.play(FadeOut(Group(title2, nl, nl_labels, ticks, dot, label_14)), run_time=1)
+        self.wait(1.77)
+
+        # "Birim kesirleri nasıl karşılaştırırız?" (4 kelime = 2.22s)
+        title3 = Text("Birim Kesirleri Karşılaştırma", color=navy_blue, font_size=48).to_edge(UP)
+        self.play(Write(title3), run_time=1)
+        self.wait(1.22)
+
+        # "Ezberlemek yerine mantığını düşünelim." (4 kelime = 2.22s)
+        self.wait(2.22)
+
+        # "Bir bütünü iki parçaya böldüğünüzde mi daha büyük bir parça elde edersiniz, yoksa on parçaya böldüğünüzde mi?" (17 kelime = 9.44s)
+        rect1 = Rectangle(width=4, height=1, color=navy_blue).shift(LEFT*3 + UP)
+        rect2 = Rectangle(width=4, height=1, color=navy_blue).shift(RIGHT*3 + UP)
         
-        rule_text = Text("Kişi artarsa\ndilim küçülür!", color=GREEN, text_alignment="CENTER").scale(1.5).shift(DOWN*3.5)
-        self.play(Write(rule_text))
-        self.wait(2.7)
+        line1 = Line(rect1.get_top(), rect1.get_bottom(), color=navy_blue)
+        fill1 = Rectangle(width=2, height=1, color=maarif_red, fill_opacity=0.5).align_to(rect1, LEFT).align_to(rect1, UP)
+        
+        lines2 = VGroup(*[Line(rect2.get_corner(UL) + RIGHT*(i*0.4), rect2.get_corner(DL) + RIGHT*(i*0.4), color=navy_blue) for i in range(1,10)])
+        fill2 = Rectangle(width=0.4, height=1, color=maarif_red, fill_opacity=0.5).align_to(rect2, LEFT).align_to(rect2, UP)
+        
+        self.play(Create(rect1), Create(line1), Create(rect2), Create(lines2), run_time=2)
+        self.wait(7.44)
 
-        # Mutlak Senkronizasyon: Son cümle bittikten sonra +1.5 saniye bekle
-        self.wait(1.5)
+        # "Elbette iki parçaya böldüğünüzde." (4 kelime = 2.22s)
+        self.play(FadeIn(fill1), FadeIn(fill2), run_time=1)
+        self.wait(1.22)
 
-        # 9. Maarif Matematik ile mantığını kavra, takipte kal!
-        self.play(FadeOut(*self.mobjects))
-        outro_text = Text("Maarif Matematik ile\nmantığını kavra,\ntakipte kal!", text_alignment="CENTER", color=BLUE).scale(1.5)
-        self.play(Write(outro_text))
-        self.wait(2.3)
+        # "Bu yüzden payda büyüdükçe, yani parça sayısı arttıkça, birim kesrin değeri küçülür." (12 kelime = 6.66s)
+        comp_text = MathTex(r"\frac{1}{2}", ">", r"\frac{1}{10}", color=dark_gray, font_size=64).shift(DOWN*1.5)
+        comp_text[0].set_color(maarif_red)
+        comp_text[2].set_color(maarif_red)
+        self.play(Write(comp_text), run_time=1)
+        self.wait(5.66)
+
+        # "İkide bir, onda birden her zaman daha büyüktür." (8 kelime = 4.44s)
+        self.play(comp_text[1].animate.scale(1.5).set_color(navy_blue), run_time=0.5)
+        self.play(comp_text[1].animate.scale(1/1.5), run_time=0.5)
+        self.wait(3.44)
+
+        # "Bir sonraki derste görüşmek üzere, hoşça kalın." (7 kelime = 3.88s)
+        outro = Text("Maarif Matematik", color=maarif_red, font_size=48).shift(DOWN*3)
+        self.play(Write(outro), run_time=1)
+        self.wait(2.88)
