@@ -1,89 +1,106 @@
 from manim import *
 
-class MaarifScene(Scene):
+class Kesirler(Scene):
     def construct(self):
-        # Renk Tanımlamaları
-        bg_color = "#FFFFFF"
-        text_color = "#333333"
-        navy_color = "#002B4D"
-        red_color = "#D32F2F"
-        
-        self.camera.background_color = bg_color
+        # 1. GİRİŞ
+        title = Tex("Kesir Çeşitleri ve Dönüşümler", font_size=48, color=YELLOW)
+        self.play(Write(title))
+        self.wait(1)
+        self.play(title.animate.to_edge(UP))
+        self.wait(5)
 
-        # BÖLÜM 1: Giriş ve Basit Kesir (Kelime: 70, Süre: ~38.8 sn, Animasyon: 4 sn, Bekleme: 35 sn)
-        title_basit = Text("Basit Kesir", color=navy_color, font_size=48).to_edge(UP)
-        fraction_3_4 = MathTex(r"\frac{3}{4}", color=text_color, font_size=72).next_to(title_basit, DOWN, buff=0.5)
-        
-        # 3/4 Pizza Modeli
-        pizza1 = VGroup()
-        for i in range(4):
-            if i < 3:
-                slice_color = red_color
-                opacity = 0.8
-            else:
-                slice_color = text_color
-                opacity = 0.1
-            
-            pizza_slice = Sector(radius=1.5, angle=PI/2, start_angle=i*PI/2, color=slice_color, fill_opacity=opacity, stroke_color=bg_color, stroke_width=2)
-            pizza1.add(pizza_slice)
-        
-        pizza1.next_to(fraction_3_4, DOWN, buff=1)
+        # 2. BASİT KESİR
+        basit_title = Tex("Basit Kesir: Pay $<$ Payda", font_size=40).shift(UP*1.5)
+        basit_ex = MathTex(r"\frac{3}{5}", font_size=60).next_to(basit_title, DOWN, buff=0.5)
+        self.play(Write(basit_title))
+        self.play(FadeIn(basit_ex, shift=UP))
+        self.wait(5)
+        self.play(FadeOut(basit_title), FadeOut(basit_ex))
 
-        self.play(Write(title_basit), run_time=1)
-        self.play(Write(fraction_3_4), run_time=1)
-        self.play(FadeIn(pizza1), run_time=2)
-        self.wait(35)
+        # 3. BİLEŞİK KESİR
+        bilesik_title = Tex("Bileşik Kesir: Pay $\geq$ Payda", font_size=40).shift(UP*1.5)
+        bilesik_ex = MathTex(r"\frac{7}{4}", font_size=60).next_to(bilesik_title, DOWN, buff=0.5)
+        self.play(Write(bilesik_title))
+        self.play(FadeIn(bilesik_ex, shift=UP))
+        self.wait(6)
+        self.play(FadeOut(bilesik_title), FadeOut(bilesik_ex))
 
-        # BÖLÜM 2: Bileşik Kesir (Kelime: 58, Süre: ~32.2 sn, Animasyon: 4 sn, Bekleme: 28 sn)
-        self.play(FadeOut(title_basit), FadeOut(fraction_3_4), FadeOut(pizza1), run_time=1)
-        
-        title_bilesik = Text("Bileşik Kesir", color=navy_color, font_size=48).to_edge(UP)
-        fraction_5_4 = MathTex(r"\frac{5}{4}", color=text_color, font_size=72).next_to(title_bilesik, DOWN, buff=0.5)
-        
-        # 5/4 Pizza Modeli (2 Pizza)
-        pizzas = VGroup()
-        pizza2_full = VGroup()
-        for i in range(4):
-            pizza_slice = Sector(radius=1.2, angle=PI/2, start_angle=i*PI/2, color=red_color, fill_opacity=0.8, stroke_color=bg_color, stroke_width=2)
-            pizza2_full.add(pizza_slice)
-            
-        pizza3_part = VGroup()
-        for i in range(4):
-            if i < 1:
-                slice_color = red_color
-                opacity = 0.8
-            else:
-                slice_color = text_color
-                opacity = 0.1
-            pizza_slice = Sector(radius=1.2, angle=PI/2, start_angle=i*PI/2, color=slice_color, fill_opacity=opacity, stroke_color=bg_color, stroke_width=2)
-            pizza3_part.add(pizza_slice)
-            
-        pizzas.add(pizza2_full, pizza3_part).arrange(RIGHT, buff=1).next_to(fraction_5_4, DOWN, buff=1)
+        # 4. TAM SAYILI KESİR
+        tam_title = Tex("Tam Sayılı Kesir: Tam Sayı + Basit Kesir", font_size=40).shift(UP*1.5)
+        tam_ex = MathTex(r"1 \frac{3}{4}", font_size=60).next_to(tam_title, DOWN, buff=0.5)
+        self.play(Write(tam_title))
+        self.play(FadeIn(tam_ex, shift=UP))
+        self.wait(6)
+        self.play(FadeOut(tam_title), FadeOut(tam_ex))
 
-        self.play(Write(title_bilesik), Write(fraction_5_4), run_time=1)
-        self.play(FadeIn(pizzas), run_time=2)
-        self.wait(28)
-
-        # BÖLÜM 3: Tam Sayılı Kesir ve Dönüşüm (Kelime: 103, Süre: ~57.2 sn, Animasyon: 5 sn, Bekleme: 52.5 sn)
-        title_tam = Text("Tam Sayılı Kesir & Dönüşüm", color=navy_color, font_size=48).to_edge(UP)
+        # 5. DÖNÜŞÜM: TAM SAYILIDAN BİLEŞİĞE
+        conv1_title = Tex("Tam Sayılı $\rightarrow$ Bileşik Kesir", font_size=40, color=BLUE).shift(UP*2)
+        self.play(Write(conv1_title))
         
-        # 5/4 -> 1 1/4 Dönüşümü
-        fraction_mixed = MathTex(r"1 \frac{1}{4}", color=text_color, font_size=72).next_to(title_tam, DOWN, buff=0.5)
+        step1 = MathTex(r"2 \frac{1}{3}", font_size=60)
+        step2 = MathTex(r"= \frac{2 \times 3 + 1}{3}", font_size=60).next_to(step1, RIGHT)
+        step3 = MathTex(r"= \frac{7}{3}", font_size=60).next_to(step2, RIGHT)
         
-        # Bölme işlemi mantığı
-        div_logic = MathTex(r"5 \div 4 = 1 \text{ (Kalan: } 1\text{)}", color=navy_color, font_size=48).next_to(pizzas, DOWN, buff=0.5)
+        eq_group = VGroup(step1, step2, step3).move_to(ORIGIN)
         
-        # Çarpma işlemi mantığı
-        mult_logic = MathTex(r"1 \frac{1}{4} = \frac{(1 \times 4) + 1}{4} = \frac{5}{4}", color=red_color, font_size=48).next_to(div_logic, DOWN, buff=0.5)
-
-        self.play(Transform(title_bilesik, title_tam), Transform(fraction_5_4, fraction_mixed), run_time=1)
-        self.play(Write(div_logic), run_time=2)
-        self.play(Write(mult_logic), run_time=2)
-        self.wait(52.5)
-
-        # BÖLÜM 4: Çıkış (Kelime: 7, Süre: ~3.8 sn, Animasyon: 2 sn, Bekleme: 2 sn)
-        self.play(FadeOut(title_bilesik), FadeOut(fraction_5_4), FadeOut(pizzas), FadeOut(div_logic), FadeOut(mult_logic), run_time=1)
-        
-        outro_text = Text("Maarif Matematik", color=navy_color, font_size=60)
-        self.play(Write(outro_text), run_time=1)
+        self.play(Write(eq_group[0]))
         self.wait(2)
+        self.play(Write(eq_group[1]))
+        self.wait(5)
+        self.play(Write(eq_group[2]))
+        self.wait(4)
+        self.play(FadeOut(conv1_title), FadeOut(eq_group))
+
+        # 6. DÖNÜŞÜM: BİLEŞİKTEN TAM SAYILIYA (BÖLME EVİ)
+        conv2_title = Tex("Bileşik $\rightarrow$ Tam Sayılı Kesir", font_size=40, color=GREEN).shift(UP*2.5)
+        self.play(Write(conv2_title))
+        
+        start_frac = MathTex(r"\frac{11}{4}", font_size=60).shift(LEFT*4 + UP*0.5)
+        self.play(Write(start_frac))
+        self.wait(4)
+
+        # Bölme Evi Kurulumu (Line objeleri ile)
+        dividend = MathTex("11", font_size=48).move_to(LEFT * 0.5 + UP * 0.8)
+        divisor = MathTex("4", font_size=48).move_to(RIGHT * 0.5 + UP * 0.8)
+        
+        v_line = Line(UP * 1.2, DOWN * 0.2).move_to(ORIGIN + UP * 0.5)
+        h_line = Line(ORIGIN, RIGHT * 1).move_to(RIGHT * 0.5 + UP * 0.4)
+        
+        self.play(Write(dividend), Write(divisor))
+        self.play(Create(v_line), Create(h_line))
+        self.wait(3)
+
+        # Bölme İşlemi Adımları
+        quotient = MathTex("2", font_size=48, color=YELLOW).move_to(RIGHT * 0.5 + DOWN * 0.2)
+        self.play(Write(quotient))
+        self.wait(2)
+
+        product = MathTex("8", font_size=48).move_to(LEFT * 0.5 + DOWN * 0.2)
+        minus = MathTex("-", font_size=48).next_to(product, LEFT, buff=0.1)
+        sub_line = Line(LEFT * 1, ORIGIN).move_to(LEFT * 0.5 + DOWN * 0.6)
+        
+        self.play(Write(product), Write(minus))
+        self.play(Create(sub_line))
+        self.wait(2)
+
+        remainder = MathTex("3", font_size=48, color=RED).move_to(LEFT * 0.5 + DOWN * 1.1)
+        self.play(Write(remainder))
+        self.wait(3)
+
+        # Sonucu Yazma
+        arrow = Arrow(start=LEFT*2, end=RIGHT*2, color=WHITE).next_to(h_line, RIGHT, buff=1)
+        final_result = MathTex(r"2 \frac{3}{4}", font_size=60)
+        final_result[0][0].set_color(YELLOW) # Tam kısım (2)
+        final_result[0][1].set_color(RED)    # Pay (3)
+        final_result.next_to(arrow, RIGHT)
+
+        self.play(GrowArrow(arrow))
+        self.play(Write(final_result))
+        self.wait(5)
+
+        # 8. ÇIKIŞ
+        self.play(
+            *[FadeOut(mob) for mob in self.mobjects if mob != title]
+        )
+        self.play(title.animate.move_to(ORIGIN))
+        self.wait(3)
