@@ -1,63 +1,89 @@
 from manim import *
 
-config.pixel_width = 1080
-config.pixel_height = 1920
-config.frame_width = 1080 / 1920 * 14.22
-config.frame_height = 14.22
-
 class MaarifScene(Scene):
     def construct(self):
-        # 1. GİRİŞ VE BAŞLIK (Güvenli Alan: buff=2.0)
-        title = Text("Birim Kesirler", font="DejaVu Sans", color=WHITE).scale(1.5).to_edge(UP, buff=2.0)
-        self.play(Write(title))
-        self.wait(1.7) # Merhaba, Maarif Matematik’e hoş geldiniz.
+        # Renk Tanımlamaları
+        bg_color = "#FFFFFF"
+        text_color = "#333333"
+        navy_color = "#002B4D"
+        red_color = "#D32F2F"
         
-        self.wait(2.3) # Birim kesirlerde payda büyüdükçe kesir neden küçülür?
-        self.wait(2.0) # Gelin mantığını bir pasta üzerinden anlayalım.
+        self.camera.background_color = bg_color
+
+        # BÖLÜM 1: Giriş ve Basit Kesir (Kelime: 70, Süre: ~38.8 sn, Animasyon: 4 sn, Bekleme: 35 sn)
+        title_basit = Text("Basit Kesir", color=navy_color, font_size=48).to_edge(UP)
+        fraction_3_4 = MathTex(r"\frac{3}{4}", color=text_color, font_size=72).next_to(title_basit, DOWN, buff=0.5)
         
-        # 2. PASTALAR (Merkez 6x10 alanına mıhlanmış)
-        cake1_base = Circle(radius=1.5, color=WHITE).shift(UP*1.5 + LEFT*2.2)
-        cake2_base = Circle(radius=1.5, color=WHITE).shift(UP*1.5 + RIGHT*2.2)
+        # 3/4 Pizza Modeli
+        pizza1 = VGroup()
+        for i in range(4):
+            if i < 3:
+                slice_color = red_color
+                opacity = 0.8
+            else:
+                slice_color = text_color
+                opacity = 0.1
+            
+            pizza_slice = Sector(radius=1.5, angle=PI/2, start_angle=i*PI/2, color=slice_color, fill_opacity=opacity, stroke_color=bg_color, stroke_width=2)
+            pizza1.add(pizza_slice)
         
-        self.play(Create(cake1_base), Create(cake2_base))
-        self.wait(2.3) # Elimizde aynı boyutta iki nefis pasta var.
+        pizza1.next_to(fraction_3_4, DOWN, buff=1)
+
+        self.play(Write(title_basit), run_time=1)
+        self.play(Write(fraction_3_4), run_time=1)
+        self.play(FadeIn(pizza1), run_time=2)
+        self.wait(35)
+
+        # BÖLÜM 2: Bileşik Kesir (Kelime: 58, Süre: ~32.2 sn, Animasyon: 4 sn, Bekleme: 28 sn)
+        self.play(FadeOut(title_basit), FadeOut(fraction_3_4), FadeOut(pizza1), run_time=1)
         
-        # 3. DİLİMLER VE KESİRLER (outer_radius KESİNLİKLE YOK, sadece radius)
-        slice1 = Sector(radius=1.5, angle=PI, color=ORANGE, fill_opacity=0.8).move_arc_center_to(cake1_base.get_center())
-        frac1 = MathTex(r"\frac{1}{2}").scale(2.5).next_to(cake1_base, DOWN, buff=0.5)
+        title_bilesik = Text("Bileşik Kesir", color=navy_color, font_size=48).to_edge(UP)
+        fraction_5_4 = MathTex(r"\frac{5}{4}", color=text_color, font_size=72).next_to(title_bilesik, DOWN, buff=0.5)
         
-        self.play(Create(slice1), Write(frac1))
-        self.wait(3.0) # İlk pastayı iki kişiye paylaştıralım, yani bir bölü iki.
+        # 5/4 Pizza Modeli (2 Pizza)
+        pizzas = VGroup()
+        pizza2_full = VGroup()
+        for i in range(4):
+            pizza_slice = Sector(radius=1.2, angle=PI/2, start_angle=i*PI/2, color=red_color, fill_opacity=0.8, stroke_color=bg_color, stroke_width=2)
+            pizza2_full.add(pizza_slice)
+            
+        pizza3_part = VGroup()
+        for i in range(4):
+            if i < 1:
+                slice_color = red_color
+                opacity = 0.8
+            else:
+                slice_color = text_color
+                opacity = 0.1
+            pizza_slice = Sector(radius=1.2, angle=PI/2, start_angle=i*PI/2, color=slice_color, fill_opacity=opacity, stroke_color=bg_color, stroke_width=2)
+            pizza3_part.add(pizza_slice)
+            
+        pizzas.add(pizza2_full, pizza3_part).arrange(RIGHT, buff=1).next_to(fraction_5_4, DOWN, buff=1)
+
+        self.play(Write(title_bilesik), Write(fraction_5_4), run_time=1)
+        self.play(FadeIn(pizzas), run_time=2)
+        self.wait(28)
+
+        # BÖLÜM 3: Tam Sayılı Kesir ve Dönüşüm (Kelime: 103, Süre: ~57.2 sn, Animasyon: 5 sn, Bekleme: 52.5 sn)
+        title_tam = Text("Tam Sayılı Kesir & Dönüşüm", color=navy_color, font_size=48).to_edge(UP)
         
-        slice2 = Sector(radius=1.5, angle=PI/2, color=BLUE, fill_opacity=0.8).move_arc_center_to(cake2_base.get_center())
-        frac2 = MathTex(r"\frac{1}{4}").scale(2.5).next_to(cake2_base, DOWN, buff=0.5)
+        # 5/4 -> 1 1/4 Dönüşümü
+        fraction_mixed = MathTex(r"1 \frac{1}{4}", color=text_color, font_size=72).next_to(title_tam, DOWN, buff=0.5)
         
-        self.play(Create(slice2), Write(frac2))
-        self.wait(3.3) # İkinci pastayı ise dört kişiye paylaştıralım, yani bir bölü dört.
+        # Bölme işlemi mantığı
+        div_logic = MathTex(r"5 \div 4 = 1 \text{ (Kalan: } 1\text{)}", color=navy_color, font_size=48).next_to(pizzas, DOWN, buff=0.5)
         
-        self.wait(2.3) # Hangisinde tabağınıza daha büyük bir dilim düşer?
+        # Çarpma işlemi mantığı
+        mult_logic = MathTex(r"1 \frac{1}{4} = \frac{(1 \times 4) + 1}{4} = \frac{5}{4}", color=red_color, font_size=48).next_to(div_logic, DOWN, buff=0.5)
+
+        self.play(Transform(title_bilesik, title_tam), Transform(fraction_5_4, fraction_mixed), run_time=1)
+        self.play(Write(div_logic), run_time=2)
+        self.play(Write(mult_logic), run_time=2)
+        self.wait(52.5)
+
+        # BÖLÜM 4: Çıkış (Kelime: 7, Süre: ~3.8 sn, Animasyon: 2 sn, Bekleme: 2 sn)
+        self.play(FadeOut(title_bilesik), FadeOut(fraction_5_4), FadeOut(pizzas), FadeOut(div_logic), FadeOut(mult_logic), run_time=1)
         
-        self.play(Indicate(slice1, scale_factor=1.2, color=YELLOW))
-        self.wait(2.0) # Tabii ki iki kişiye bölünen pastada!
-        
-        # 4. PEDAGOJİK AÇIKLAMA (Yazılar KESİNLİKLE scale(1.5) ve alignment parametresi YOK)
-        exp_text1 = Text("Payda = Kisi Sayisi", font="DejaVu Sans", color=YELLOW).scale(1.5).shift(DOWN*2.5)
-        self.play(Write(exp_text1))
-        self.wait(2.0) # Payda, pastayı kaç kişiye böldüğümüzü gösterir.
-        
-        exp_text2 = Text("Kisi artarsa\ndilim kuculur", font="DejaVu Sans", color=RED_B).scale(1.5).next_to(exp_text1, DOWN, buff=0.8)
-        self.play(Write(exp_text2))
-        self.wait(2.3) # Kişi sayısı artarsa, sana düşen dilim küçülür.
-        
-        # 5. BÜYÜKTÜR SEMBOLÜ (Devasa ve YELLOW)
-        comp_sign = Text(">", font="DejaVu Sans", color=YELLOW).scale(4).move_to(UP*1.5)
-        self.play(Write(comp_sign))
-        self.wait(3.0) # Bu yüzden bir bölü iki, bir bölü dörtten büyüktür.
-        
-        # 6. KAPANIŞ VE TEMİZLİK
-        self.wait(1.5) # Son cümle bittikten sonra 1.5 saniye bekle
-        self.play(*[FadeOut(mob) for mob in self.mobjects])
-        
-        cta = Text("Maarif Matematik ile\nmantigini kavra,\ntakipte kal", font="DejaVu Sans", color=BLUE).scale(1.5)
-        self.play(Write(cta))
-        self.wait(2.3) # Maarif Matematik ile mantığını kavra, takipte kal!
+        outro_text = Text("Maarif Matematik", color=navy_color, font_size=60)
+        self.play(Write(outro_text), run_time=1)
+        self.wait(2)
