@@ -1,69 +1,82 @@
 from manim import *
-config.pixel_height=1920
-config.pixel_width=1080
-config.frame_height=14.22
-config.frame_width=8.0
 
 class MaarifScene(Scene):
     def construct(self):
-        # GİRİŞ (5 kelime -> 1.66 saniye)
-        intro_text = Text("Merhaba, Maarif Matematik'e\nhoş geldiniz.", font="DejaVu Sans", color=YELLOW).scale_to_fit_width(6.2)
-        self.play(Write(intro_text), run_time=0.66)
-        self.wait(1.0)
-        self.play(FadeOut(intro_text), run_time=0.2)
+        # Renk Paleti
+        self.camera.background_color = "#FFFFFF"
+        dark_gray = "#333333"
+        navy_blue = "#002B4D"
+        maarif_red = "#D32F2F"
 
-        # KANCA (7 kelime -> 2.33 saniye)
-        hook_text = Text("Birim kesirlerde payda büyüdükçe\nkesir neden küçülür?", font="DejaVu Sans", color=WHITE).scale_to_fit_width(6.2)
-        self.play(Write(hook_text), run_time=1.0)
-        self.wait(1.33)
-        self.play(FadeOut(hook_text), run_time=0.2)
-
-        # GÖRSEL İSPAT HAZIRLIĞI
-        # 1/2 Kesri Modeli
-        circle1 = Circle(radius=2, color=WHITE)
-        line1 = Line(circle1.get_top(), circle1.get_bottom(), color=WHITE)
-        sector1 = Sector(radius=2, angle=PI, start_angle=PI/2, color=ORANGE, fill_opacity=0.7)
-        frac1 = MathTex(r"\frac{1}{2}").scale(2)
-        group1_pizza = VGroup(circle1, line1, sector1)
-        group1 = VGroup(group1_pizza, frac1).arrange(DOWN, buff=0.5)
-
-        # 1/8 Kesri Modeli
-        circle2 = Circle(radius=2, color=WHITE)
-        line2_1 = Line(circle2.get_left(), circle2.get_right(), color=WHITE)
-        line2_2 = Line(circle2.get_top(), circle2.get_bottom(), color=WHITE)
-        line2_3 = Line(circle2.point_at_angle(PI/4), circle2.point_at_angle(5*PI/4), color=WHITE)
-        line2_4 = Line(circle2.point_at_angle(3*PI/4), circle2.point_at_angle(7*PI/4), color=WHITE)
-        lines2 = VGroup(line2_1, line2_2, line2_3, line2_4)
-        sector2 = Sector(radius=2, angle=PI/4, start_angle=PI/2, color=RED, fill_opacity=0.7)
-        frac2 = MathTex(r"\frac{1}{8}").scale(2)
-        group2_pizza = VGroup(circle2, lines2, sector2)
-        group2 = VGroup(group2_pizza, frac2).arrange(DOWN, buff=0.5)
-
-        # Dikey Hizalama ve Ekrana Sığdırma
-        main_group = VGroup(group1, group2).arrange(DOWN, buff=1.8)
-        main_group.scale_to_fit_width(6.2)
-
-        # AÇIKLAMA 1 (10 kelime -> 3.33 saniye)
-        self.play(Create(circle1), Create(line1), run_time=1.0)
-        self.play(FadeIn(sector1), Write(frac1), run_time=1.0)
-        self.wait(1.33)
-
-        # AÇIKLAMA 2 (13 kelime -> 4.33 saniye)
-        self.play(Create(circle2), Create(lines2), run_time=1.0)
-        self.play(FadeIn(sector2), Write(frac2), run_time=1.0)
-        self.wait(2.33)
-
-        # SONUÇ (9 kelime -> 3.0 saniye)
-        self.play(FadeOut(main_group), run_time=0.5)
-        conc_text = Text("Payda büyüdükçe\nparça sayısı artar\nve dilimler küçülür.", font="DejaVu Sans", color=YELLOW).scale_to_fit_width(6.2)
-        self.play(Write(conc_text), run_time=1.0)
-        self.wait(1.5)
-        self.play(FadeOut(conc_text), run_time=0.5)
-
-        # ÇIKIŞ (7 kelime -> 2.33 saniye)
-        outro_text = Text("Bir sonraki derste\ngörüşmek üzere,\nhoşça kalın.", font="DejaVu Sans", color=WHITE).scale_to_fit_width(6.2)
-        self.play(Write(outro_text), run_time=1.0)
-        self.wait(1.33)
+        # BÖLÜM 1: Birim Kesir Nedir? (52 kelime / 1.8 = 28.8 saniye)
+        title = Text("Birim Kesirler", color=navy_blue, font_size=48).to_edge(UP)
+        self.play(Write(title), run_time=2)
         
-        # Kapanış Sabitleme
-        self.wait(5)
+        circle = Circle(radius=2, color=dark_gray, stroke_width=4)
+        self.play(Create(circle), run_time=2)
+        
+        lines = VGroup(
+            Line(circle.get_top(), circle.get_bottom(), color=dark_gray),
+            Line(circle.get_left(), circle.get_right(), color=dark_gray)
+        )
+        self.play(Create(lines), run_time=2)
+        
+        slice1 = Sector(radius=2, angle=PI/2, start_angle=0, color=maarif_red, fill_opacity=0.7)
+        self.play(FadeIn(slice1), run_time=2)
+        
+        frac_1_4 = MathTex(r"\frac{1}{4}", color=navy_blue, font_size=64).next_to(circle, RIGHT, buff=1)
+        self.play(Write(frac_1_4), run_time=2)
+        
+        # Animasyonlar 10 saniye sürdü. Kalan süre: 28.8 - 10 = 18.8 -> 19 saniye bekleme.
+        self.wait(19)
+
+        # BÖLÜM 2: Sayı Doğrusunda Gösterme (49 kelime / 1.8 = 27.2 saniye)
+        self.play(FadeOut(circle), FadeOut(lines), FadeOut(slice1), FadeOut(frac_1_4), run_time=1)
+        
+        nl = NumberLine(x_range=[0, 1, 0.25], length=8, color=dark_gray, include_numbers=False)
+        nl.add_labels({0: MathTex("0", color=navy_blue), 1: MathTex("1", color=navy_blue)})
+        self.play(Create(nl), run_time=2)
+        
+        ticks = VGroup(*[Line(UP*0.2, DOWN*0.2, color=dark_gray).move_to(nl.n2p(i*0.25)) for i in range(1,4)])
+        self.play(Create(ticks), run_time=2)
+        
+        dot = Dot(nl.n2p(0.25), color=maarif_red, radius=0.15)
+        label_1_4 = MathTex(r"\frac{1}{4}", color=maarif_red).next_to(dot, UP)
+        self.play(FadeIn(dot), Write(label_1_4), run_time=2)
+        
+        # Animasyonlar 7 saniye sürdü. Kalan süre: 27.2 - 7 = 20.2 -> 20 saniye bekleme.
+        self.wait(20)
+
+        # BÖLÜM 3: Karşılaştırma (54 kelime / 1.8 = 30 saniye)
+        self.play(FadeOut(nl), FadeOut(ticks), FadeOut(dot), FadeOut(label_1_4), run_time=1)
+        
+        circle_half = Circle(radius=1.5, color=dark_gray).shift(LEFT*3)
+        slice_half = Sector(radius=1.5, angle=PI, start_angle=0, color=maarif_red, fill_opacity=0.7).shift(LEFT*3)
+        frac_half = MathTex(r"\frac{1}{2}", color=navy_blue, font_size=48).next_to(circle_half, DOWN)
+        
+        circle_ten = Circle(radius=1.5, color=dark_gray).shift(RIGHT*3)
+        slice_ten = Sector(radius=1.5, angle=TAU/10, start_angle=0, color=maarif_red, fill_opacity=0.7).shift(RIGHT*3)
+        frac_ten = MathTex(r"\frac{1}{10}", color=navy_blue, font_size=48).next_to(circle_ten, DOWN)
+        
+        self.play(Create(circle_half), FadeIn(slice_half), Write(frac_half), run_time=2)
+        self.play(Create(circle_ten), FadeIn(slice_ten), Write(frac_ten), run_time=2)
+        
+        gt_sign = MathTex(">", color=dark_gray, font_size=64).move_to(ORIGIN)
+        self.play(Write(gt_sign), run_time=2)
+        
+        # Animasyonlar 7 saniye sürdü. Kalan süre: 30 - 7 = 23 saniye bekleme.
+        self.wait(23)
+
+        # BÖLÜM 4: Çıkış (7 kelime / 1.8 = 3.8 saniye)
+        self.play(
+            FadeOut(circle_half), FadeOut(slice_half), FadeOut(frac_half),
+            FadeOut(circle_ten), FadeOut(slice_ten), FadeOut(frac_ten),
+            FadeOut(gt_sign), FadeOut(title),
+            run_time=1
+        )
+        
+        outro_text = Text("Maarif Matematik", color=navy_blue, font_size=48)
+        self.play(Write(outro_text), run_time=1)
+        
+        # Animasyonlar 2 saniye sürdü. Kalan süre: 3.8 - 2 = 1.8 -> 2 saniye bekleme.
+        self.wait(2)
