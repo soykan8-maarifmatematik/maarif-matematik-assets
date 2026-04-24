@@ -7,59 +7,61 @@ config.frame_width = 8.0
 
 class MaarifScene(Scene):
     def construct(self):
-        # Objelerin Oluşturulması
-        title = Text("Birim Kesirler", font="DejaVu Sans", font_size=56).move_to(UP * 3.5)
+        # BAŞLIK
+        title = Text("Birim Kesirler", font="DejaVu Sans").to_edge(UP, buff=1.0)
 
-        # 1/2 Görseli
-        circle_half = Circle(radius=1.3, color=WHITE)
-        line_half = Line(circle_half.get_top(), circle_half.get_bottom(), color=WHITE)
-        sector_half = Sector(radius=1.3, angle=PI, start_angle=PI/2, color=BLUE, fill_opacity=0.7)
-        frac_half = MathTex(r"\frac{1}{2}", font_size=72)
-        group_half = VGroup(VGroup(circle_half, line_half, sector_half), frac_half).arrange(DOWN, buff=0.5)
+        # DAİRE MODELLERİ
+        def create_fraction_model(fraction_tex, angle, color):
+            circle = Circle(radius=1.5, color=WHITE)
+            sector = Sector(radius=1.5, angle=angle, color=color, fill_opacity=0.8)
+            lines = VGroup(*[Line(ORIGIN, circle.point_at_angle(i * angle), color=WHITE) for i in range(int(round(2*PI/angle)))])
+            pie = VGroup(circle, sector, lines)
+            label = MathTex(fraction_tex).scale(2.0)
+            return VGroup(pie, label).arrange(RIGHT, buff=1.0)
 
-        # 1/4 Görseli
-        circle_quarter = Circle(radius=1.3, color=WHITE)
-        line_q1 = Line(circle_quarter.get_top(), circle_quarter.get_bottom(), color=WHITE)
-        line_q2 = Line(circle_quarter.get_left(), circle_quarter.get_right(), color=WHITE)
-        sector_quarter = Sector(radius=1.3, angle=PI/2, start_angle=PI/2, color=RED, fill_opacity=0.7)
-        frac_quarter = MathTex(r"\frac{1}{4}", font_size=72)
-        group_quarter = VGroup(VGroup(circle_quarter, line_q1, line_q2, sector_quarter), frac_quarter).arrange(DOWN, buff=0.5)
+        model1 = create_fraction_model(r"\frac{1}{2}", PI, BLUE)
+        model2 = create_fraction_model(r"\frac{1}{3}", 2*PI/3, GREEN)
+        model3 = create_fraction_model(r"\frac{1}{4}", PI/2, RED)
 
-        # Yan yana dizilim
-        circles_group = VGroup(group_half, group_quarter).arrange(RIGHT, buff=1.2)
+        # DİKEY DİZİLİM
+        models = VGroup(model1, model2, model3).arrange(DOWN, buff=1.8)
         
-        # Karşılaştırma
-        comparison = MathTex(r"\frac{1}{2} > \frac{1}{4}", font_size=88)
-
-        # KESİN KURAL: VGroup(...).arrange(DOWN, buff=1.6)
-        content = VGroup(circles_group, comparison).arrange(DOWN, buff=1.6)
-        content.move_to(DOWN * 0.5) # Güvenli alan hizalaması (UP * 3.5 ile DOWN * 4 arası)
-
-        # Animasyonlar ve Senkronizasyon (Hız: 3.0 kelime/saniye)
+        # ÖLÇEK
+        models.scale_to_fit_width(6.5)
         
-        # 1. "Merhaba, Maarif Matematik’e hoş geldiniz." (5 kelime -> 1.67s)
-        self.play(Write(title), run_time=0.67)
-        self.wait(1.0)
+        # KESİN YERLEŞİM: İlk model KESİNLİKLE UP * 2.0 noktasından başlamalıdır
+        models.shift(UP * 2.0 - model1.get_center())
 
-        # 2. "Birim kesirlerde payda büyüdükçe kesrin değeri neden küçülür?" (8 kelime -> 2.67s)
-        self.wait(2.67)
+        # GİRİŞ (5 kelime = 1.67s)
+        self.play(Write(title), run_time=1.0)
+        self.wait(0.67)
 
-        # 3. "Bir pastayı iki kişiye bölersek her birimize yarım pasta düşer." (10 kelime -> 3.33s)
-        self.play(FadeIn(group_half), run_time=1.0)
+        # Cümle 1 (5 kelime = 1.67s)
+        self.wait(1.67)
+
+        # Cümle 2 (7 kelime = 2.33s)
         self.wait(2.33)
 
-        # 4. "Aynı pastayı dört kişiye bölersek dilimler küçülür ve çeyrek pasta düşer." (11 kelime -> 3.67s)
-        self.play(FadeIn(group_quarter), run_time=1.0)
-        self.wait(2.67)
+        # Cümle 3 (8 kelime = 2.67s)
+        self.play(FadeIn(model1), run_time=1.0)
+        self.wait(1.67)
 
-        # 5. "Yani payda parça sayısını gösterir parça sayısı artarsa dilimler ufalır." (10 kelime)
-        self.play(Write(comparison), run_time=1.0)
-        
-        # MÜHÜR KURALI: Son matematiksel animasyon bittikten sonra, o cümledeki kelime sayısını (10) 3.0'a böl ve bekle.
-        self.wait(3.33)
+        # Cümle 4 (8 kelime = 2.67s)
+        self.play(FadeIn(model2), run_time=1.0)
+        self.wait(1.67)
 
-        # 6. ÇIKIŞ MÜHRÜ: "Maarif Matematik ile mantığını kavra, takipte kal!" (7 kelime -> 2.33s)
-        self.play(FadeOut(Group(*self.mobjects)), run_time=0.5)
-        outro_text = Text("Maarif Matematik ile\nmantığını kavra,\ntakipte kal!", font="DejaVu Sans", font_size=56)
-        self.play(Write(outro_text), run_time=0.83)
-        self.wait(1.5)
+        # Cümle 5 (8 kelime = 2.67s)
+        self.play(FadeIn(model3), run_time=1.0)
+        self.wait(1.67)
+
+        # Cümle 6 - SON MATEMATİK CÜMLESİ (6 kelime)
+        # 6 / 3.0 = 2.0 saniye. +1 saniye ekstra = 3.0 saniye bekleme.
+        self.wait(3.0)
+
+        # EKRANI TEMİZLE (Tüm matematiksel objeler FadeOut ile silinir)
+        self.play(FadeOut(title), FadeOut(models), run_time=1.0)
+
+        # ÇIKIŞ MÜHRÜ (7 kelime = 2.33s)
+        outro = Text("Maarif Matematik ile\nmantığını kavra,\ntakipte kal!", font="DejaVu Sans", text_alignment="CENTER")
+        self.play(Write(outro), run_time=1.0)
+        self.wait(1.33)
