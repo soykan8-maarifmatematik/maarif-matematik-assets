@@ -1,70 +1,72 @@
 from manim import *
 
+config.pixel_height = 1920
+config.pixel_width = 1080
+config.frame_width = 9.0
+config.frame_height = 16.0
+
 class BirimKesirler(Scene):
     def construct(self):
-        config.pixel_height = 1920
-        config.pixel_width = 1080
-        config.frame_height = 16.0
-        config.frame_width = 9.0
+        # 1. Merhaba, Maarif Matematik'e hoş geldiniz.
+        intro_text = Text("Maarif Matematik", color=BLUE).scale(1.5)
+        self.play(Write(intro_text))
+        self.wait(1.7)
+        self.play(FadeOut(intro_text))
 
-        # Başlık (iPhone 16 Fix)
-        title = Text("Birim Kesirler", font="DejaVu Sans", font_size=60).to_edge(UP, buff=2.0)
+        # 2. Birim kesirlerde payda büyüdükçe kesir neden küçülür?
+        hook_text = Text("Payda büyüdükçe\nkesir neden küçülür?", text_alignment="CENTER").scale(1.5).shift(UP*4)
+        self.play(Write(hook_text))
+        self.wait(2.3)
+
+        # 3. Düşünün ki elinizde harika bir pizza var.
+        pizza1 = Circle(radius=1.5, color=WHITE, fill_opacity=0).shift(UP*1)
+        self.play(Create(pizza1))
+        self.wait(2.3)
+
+        # 4. Eğer bu pizzayı iki kişi paylaşırsanız, kocaman bir dilim yersiniz.
+        slice1 = Sector(outer_radius=1.5, angle=PI, color=ORANGE, fill_opacity=0.8).shift(UP*1)
+        self.play(Create(slice1))
+        self.wait(3.3)
+
+        # 5. İşte bu ikide birdir.
+        frac1 = MathTex(r"\frac{1}{2}").scale(2.5).next_to(pizza1, LEFT, buff=0.5)
+        self.play(Write(frac1))
+        self.wait(1.3)
+
+        # 6. Ama aynı pizzayı sekiz kişi paylaşırsanız, diliminiz küçücük kalır.
+        pizza2 = Circle(radius=1.5, color=WHITE, fill_opacity=0).shift(DOWN*2.5)
+        slice2 = Sector(outer_radius=1.5, angle=PI/4, color=RED, fill_opacity=0.8).shift(DOWN*2.5)
+        self.play(Create(pizza2))
+        self.play(Create(slice2))
+        self.wait(3.0)
+
+        # 7. Bu da sekizde birdir.
+        frac2 = MathTex(r"\frac{1}{8}").scale(2.5).next_to(pizza2, LEFT, buff=0.5)
+        self.play(Write(frac2))
+        self.wait(1.3)
+
+        # 8. Yani payda kişi sayısıdır, kişi artarsa dilim küçülür.
+        self.play(FadeOut(pizza1), FadeOut(slice1), FadeOut(pizza2), FadeOut(slice2), FadeOut(hook_text))
         
-        self.play(Write(title))
-        # "Merhaba, Maarif Matematik’e hoş geldiniz." (5 kelime)
-        self.wait(5 / 3.0)
+        final_frac1 = MathTex(r"\frac{1}{2}").scale(3.5).shift(LEFT*2)
+        final_frac2 = MathTex(r"\frac{1}{8}").scale(3.5).shift(RIGHT*2)
+        greater_than = MathTex(">").scale(5.0).set_color(YELLOW).move_to(ORIGIN)
 
-        # Modeller
-        # 1/2 Modeli
-        rect1_outline = Rectangle(height=2, width=6, color=WHITE)
-        line1 = Line(rect1_outline.get_top(), rect1_outline.get_bottom(), color=WHITE)
-        fill1 = Rectangle(height=2, width=3, color=BLUE, fill_opacity=0.7).align_to(rect1_outline, LEFT)
-        label1 = MathTex(r"\frac{1}{2}", font_size=72).next_to(rect1_outline, UP, buff=0.5)
-        model1 = VGroup(label1, VGroup(rect1_outline, line1, fill1))
-
-        # 1/4 Modeli
-        rect2_outline = Rectangle(height=2, width=6, color=WHITE)
-        line2_1 = Line(rect2_outline.get_top() + LEFT*1.5, rect2_outline.get_bottom() + LEFT*1.5, color=WHITE)
-        line2_2 = Line(rect2_outline.get_top(), rect2_outline.get_bottom(), color=WHITE)
-        line2_3 = Line(rect2_outline.get_top() + RIGHT*1.5, rect2_outline.get_bottom() + RIGHT*1.5, color=WHITE)
-        fill2 = Rectangle(height=2, width=1.5, color=RED, fill_opacity=0.7).align_to(rect2_outline, LEFT)
-        label2 = MathTex(r"\frac{1}{4}", font_size=72).next_to(rect2_outline, UP, buff=0.5)
-        model2 = VGroup(label2, VGroup(rect2_outline, line2_1, line2_2, line2_3, fill2))
-
-        # Yerleşim
-        model1.move_to(UP * 2.0)
-        model2.next_to(model1, DOWN, buff=1.8)
-
-        self.play(FadeIn(rect1_outline))
-        # "Bugün birim kesirlerin büyüklüğünü karşılaştıracağız." (5 kelime)
-        self.wait(5 / 3.0)
-
-        self.play(Write(label1))
-        # "Birim kesir, payı bir olan kesirdir." (6 kelime)
-        self.wait(6 / 3.0)
-
-        self.play(FadeIn(rect2_outline), Write(label2))
-        # "Örneğin, bir bölü iki ve bir bölü dört kesirlerini düşünelim." (10 kelime)
-        self.wait(10 / 3.0)
-
-        self.play(Create(line1), FadeIn(fill1))
-        # "Bir bütünü ikiye bölersek, parçalar büyük olur." (7 kelime)
-        self.wait(7 / 3.0)
-
-        self.play(Create(VGroup(line2_1, line2_2, line2_3)), FadeIn(fill2))
-        # "Ama dörde bölersek, parçalar küçülür." (5 kelime)
-        self.wait(5 / 3.0)
-
-        greater_sign = MathTex(">", font_size=96).move_to((model1.get_bottom() + model2.get_top()) / 2)
-        self.play(Write(greater_sign))
-        # "Yani, payda büyüdükçe birim kesrin değeri küçülür." (7 kelime)
-        self.wait(7 / 3.0)
-
-        # Outro Kilidi ve Temizleme
-        self.wait(2.0)
-        self.play(*[FadeOut(mob) for mob in self.mobjects])
+        self.play(
+            Transform(frac1, final_frac1),
+            Transform(frac2, final_frac2)
+        )
+        self.play(Write(greater_than))
         
-        outro_text = Text("Maarif Matematik ile\nmantığını kavra,\ntakipte kal!", font="DejaVu Sans", font_size=55)
+        rule_text = Text("Kişi artarsa\ndilim küçülür!", color=GREEN, text_alignment="CENTER").scale(1.5).shift(DOWN*3.5)
+        self.play(Write(rule_text))
+        self.wait(2.7)
+
+        # Mutlak Senkronizasyon: Son cümle bittikten sonra +1.5 saniye bekle
+        self.wait(1.5)
+
+        # 9. Maarif Matematik ile mantığını kavra, takipte kal!
+        self.play(FadeOut(*self.mobjects))
+        outro_text = Text("Maarif Matematik ile\nmantığını kavra,\ntakipte kal!", text_alignment="CENTER", color=BLUE).scale(1.5)
         self.play(Write(outro_text))
-        # Outro bekleme süresi
-        self.wait(4.0)
+        self.wait(2.3)
