@@ -1,13 +1,13 @@
 name: Maarif Matematik Video Render ve Youtube
 concurrency:
   group: maarif-render
-  cancel-in-progress: true # Aynı anda iki video gelirse sıraya sokar veya eskisini durdurur.
+  cancel-in-progress: true
 
 on:
   push:
     paths:
-      - 'metadata.json' # Sadece bu dosya güncellendiğinde fırın ısınır (Çift videoyu önler).
-  workflow_dispatch: # Manuel başlatma yetkisi.
+      - 'metadata.json'
+  workflow_dispatch:
 
 jobs:
   render:
@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install System Dependencies (HIZLI VE TAM DESTEK)
+      - name: Install System Dependencies
         run: |
           sudo apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -32,14 +32,12 @@ jobs:
       - name: Install Python Libraries
         run: |
           python -m pip install --upgrade pip
-          python -m pip install manim numpy google-api-python-client google-auth-oauthlib google-auth-httplib2
+          python -m pip install manim numpy google-api-python-client google-auth-oauthlib google-auth-httplib2 requests
 
-      - name: Render ve Merge (Zırhlı Senkronizasyon)
+      - name: Render ve Merge (TAM GÖRSEL SENKRON)
         run: |
           mkdir -p media/videos
           
-          # Gemini'nin yazdığı sınıfı (MaarifScene) çalıştırır.
-          # Eğer isim değişirse diye hata toleransı ekledik.
           manim -qm --media_dir ./media scripts/render_code.py MaarifScene || \
           manim -qm --media_dir ./media scripts/render_code.py
           
@@ -47,13 +45,15 @@ jobs:
           AUDIO_PATH=$(find . -name "*.mp3" | head -n 1)
           
           if [ -n "$VIDEO_PATH" ] && [ -n "$AUDIO_PATH" ]; then
-            # fflags +genpts: Ses ve görüntü kaymasını (lag) önler.
-            # -shortest kaldırıldı: Video görüntü bittikten sonra ses için siyah ekranda bekler (6 sn hatasını bitirir).
+            # -shortest kaldırıldı! Görüntü ne kadar sürerse video o kadar sürecek.
+            # Artık tüm odağımız Manim kodundaki süreyi sese uydurmak.
             ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -fflags +genpts \
             -c:v libx264 -c:a aac -map 0:v:0 -map 1:a:0 -y media/videos/final_output.mp4
           fi
 
-      - name: Upload to YouTube
+      - name: Upload to Social Media
         env:
           TOKEN_JSON: ${{ secrets.TOKEN_JSON }}
-        run: python scripts/upload_to_youtube.py
+          INSTAGRAM_ACCOUNT_ID: ${{ secrets.INSTAGRAM_ACCOUNT_ID }}
+          INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
+        run: python scripts/upload_social.py
