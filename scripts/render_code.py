@@ -1,99 +1,87 @@
 from manim import *
 
-class FractionsLesson(Scene):
+class MaarifScene(Scene):
     def construct(self):
-        # Intro
-        title_main = Tex("Kesir Çeşitleri ve Dönüşümler", font_size=48, color=YELLOW)
-        self.play(Write(title_main), run_time=1)
-        self.wait(3)
-        self.play(FadeOut(title_main), run_time=1)
+        # Block 1
+        title = Tex(r'Kesir Çeşitleri').to_edge(UP)
+        self.play(Write(title), run_time=2)
 
-        # Basit Kesir
-        basit_text = Tex("Basit Kesir", font_size=40, color=BLUE).shift(UP*2)
-        basit_frac = MathTex(r"\frac{3}{5}", font_size=72)
-        basit_desc = Tex("Pay $<$ Payda", font_size=32).next_to(basit_frac, DOWN, buff=0.5)
-        self.play(Write(basit_text), Write(basit_frac), run_time=2)
-        self.play(Write(basit_desc), run_time=1)
-        self.wait(5)
-        self.play(FadeOut(basit_text, basit_frac, basit_desc), run_time=1)
+        basit_tex = Tex(r'Basit').shift(LEFT*4 + UP*1)
+        bilesik_tex = Tex(r'Bileşik').shift(UP*1)
+        tam_tex = Tex(r'Tam Sayılı').shift(RIGHT*4 + UP*1)
 
-        # Bileşik Kesir
-        bilesik_text = Tex("Bileşik Kesir", font_size=40, color=RED).shift(UP*2)
-        bilesik_frac = MathTex(r"\frac{7}{4}", font_size=72)
-        bilesik_desc = Tex("Pay $\ge$ Payda", font_size=32).next_to(bilesik_frac, DOWN, buff=0.5)
-        self.play(Write(bilesik_text), Write(bilesik_frac), run_time=2)
-        self.play(Write(bilesik_desc), run_time=1)
-        self.wait(5)
-        self.play(FadeOut(bilesik_text, bilesik_frac, bilesik_desc), run_time=1)
+        f1 = MathTex(r'\frac{3}{5}').next_to(basit_tex, DOWN, buff=0.5)
+        f2 = MathTex(r'\frac{7}{4}').next_to(bilesik_tex, DOWN, buff=0.5)
+        f3 = MathTex(r'1\frac{3}{4}').next_to(tam_tex, DOWN, buff=0.5)
 
-        # Tam Sayılı Kesir
-        tam_text = Tex("Tam Sayılı Kesir", font_size=40, color=GREEN).shift(UP*2)
-        tam_frac = MathTex(r"2 \frac{1}{3}", font_size=72)
-        tam_desc = Tex("Tam Sayı + Basit Kesir", font_size=32).next_to(tam_frac, DOWN, buff=0.5)
-        self.play(Write(tam_text), Write(tam_frac), run_time=2)
-        self.play(Write(tam_desc), run_time=1)
-        self.wait(5)
-        self.play(FadeOut(tam_text, tam_frac, tam_desc), run_time=1)
+        sec = Sector(radius=0.8, angle=TAU * 3/5, color=BLUE, fill_opacity=0.7).next_to(f1, DOWN, buff=0.5)
+        sec_bg = Circle(radius=0.8, color=WHITE).move_to(sec.get_arc_center())
 
-        # Bileşik -> Tam Sayılı
-        conv1_title = MathTex(r"Bileşik \\rightarrow Tam Sayılı", font_size=40, color=YELLOW).shift(UP*3)
-        self.play(Write(conv1_title), run_time=1.5)
-        self.wait(2.5)
+        self.play(Write(basit_tex), Write(bilesik_tex), Write(tam_tex), run_time=3)
+        self.play(Write(f1), Write(f2), Write(f3), run_time=3)
+        self.play(Create(sec_bg), Create(sec), run_time=2)
+        self.wait(11)
 
-        # Division House
-        dividend = MathTex("7", font_size=48).shift(LEFT*1 + UP*0.5)
-        vline = Line(UP*1, DOWN*0.5).next_to(dividend, RIGHT, buff=0.2)
-        divisor = MathTex("4", font_size=48).next_to(vline, RIGHT, buff=0.2).align_to(dividend, UP)
-        hline = Line(divisor.get_bottom() + LEFT*0.3, divisor.get_bottom() + RIGHT*0.3).shift(DOWN*0.1)
-        
-        self.play(Write(dividend), Write(vline), Write(divisor), Write(hline), run_time=2)
-        self.wait(2.5)
+        # Block 2
+        self.play(FadeOut(Group(title, basit_tex, bilesik_tex, tam_tex, f1, f2, f3, sec, sec_bg)), run_time=1)
 
-        quotient = MathTex("1", font_size=48).next_to(hline, DOWN, buff=0.2)
+        title2 = Tex(r'Bileşik $\rightarrow$ Tam Sayılı').to_edge(UP)
+        self.play(Write(title2), run_time=2)
+
+        eq1 = MathTex(r'\frac{7}{4}').shift(LEFT*4)
+        self.play(Write(eq1), run_time=1)
+
+        dividend = MathTex('7')
+        vline = Line(dividend.get_top() + RIGHT*0.3, dividend.get_bottom() + RIGHT*0.3 + DOWN*1.5)
+        divisor = MathTex('4').next_to(vline, RIGHT, buff=0.3).align_to(dividend, UP)
+        hline = Line(vline.get_start() + DOWN*0.6, vline.get_start() + DOWN*0.6 + RIGHT*1.2)
+        quotient = MathTex('1').next_to(hline, DOWN, buff=0.3).align_to(divisor, LEFT)
+
+        minus = MathTex('-').next_to(dividend, DOWN, buff=0.5).shift(LEFT*0.6)
+        sub_val = MathTex('4').next_to(dividend, DOWN, buff=0.5)
+        sub_line = Line(minus.get_left() + DOWN*0.2, sub_val.get_right() + DOWN*0.2)
+        remainder = MathTex('3').next_to(sub_line, DOWN, buff=0.2).align_to(sub_val, RIGHT)
+
+        div_group = VGroup(dividend, vline, divisor, hline, quotient, minus, sub_val, sub_line, remainder).center()
+
+        self.play(Write(dividend), Create(vline), Write(divisor), Create(hline), run_time=3)
         self.play(Write(quotient), run_time=1)
-        self.wait(2)
-
-        minus = MathTex("-", font_size=48).next_to(dividend, DOWN, buff=0.2).shift(LEFT*0.5)
-        sub_val = MathTex("4", font_size=48).next_to(dividend, DOWN, buff=0.2)
-        sub_line = Line(minus.get_left() + DOWN*0.1, sub_val.get_right() + DOWN*0.1).shift(DOWN*0.1)
-        self.play(Write(minus), Write(sub_val), Write(sub_line), run_time=1.5)
-        self.wait(2)
-
-        remainder = MathTex("3", font_size=48).next_to(sub_line, DOWN, buff=0.2).align_to(sub_val, RIGHT)
+        self.play(Write(minus), Write(sub_val), Create(sub_line), run_time=2)
         self.play(Write(remainder), run_time=1)
-        self.wait(2)
 
-        box_quotient = SurroundingRectangle(quotient, color=GREEN, buff=0.1)
-        box_remainder = SurroundingRectangle(remainder, color=YELLOW, buff=0.1)
-        box_divisor = SurroundingRectangle(divisor, color=BLUE, buff=0.1)
-        self.play(Create(box_quotient), Create(box_remainder), Create(box_divisor), run_time=2)
-        self.wait(2.5)
+        box_q = SurroundingRectangle(quotient, color=YELLOW)
+        box_r = SurroundingRectangle(remainder, color=GREEN)
+        box_d = SurroundingRectangle(divisor, color=RED)
 
-        result1 = MathTex(r"= 1 \frac{3}{4}", font_size=60).next_to(vline, RIGHT, buff=2)
+        self.play(Create(box_q), Create(box_r), Create(box_d), run_time=2)
+
+        result1 = MathTex(r'= 1\frac{3}{4}').next_to(div_group, RIGHT, buff=1.5)
         self.play(Write(result1), run_time=2)
-        self.wait(4.5)
+        self.wait(7)
 
-        self.play(FadeOut(conv1_title, dividend, vline, divisor, hline, quotient, minus, sub_val, sub_line, remainder, box_quotient, box_remainder, box_divisor, result1), run_time=1)
+        # Block 3
+        self.play(FadeOut(Group(title2, eq1, div_group, box_q, box_r, box_d, result1)), run_time=1)
 
-        # Tam Sayılı -> Bileşik
-        conv2_title = MathTex(r"Tam Sayılı \\rightarrow Bileşik", font_size=40, color=YELLOW).shift(UP*3)
-        self.play(Write(conv2_title), run_time=1.5)
-        self.wait(2.5)
+        title3 = Tex(r'Tam Sayılı $\rightarrow$ Bileşik').to_edge(UP)
+        self.play(Write(title3), run_time=2)
 
-        tam_frac2 = MathTex(r"2 \frac{1}{3}", font_size=72).shift(LEFT*2)
-        self.play(Write(tam_frac2), run_time=1.5)
-        self.wait(2.5)
+        eq2 = MathTex(r'2\frac{1}{3}').scale(1.5).shift(LEFT*3)
+        self.play(Write(eq2), run_time=2)
 
-        mul_text = Tex(r"$2 \times 3 = 6$", font_size=40, color=BLUE).shift(RIGHT*2 + UP*1)
-        self.play(Write(mul_text), run_time=1.5)
-        self.wait(2.5)
+        step1 = MathTex(r'= \frac{3 \times 2 + 1}{3}').next_to(eq2, RIGHT, buff=1)
+        self.play(Write(step1), run_time=3)
 
-        add_text = Tex(r"$6 + 1 = 7$", font_size=40, color=GREEN).next_to(mul_text, DOWN, buff=0.5)
-        self.play(Write(add_text), run_time=1.5)
-        self.wait(2.5)
+        step2 = MathTex(r'= \frac{7}{3}').next_to(step1, RIGHT, buff=1)
+        self.play(Write(step2), run_time=2)
 
-        result2 = MathTex(r"= \frac{7}{3}", font_size=72).next_to(tam_frac2, RIGHT, buff=1)
-        self.play(Write(result2), run_time=2)
-        self.wait(4.5)
+        box_final = SurroundingRectangle(step2, color=YELLOW)
+        self.play(Create(box_final), run_time=2)
 
-        self.play(FadeOut(Group(*self.mobjects)), run_time=1)
+        self.wait(10)
+
+        # Block 4
+        self.play(FadeOut(Group(title3, eq2, step1, step2, box_final)), run_time=1)
+
+        outro_text = Tex(r'Harika! Bol bol pratik yapın!').scale(1.5)
+        self.play(Write(outro_text), run_time=2)
+        self.wait(6)
