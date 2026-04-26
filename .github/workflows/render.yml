@@ -34,10 +34,11 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install manim numpy google-api-python-client google-auth-oauthlib google-auth-httplib2 requests
 
-      - name: Render ve Merge (TAM GÖRSEL SENKRON)
+      - name: Render ve Merge (Görsel Odaklı Senkron)
         run: |
           mkdir -p media/videos
           
+          # Manim kodunu çalıştırır
           manim -qm --media_dir ./media scripts/render_code.py MaarifScene || \
           manim -qm --media_dir ./media scripts/render_code.py
           
@@ -45,15 +46,13 @@ jobs:
           AUDIO_PATH=$(find . -name "*.mp3" | head -n 1)
           
           if [ -n "$VIDEO_PATH" ] && [ -n "$AUDIO_PATH" ]; then
-            # -shortest kaldırıldı! Görüntü ne kadar sürerse video o kadar sürecek.
-            # Artık tüm odağımız Manim kodundaki süreyi sese uydurmak.
+            # -shortest YOK: Görüntü ne kadar sürerse video o kadar sürer, son görseller kesilmez.
             ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -fflags +genpts \
             -c:v libx264 -c:a aac -map 0:v:0 -map 1:a:0 -y media/videos/final_output.mp4
           fi
 
-      - name: Upload to Social Media
+      - name: Upload to YouTube (Dosya Adı Fix)
         env:
           TOKEN_JSON: ${{ secrets.TOKEN_JSON }}
-          INSTAGRAM_ACCOUNT_ID: ${{ secrets.INSTAGRAM_ACCOUNT_ID }}
-          INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
-        run: python scripts/upload_social.py
+        # Görseldeki dosya ismine (upload_to_youtube.py) göre güncellendi
+        run: python scripts/upload_to_youtube.py
