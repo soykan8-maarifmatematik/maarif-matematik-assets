@@ -1,122 +1,90 @@
-from manim import *
-
 class MaarifScene(Scene):
     def construct(self):
-        # Arka plan rengi
         self.camera.background_color = "#FFFFFF"
-        
-        # --- GİRİŞ ---
-        title = Text("Maarif Matematik", color="#002B4D", font_size=48, weight=BOLD)
-        subtitle = Text("Kesirler: Basit, Bileşik, Tam Sayılı", color="#333333", font_size=32).next_to(title, DOWN)
-        self.play(Write(title), FadeIn(subtitle), run_time=2)
-        self.wait(3) # Toplam: 5s
-        self.play(FadeOut(title), FadeOut(subtitle))
-        
-        # --- BASİT KESİR ---
-        basit_title = Text("Basit Kesir", color="#002B4D", font_size=40).to_edge(UP)
-        basit_kesir = MathTex(r"\frac{3}{4}", color="#333333", font_size=72).move_to(LEFT * 3)
-        
-        # Pizza görseli (3/4)
-        pizza1 = VGroup()
-        colors = ["#D32F2F", "#D32F2F", "#D32F2F", "#E0E0E0"]
-        for i in range(4):
-            slice = Sector(radius=1.5, angle=PI/2, start_angle=i*PI/2, color=colors[i], fill_opacity=0.8, stroke_width=2, stroke_color="#FFFFFF")
-            pizza1.add(slice)
-        pizza1.move_to(RIGHT * 2)
-        
-        self.play(Write(basit_title), Write(basit_kesir), run_time=2)
-        self.play(FadeIn(pizza1, shift=UP), run_time=2)
-        self.wait(15) # Toplam: 19s
-        self.play(FadeOut(basit_title), FadeOut(basit_kesir), FadeOut(pizza1))
-        
-        # --- BİLEŞİK KESİR ---
-        bilesik_title = Text("Bileşik Kesir", color="#002B4D", font_size=40).to_edge(UP)
-        bilesik_kesir = MathTex(r"\frac{7}{4}", color="#333333", font_size=72).move_to(LEFT * 4)
-        
-        # Pizza görseli (7/4)
-        pizza2_full = VGroup()
-        for i in range(4):
-            slice = Sector(radius=1.2, angle=PI/2, start_angle=i*PI/2, color="#D32F2F", fill_opacity=0.8, stroke_width=2, stroke_color="#FFFFFF")
-            pizza2_full.add(slice)
-        pizza2_full.move_to(RIGHT * 0.5)
-        
-        pizza2_part = VGroup()
-        for i in range(4):
-            color = "#D32F2F" if i < 3 else "#E0E0E0"
-            slice = Sector(radius=1.2, angle=PI/2, start_angle=i*PI/2, color=color, fill_opacity=0.8, stroke_width=2, stroke_color="#FFFFFF")
-            pizza2_part.add(slice)
-        pizza2_part.move_to(RIGHT * 3.5)
-        
-        self.play(Write(bilesik_title), Write(bilesik_kesir), run_time=2)
-        self.play(FadeIn(pizza2_full), FadeIn(pizza2_part), run_time=2)
-        self.wait(15) # Toplam: 19s
-        self.play(FadeOut(bilesik_title), FadeOut(bilesik_kesir), FadeOut(pizza2_full), FadeOut(pizza2_part))
-        
-        # --- BÖLME ALGORİTMASI (Bileşikten Tam Sayılıya) ---
-        donusum_title = Text("Bileşik Kesri Tam Sayılıya Çevirme", color="#002B4D", font_size=36).to_edge(UP)
-        self.play(Write(donusum_title), run_time=1)
-        
-        # Bölme Evi Kurulumu
-        bölme_merkezi = LEFT * 3
-        v_line = Line(UP * 0.5, DOWN * 1.5, color="#333333").move_to(bölme_merkezi)
-        dividend = MathTex("7", color="#333333", font_size=60).next_to(v_line, LEFT, buff=0.4).shift(UP * 0.5)
-        divisor = MathTex("4", color="#002B4D", font_size=60).next_to(v_line, RIGHT, buff=0.4).shift(UP * 0.5)
-        
-        # Yatay çizgi KESİNLİKLE bölenin altında
-        h_line = Line(v_line.get_center(), v_line.get_center() + RIGHT * 1.2, color="#333333").next_to(divisor, DOWN, buff=0.1).align_to(v_line, LEFT)
-        
-        quotient = MathTex("1", color="#D32F2F", font_size=60).next_to(h_line, DOWN, buff=0.3)
-        
-        # Çıkarma işlemi ve kalan
-        eksi = MathTex("-", color="#333333").next_to(dividend, DOWN, buff=0.3).shift(LEFT*0.5)
-        dort_cikan = MathTex("4", color="#333333", font_size=60).next_to(dividend, DOWN, buff=0.3)
-        cizgi_cikan = Line(eksi.get_left() + DOWN*0.2, dort_cikan.get_right() + DOWN*0.2 + RIGHT*0.2, color="#333333")
-        remainder = MathTex("3", color="#002B4D", font_size=60).next_to(cizgi_cikan, DOWN, buff=0.2).align_to(dividend, RIGHT)
-        
-        # Sonuç Kesri
-        sonuc_tam = MathTex("1", color="#D32F2F", font_size=72).move_to(RIGHT * 2)
-        sonuc_kesir = MathTex(r"\frac{3}{4}", color="#002B4D", font_size=72).next_to(sonuc_tam, RIGHT, buff=0.1)
-        
-        # Oklar
-        arrow_tam = CurvedArrow(quotient.get_bottom(), sonuc_tam.get_bottom() + DOWN*0.5, angle=PI/4, color="#D32F2F")
-        arrow_pay = CurvedArrow(remainder.get_bottom(), sonuc_kesir.get_top() + UP*1.5, angle=-PI/3, color="#002B4D")
-        
-        self.play(Write(dividend), Write(divisor), Create(v_line), Create(h_line), run_time=2)
-        self.wait(1)
-        self.play(Write(quotient), run_time=1)
-        self.play(Write(eksi), Write(dort_cikan), Create(cizgi_cikan), Write(remainder), run_time=2)
-        self.wait(1)
-        self.play(Create(arrow_tam), Write(sonuc_tam), run_time=1)
-        self.play(Create(arrow_pay), Write(sonuc_kesir), run_time=1)
-        self.wait(25) # Toplam: 35s
-        
-        self.play(FadeOut(donusum_title), FadeOut(VGroup(dividend, divisor, v_line, h_line, quotient, eksi, dort_cikan, cizgi_cikan, remainder, arrow_tam, arrow_pay, sonuc_tam, sonuc_kesir)))
 
-        # --- TAM SAYILIDAN BİLEŞİĞE --- 
-        ters_title = Text("Tam Sayılı Kesri Bileşiğe Çevirme", color="#002B4D", font_size=36).to_edge(UP)
-        baslangic_tam = MathTex("1", color="#D32F2F", font_size=72).move_to(LEFT * 3)
-        baslangic_kesir = MathTex(r"\frac{3}{4}", color="#002B4D", font_size=72).next_to(baslangic_tam, RIGHT, buff=0.1)
+        # Intro
+        title = Text("Kesir Çeşitleri ve Dönüşümler", color="#002B4D", font_size=48).to_edge(UP)
+        self.play(Write(title), run_time=2)
+        self.wait(12)
+
+        # Basit Kesir
+        basit_title = Text("Basit Kesir", color="#333333", font_size=36).move_to(LEFT*4 + UP*1)
+        basit_frac = MathTex("\\frac{3}{4}", color="#D32F2F", font_size=64).next_to(basit_title, DOWN)
+        self.play(Write(basit_title), Write(basit_frac))
+        self.wait(12)
+
+        # Bileşik Kesir
+        bilesik_title = Text("Bileşik Kesir", color="#333333", font_size=36).move_to(ORIGIN + UP*1)
+        bilesik_frac = MathTex("\\frac{7}{3}", color="#002B4D", font_size=64).next_to(bilesik_title, DOWN)
+        self.play(Write(bilesik_title), Write(bilesik_frac))
+        self.wait(12)
+
+        # Tam Sayılı Kesir
+        tam_title = Text("Tam Sayılı Kesir", color="#333333", font_size=36).move_to(RIGHT*4 + UP*1)
+        tam_frac = MathTex("2\\frac{1}{3}", color="#D32F2F", font_size=64).next_to(tam_title, DOWN)
+        self.play(Write(tam_title), Write(tam_frac))
+        self.wait(12)
+
+        self.play(FadeOut(basit_title), FadeOut(basit_frac), FadeOut(bilesik_title), FadeOut(tam_title), FadeOut(tam_frac))
+        self.play(bilesik_frac.animate.move_to(LEFT*4 + UP*2))
+        self.wait(5)
+
+        # Division House (Bölme Evi)
+        # Sol Üst: Bölünen (7)
+        dividend = MathTex("7", color="#333333", font_size=64).move_to(LEFT*1 + UP*0.5)
+        # Dikey Çizgi
+        v_line = Line(UP*1, DOWN*1.5, color="#333333").next_to(dividend, RIGHT, buff=0.3)
+        # Sağ Üst: Bölen (3)
+        divisor = MathTex("3", color="#002B4D", font_size=64).next_to(v_line, RIGHT, buff=0.3).align_to(dividend, UP)
+        # Yatay Çizgi (Bölenin Altında)
+        h_line = Line(LEFT*0.4, RIGHT*0.4, color="#333333").next_to(divisor, DOWN, buff=0.1)
+        # Sağ Alt: Bölüm (2)
+        quotient = MathTex("2", color="#D32F2F", font_size=64).next_to(h_line, DOWN, buff=0.2)
         
-        ok_carp = CurvedArrow(baslangic_kesir.get_bottom() + LEFT*0.2, baslangic_tam.get_bottom() + RIGHT*0.2, angle=PI/2, color="#333333")
-        isaret_carp = MathTex(r"\times", color="#333333", font_size=30).next_to(ok_carp, DOWN, buff=0.1)
+        # Kalan hesaplama (Sol Alt)
+        minus_six = MathTex("-6", color="#333333", font_size=48).next_to(dividend, DOWN, buff=0.2)
+        sub_line = Line(LEFT*0.4, RIGHT*0.4, color="#333333").next_to(minus_six, DOWN, buff=0.1)
+        remainder = MathTex("1", color="#D32F2F", font_size=64).next_to(sub_line, DOWN, buff=0.2)
+
+        self.play(Create(dividend), Create(v_line), Create(divisor), Create(h_line))
+        self.wait(8)
         
-        ok_topla = CurvedArrow(baslangic_tam.get_top() + RIGHT*0.2, baslangic_kesir.get_top() + LEFT*0.2, angle=PI/2, color="#333333")
-        isaret_topla = MathTex("+", color="#333333", font_size=30).next_to(ok_topla, UP, buff=0.1)
+        self.play(Write(quotient))
+        self.wait(5)
         
-        esittir = MathTex("=", color="#333333", font_size=60).move_to(ORIGIN)
+        self.play(Write(minus_six), Create(sub_line), Write(remainder))
+        self.wait(8)
+
+        # Arrows to Mixed Fraction
+        mixed_result = MathTex("2", "\\frac{1}{3}", color="#333333", font_size=72).move_to(RIGHT*4)
+        mixed_result[0].set_color("#D32F2F")
         
-        son_bilesik = MathTex(r"\frac{7}{4}", color="#333333", font_size=72).move_to(RIGHT * 3)
+        arrow_quotient = CurvedArrow(quotient.get_right(), mixed_result[0].get_left(), color="#D32F2F")
+        arrow_remainder = CurvedArrow(remainder.get_bottom(), mixed_result[1].get_top() + UP*0.5, color="#D32F2F")
         
-        self.play(Write(ters_title), Write(baslangic_tam), Write(baslangic_kesir), run_time=2)
-        self.wait(1)
-        self.play(Create(ok_carp), Write(isaret_carp), run_time=1.5)
-        self.play(Create(ok_topla), Write(isaret_topla), run_time=1.5)
-        self.play(Write(esittir), Write(son_bilesik), run_time=2)
-        self.wait(20) # Toplam: 28s
+        self.play(Write(mixed_result), Create(arrow_quotient), Create(arrow_remainder))
+        self.wait(10)
+
+        # Clear for reverse
+        self.play(FadeOut(dividend), FadeOut(v_line), FadeOut(divisor), FadeOut(h_line), FadeOut(quotient), FadeOut(minus_six), FadeOut(sub_line), FadeOut(remainder), FadeOut(bilesik_frac), FadeOut(arrow_quotient), FadeOut(arrow_remainder))
         
-        self.play(FadeOut(VGroup(ters_title, baslangic_tam, baslangic_kesir, ok_carp, isaret_carp, ok_topla, isaret_topla, esittir, son_bilesik)))
+        self.play(mixed_result.animate.move_to(ORIGIN))
+        self.wait(5)
+
+        # Mixed to Improper
+        arc_mul = CurvedArrow(mixed_result[1].get_bottom(), mixed_result[0].get_bottom(), color="#002B4D", angle=PI/2)
+        mul_sign = MathTex("\\times", color="#002B4D").next_to(arc_mul, DOWN, buff=0.1)
         
-        # --- ÇIKIŞ ---
-        logo = Text("Maarif Matematik", color="#002B4D", font_size=60, weight=BOLD)
-        self.play(FadeIn(logo), run_time=2)
-        self.wait(20.33) # Toplam: 22.33s
+        arc_add = CurvedArrow(mixed_result[0].get_top(), mixed_result[1].get_top(), color="#D32F2F", angle=-PI/2)
+        add_sign = MathTex("+", color="#D32F2F").next_to(arc_add, UP, buff=0.1)
+
+        self.play(Create(arc_mul), Write(mul_sign))
+        self.wait(8)
+        
+        self.play(Create(arc_add), Write(add_sign))
+        self.wait(8)
+
+        final_bilesik = MathTex("=", "\\frac{7}{3}", color="#333333", font_size=72).next_to(mixed_result, RIGHT, buff=1)
+        final_bilesik[1].set_color("#002B4D")
+        self.play(Write(final_bilesik))
+        self.wait(15)
