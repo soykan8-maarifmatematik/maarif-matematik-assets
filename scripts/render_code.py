@@ -2,139 +2,85 @@ from manim import *
 
 class MaarifScene(Scene):
     def construct(self):
-        # Arka plan ve genel ayarlar
         self.camera.background_color = "#FFFFFF"
-        text_color = "#333333"
         
-        # GİRİŞ (Yaklaşık 15 saniye)
-        self.wait(2)
-        title = Text("Kesir Çeşitleri ve Dönüşümler", color=text_color, font_size=40)
-        self.play(Write(title))
-        self.wait(10)
-        self.play(FadeOut(title))
-        self.wait(3)
-
-        # BASİT KESİR (Yaklaşık 40 saniye)
-        basit_title = Text("Basit Kesir", color=text_color, font_size=36).to_edge(UP)
-        basit_frac = MathTex("\\frac{3}{4}", color=text_color, font_size=60).move_to(LEFT * 3)
+        # Section 1: Basit Kesir
+        title_basit = Text("Basit Kesir", color="#333333").to_edge(UP)
+        basit_eq = MathTex(r"\frac{3}{5}", color="#333333").scale(2)
+        self.play(Write(title_basit), run_time=2)
+        self.play(Write(basit_eq), run_time=2)
+        self.wait(30.7)
         
-        # 4'e bölünmüş çember, 3'ü boyalı
-        circle_basit = Circle(radius=1.5, color=text_color).move_to(RIGHT * 2)
-        lines_basit = VGroup(*[Line(circle_basit.get_center(), circle_basit.point_at_angle(i * TAU / 4), color=text_color) for i in range(4)])
-        sectors_basit = VGroup(*[Sector(arc_center=circle_basit.get_center(), radius=1.5, angle=TAU/4, start_angle=i*TAU/4, color=BLUE, fill_opacity=0.6) for i in range(3)])
+        # Section 2: Bileşik ve Tam Sayılı Kesir
+        self.play(FadeOut(title_basit), FadeOut(basit_eq), run_time=1)
+        title_bilesik = Text("Bileşik Kesir ve Tam Sayılı Kesir", color="#333333").to_edge(UP)
+        bilesik_eq = MathTex(r"\frac{7}{4}", color="#333333").scale(1.5).move_to(LEFT * 2)
+        tam_eq = MathTex(r"1 \frac{3}{4}", color="#333333").scale(1.5).move_to(RIGHT * 2)
+        self.play(Write(title_bilesik), run_time=1.5)
+        self.play(Write(bilesik_eq), run_time=1.5)
+        self.play(Write(tam_eq), run_time=1.5)
+        self.wait(28.0)
         
-        self.play(Write(basit_title))
-        self.wait(5)
-        self.play(Write(basit_frac))
-        self.wait(6)
-        self.play(Create(circle_basit), Create(lines_basit))
-        self.wait(5)
-        self.play(FadeIn(sectors_basit, lag_ratio=0.5))
-        self.wait(15)
-        self.play(FadeOut(basit_title, basit_frac, circle_basit, lines_basit, sectors_basit))
-        self.wait(2)
-
-        # BİLEŞİK KESİR (Yaklaşık 40 saniye)
-        bilesik_title = Text("Bileşik Kesir", color=text_color, font_size=36).to_edge(UP)
-        bilesik_frac = MathTex("\\frac{7}{3}", color=text_color, font_size=60).move_to(LEFT * 4)
+        # Section 3: Bölme Algoritması (Bileşik -> Tam Sayılı)
+        self.play(FadeOut(title_bilesik), FadeOut(bilesik_eq), FadeOut(tam_eq), run_time=1)
         
-        # 3 adet 3'e bölünmüş çember
-        circles_bilesik = VGroup()
-        for i in range(3):
-            c = Circle(radius=1, color=text_color).move_to(RIGHT * (i * 2.5 - 1))
-            l = VGroup(*[Line(c.get_center(), c.point_at_angle(j * TAU / 3 + TAU/4), color=text_color) for j in range(3)])
-            circles_bilesik.add(VGroup(c, l))
-            
-        sectors_bilesik = VGroup()
-        # İlk iki çember tam boyalı
-        for i in range(2):
-            for j in range(3):
-                s = Sector(arc_center=circles_bilesik[i][0].get_center(), radius=1, angle=TAU/3, start_angle=j*TAU/3 + TAU/4, color=ORANGE, fill_opacity=0.6)
-                sectors_bilesik.add(s)
-        # Üçüncü çemberin 1 parçası boyalı
-        s_last = Sector(arc_center=circles_bilesik[2][0].get_center(), radius=1, angle=TAU/3, start_angle=TAU/4, color=ORANGE, fill_opacity=0.6)
-        sectors_bilesik.add(s_last)
-
-        self.play(Write(bilesik_title))
-        self.wait(4)
-        self.play(Write(bilesik_frac))
-        self.wait(6)
-        self.play(Create(circles_bilesik))
-        self.wait(5)
-        self.play(FadeIn(sectors_bilesik, lag_ratio=0.2))
-        self.wait(15)
-        self.play(FadeOut(bilesik_title, circles_bilesik, sectors_bilesik))
-        self.play(bilesik_frac.animate.to_edge(UP))
-        self.wait(3)
-
-        # BÖLME ALGORİTMASI VE TAM SAYILI KESRE ÇEVİRME (Yaklaşık 70 saniye)
-        # KURAL 4: Cerrahi Bölme Algoritması Düzeni
-        dividend = MathTex("7", color=text_color, font_size=60).move_to(LEFT * 2 + UP * 0.5)
-        divisor = MathTex("3", color=text_color, font_size=60).move_to(LEFT * 0.5 + UP * 0.5)
+        div_7 = MathTex("7", color="#333333").move_to(LEFT * 1 + UP * 1)
+        div_4 = MathTex("4", color="#333333").move_to(RIGHT * 0.5 + UP * 1)
+        v_line = Line(UP * 1.5, UP * 0.5, color="#333333").move_to(LEFT * 0.25 + UP * 1)
+        h_line = Line(LEFT * 0.2, RIGHT * 1.2, color="#333333").next_to(div_4, DOWN, buff=0.1)
         
-        # 1. ANA ÇİZGİLER
-        v_line = Line(UP * 1.2, DOWN * 0.2, color=text_color).move_to(LEFT * 1.25 + UP * 0.5)
-        h_line1 = Line(LEFT * 1.25, RIGHT * 0.25, color=text_color).move_to(LEFT * 0.5 + ORIGIN)
+        self.play(Write(div_7), Write(div_4), run_time=2)
+        self.play(Create(v_line), Create(h_line), run_time=2)
+        self.wait(10.0)
         
-        self.play(Write(dividend), Write(divisor))
-        self.play(Create(v_line), Create(h_line1))
-        self.wait(10)
+        quot_1 = MathTex("1", color="#333333").next_to(h_line, DOWN, buff=0.2)
+        self.play(Write(quot_1), run_time=1)
+        self.wait(5.0)
         
-        # Bölüm
-        quotient = MathTex("2", color=text_color, font_size=60).move_to(LEFT * 0.5 + DOWN * 0.7)
-        self.play(Write(quotient))
-        self.wait(5)
+        sub_4 = MathTex("4", color="#333333").next_to(div_7, DOWN, buff=0.2)
+        minus = MathTex("-", color="#333333").next_to(sub_4, LEFT, buff=0.1)
+        sub_line = Line(LEFT * 1.5, LEFT * 0.5, color="#333333").next_to(sub_4, DOWN, buff=0.1)
         
-        # 2. ÇIKARMA İŞLEMİ
-        sub_num = MathTex("6", color=text_color, font_size=60).move_to(LEFT * 2 + DOWN * 0.7)
-        minus = MathTex("-", color=text_color, font_size=60).next_to(sub_num, LEFT, buff=0.2)
-        h_line2 = Line(LEFT * 2.8, LEFT * 1.5, color=text_color).move_to(LEFT * 2 + DOWN * 1.3)
+        self.play(Write(sub_4), Write(minus), Create(sub_line), run_time=2)
+        self.wait(5.0)
         
-        self.play(Write(sub_num))
-        self.play(Write(minus), Create(h_line2))
-        self.wait(5)
+        rem_3 = MathTex("3", color="#333333").next_to(sub_line, DOWN, buff=0.1)
+        self.play(Write(rem_3), run_time=1)
+        self.wait(16.3)
         
-        # 3. KALAN
-        remainder = MathTex("1", color=text_color, font_size=60).move_to(LEFT * 2 + DOWN * 2)
-        self.play(Write(remainder))
-        self.wait(10)
+        # Section 4: Oklarla Yerleşim
+        arrow_tam = Arrow(quot_1.get_right(), RIGHT * 3 + DOWN * 0.5, color="#333333")
+        label_tam = Text("Tam Kısım", color="#333333", font_size=24).next_to(arrow_tam, RIGHT)
         
-        # 4. YERLEŞİM VE 5. DÖNÜŞÜM OKLARI
-        mixed_num = MathTex("2", "\\frac{1}{3}", color=text_color, font_size=70).move_to(RIGHT * 3 + DOWN * 0.5)
+        arrow_pay = Arrow(rem_3.get_bottom(), DOWN * 2.5 + LEFT * 1, color="#333333")
+        label_pay = Text("Yeni Pay", color="#333333", font_size=24).next_to(arrow_pay, DOWN)
         
-        self.play(Write(mixed_num[0])) # Tam kısım
-        arrow_q = CurvedArrow(quotient.get_right(), mixed_num[0].get_left(), angle=-TAU/4, color=BLUE)
-        self.play(Create(arrow_q))
-        self.wait(8)
+        arrow_payda = Arrow(div_4.get_right(), RIGHT * 3 + UP * 1.5, color="#333333")
+        label_payda = Text("Payda", color="#333333", font_size=24).next_to(arrow_payda, RIGHT)
         
-        self.play(Write(mixed_num[1])) # Kesir kısmı (Pay ve Payda)
-        arrow_r = CurvedArrow(remainder.get_right(), mixed_num[1].get_left() + DOWN*0.2, angle=TAU/4, color=RED)
-        self.play(Create(arrow_r))
-        self.wait(10)
+        self.play(Create(arrow_tam), Write(label_tam), run_time=2)
+        self.play(Create(arrow_pay), Write(label_pay), run_time=2)
+        self.play(Create(arrow_payda), Write(label_payda), run_time=2)
         
-        self.play(FadeOut(dividend, divisor, v_line, h_line1, quotient, sub_num, minus, h_line2, remainder, arrow_q, arrow_r, bilesik_frac))
-        self.play(mixed_num.animate.move_to(ORIGIN))
-        self.wait(3)
-
-        # TAM SAYILI KESRİ BİLEŞİĞE ÇEVİRME (Yaklaşık 35 saniye)
-        # 2 tam 1/3 -> 7/3
-        calc_text = MathTex("\\frac{2 \\times 3 + 1}{3}", color=text_color, font_size=60).move_to(RIGHT * 3)
-        arrow_convert = Arrow(mixed_num.get_right(), calc_text.get_left(), color=text_color)
+        result_eq = MathTex(r"\frac{7}{4} = 1 \frac{3}{4}", color="#333333").move_to(DOWN * 2 + RIGHT * 2)
+        self.play(Write(result_eq), run_time=2)
+        self.wait(14.3)
         
-        self.wait(5)
-        self.play(Create(arrow_convert))
-        self.play(Write(calc_text))
-        self.wait(10)
+        # Section 5: Tam Sayılı -> Bileşik
+        self.play(*[FadeOut(mob) for mob in self.mobjects], run_time=1)
         
-        final_result = MathTex("=", "\\frac{7}{3}", color=text_color, font_size=60).next_to(calc_text, RIGHT)
-        self.play(Write(final_result))
-        self.wait(15)
+        mixed_to_imp = MathTex(r"1 \frac{3}{4}", color="#333333").scale(2).move_to(LEFT * 3)
+        self.play(Write(mixed_to_imp), run_time=2)
+        self.wait(8.0)
         
-        # ÇIKIŞ (Yaklaşık 10 saniye)
-        self.play(FadeOut(mixed_num, arrow_convert, calc_text, final_result))
-        self.wait(5)
-        outro_text = Text("Maarif Matematik", color=text_color, font_size=40)
-        self.play(Write(outro_text))
-        self.wait(5)
-        self.play(FadeOut(outro_text))
-        self.wait(2)
+        step1 = MathTex(r"1 \times 4 = 4", color="#333333").next_to(mixed_to_imp, RIGHT, buff=1).shift(UP * 0.5)
+        self.play(Write(step1), run_time=2)
+        self.wait(5.0)
+        
+        step2 = MathTex(r"4 + 3 = 7", color="#333333").next_to(step1, DOWN, buff=0.5)
+        self.play(Write(step2), run_time=2)
+        self.wait(5.0)
+        
+        final_eq = MathTex(r"= \frac{7}{4}", color="#333333").scale(2).next_to(step2, RIGHT, buff=1).shift(UP * 0.25)
+        self.play(Write(final_eq), run_time=2)
+        self.wait(14.7)
