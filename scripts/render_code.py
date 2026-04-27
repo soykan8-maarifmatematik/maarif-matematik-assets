@@ -2,98 +2,137 @@ from manim import *
 
 class MaarifScene(Scene):
     def construct(self):
-        # S1: Intro (20s)
-        title = Tex("Kesirler Dünyası").scale(1.5)
-        subtitle = Tex("Basit, Bileşik ve Tam Sayılı Kesirler").next_to(title, DOWN)
+        # Intro
+        title = Text("Kesirler: Basit, Bileşik ve Tam Sayılı").scale(0.9).set_color(YELLOW)
         self.play(Write(title), run_time=2)
-        self.play(FadeIn(subtitle), run_time=1)
-        self.wait(15)
-        self.play(FadeOut(title), FadeOut(subtitle), run_time=2)
+        self.wait(11)
+        self.play(FadeOut(title), run_time=1)
 
-        # S2: Basit Kesir (47.6s)
-        basit_title = Tex("Basit Kesir: Pay $<$ Payda").to_edge(UP)
-        self.play(Write(basit_title), run_time=2)
-
-        pizza_basit = VGroup()
+        # Basit Kesir
+        pizza1_sectors = VGroup()
+        colors = [RED, RED, RED, DARK_GRAY]
         for i in range(4):
-            color = ORANGE if i < 3 else DARK_GRAY
-            slice_obj = Sector(radius=1.5, angle=TAU/4, start_angle=i*TAU/4, color=color, fill_opacity=0.8, stroke_color=WHITE, stroke_width=2)
-            pizza_basit.add(slice_obj)
+            sector = Sector(radius=1.5, angle=TAU/4, start_angle=i*TAU/4, color=colors[i], fill_opacity=0.8, stroke_width=2, stroke_color=WHITE)
+            pizza1_sectors.add(sector)
+        pizza1_sectors.move_to(LEFT*3)
+        
+        basit_text = Text("Basit Kesir").scale(0.8).move_to(RIGHT*2 + UP*1).set_color(BLUE)
+        basit_frac = MathTex(r"\frac{3}{4}").scale(2).next_to(basit_text, DOWN, buff=0.5)
 
-        frac_3_4 = MathTex(r"\frac{3}{4}").scale(2).next_to(pizza_basit, RIGHT, buff=1)
+        self.play(Create(pizza1_sectors), run_time=2)
+        self.wait(10)
+        self.play(Write(basit_text), run_time=2)
+        self.wait(10)
+        self.play(Write(basit_frac), run_time=2)
+        self.wait(15)
+        self.play(FadeOut(pizza1_sectors, basit_text, basit_frac), run_time=1)
 
-        self.play(Create(pizza_basit), run_time=3)
-        self.play(Write(frac_3_4), run_time=2)
-        self.wait(38.6)
-        self.play(FadeOut(pizza_basit), FadeOut(frac_3_4), FadeOut(basit_title), run_time=2)
+        # Bileşik Kesir
+        self.wait(5)
+        pizza2_sectors = VGroup()
+        for i in range(4):
+            sector = Sector(radius=1.5, angle=TAU/4, start_angle=i*TAU/4, color=RED, fill_opacity=0.8, stroke_width=2, stroke_color=WHITE)
+            pizza2_sectors.add(sector)
+        pizza2_sectors.move_to(LEFT*3.5)
 
-        # S3: Bileşik Kesir (68.8s)
-        bilesik_title = Tex("Bileşik Kesir: Pay $\geq$ Payda").to_edge(UP)
-        self.play(Write(bilesik_title), run_time=2)
+        pizza3_sectors = VGroup()
+        colors3 = [RED, RED, RED, DARK_GRAY]
+        for i in range(4):
+            sector = Sector(radius=1.5, angle=TAU/4, start_angle=i*TAU/4, color=colors3[i], fill_opacity=0.8, stroke_width=2, stroke_color=WHITE)
+            pizza3_sectors.add(sector)
+        pizza3_sectors.move_to(ORIGIN)
 
-        pizza_b1 = VGroup(*[Sector(radius=1.5, angle=TAU/4, start_angle=i*TAU/4, color=ORANGE, fill_opacity=0.8, stroke_color=WHITE, stroke_width=2) for i in range(4)])
-        pizza_b2 = VGroup(*[Sector(radius=1.5, angle=TAU/4, start_angle=i*TAU/4, color=ORANGE if i < 1 else DARK_GRAY, fill_opacity=0.8, stroke_color=WHITE, stroke_width=2) for i in range(4)])
+        bilesik_text = Text("Bileşik Kesir").scale(0.8).move_to(RIGHT*3.5 + UP*1).set_color(ORANGE)
+        bilesik_frac = MathTex(r"\frac{7}{4}").scale(2).next_to(bilesik_text, DOWN, buff=0.5)
 
-        pizzas = VGroup(pizza_b1, pizza_b2).arrange(RIGHT, buff=1).move_to(LEFT*1)
-        frac_5_4 = MathTex(r"\frac{5}{4}").scale(2).next_to(pizzas, RIGHT, buff=1)
+        self.play(Create(pizza2_sectors), Create(pizza3_sectors), run_time=3)
+        self.wait(12)
+        self.play(Write(bilesik_text), run_time=2)
+        self.wait(12)
+        self.play(Write(bilesik_frac), run_time=2)
+        self.wait(15)
+        self.play(FadeOut(bilesik_text, bilesik_frac), run_time=1)
 
-        self.play(Create(pizza_b1), run_time=3)
-        self.play(Create(pizza_b2), run_time=3)
-        self.play(Write(frac_5_4), run_time=2)
-        self.wait(56.8)
-        self.play(FadeOut(pizzas), FadeOut(frac_5_4), FadeOut(bilesik_title), run_time=2)
+        # Tam Sayılı Kesir
+        self.wait(4)
+        tam_text = Text("Tam Sayılı Kesir").scale(0.8).move_to(RIGHT*3.5 + UP*1).set_color(GREEN)
+        tam_frac = MathTex(r"1 \frac{3}{4}").scale(2).next_to(tam_text, DOWN, buff=0.5)
+        
+        self.play(Write(tam_text), run_time=2)
+        self.wait(10)
+        self.play(Write(tam_frac), run_time=2)
+        self.wait(15)
+        self.play(FadeOut(pizza2_sectors, pizza3_sectors, tam_text, tam_frac), run_time=1)
 
-        # S4: Tam Sayılı Kesir (43.0s)
-        tam_title = Tex("Tam Sayılı Kesir").to_edge(UP)
-        self.play(Write(tam_title), run_time=2)
+        # Bölme Evi (Bileşik -> Tam Sayılı)
+        self.wait(5)
+        dividend = MathTex("7").scale(1.5).move_to(LEFT * 1 + UP * 1)
+        divisor = MathTex("4").scale(1.5).move_to(RIGHT * 1 + UP * 1)
+        vert_line = Line(UP * 1.5, DOWN * 0.5).move_to(UP * 0.5)
+        horiz_line = Line(RIGHT * 0.2, RIGHT * 1.8).move_to(RIGHT * 1 + UP * 0.5)
+        quotient = MathTex("1").scale(1.5).move_to(RIGHT * 1 + ORIGIN)
+        sub_val = MathTex("4").scale(1.5).move_to(LEFT * 1 + ORIGIN)
+        minus = MathTex("-").scale(1.5).next_to(sub_val, LEFT, buff=0.2)
+        sub_line = Line(LEFT * 1.8, LEFT * 0.2).move_to(LEFT * 1 + DOWN * 0.5)
+        remainder = MathTex("3").scale(1.5).move_to(LEFT * 1 + DOWN * 1)
 
-        pizza_t1 = VGroup(*[Sector(radius=1.5, angle=TAU/4, start_angle=i*TAU/4, color=ORANGE, fill_opacity=0.8, stroke_color=WHITE, stroke_width=2) for i in range(4)])
-        pizza_t2 = VGroup(*[Sector(radius=1.5, angle=TAU/4, start_angle=i*TAU/4, color=ORANGE if i < 1 else DARK_GRAY, fill_opacity=0.8, stroke_color=WHITE, stroke_width=2) for i in range(4)])
-        pizzas_t = VGroup(pizza_t1, pizza_t2).arrange(RIGHT, buff=1).move_to(LEFT*1)
+        self.play(Write(dividend), Write(divisor), run_time=2)
+        self.play(Create(vert_line), Create(horiz_line), run_time=2)
+        self.wait(10)
+        self.play(Write(quotient), run_time=1)
+        self.wait(5)
+        self.play(Write(sub_val), Write(minus), Create(sub_line), run_time=2)
+        self.wait(5)
+        self.play(Write(remainder), run_time=1)
+        self.wait(10)
 
-        frac_mixed = MathTex(r"1 \frac{1}{4}").scale(2).next_to(pizzas_t, RIGHT, buff=1)
+        box_q = SurroundingRectangle(quotient, color=YELLOW, buff=0.1)
+        self.play(Create(box_q), run_time=1)
+        self.wait(5)
+        
+        box_r = SurroundingRectangle(remainder, color=GREEN, buff=0.1)
+        self.play(Create(box_r), run_time=1)
+        self.wait(5)
 
-        self.play(FadeIn(pizzas_t), run_time=2)
-        self.play(Write(frac_mixed), run_time=2)
+        box_d = SurroundingRectangle(divisor, color=BLUE, buff=0.1)
+        self.play(Create(box_d), run_time=1)
+        self.wait(10)
 
-        eq = MathTex(r"\frac{5}{4} = 1 \frac{1}{4}").scale(1.5).next_to(pizzas_t, DOWN, buff=1)
-        self.play(Write(eq), run_time=2)
+        conversion_eq = MathTex(r"\frac{7}{4} = 1 \frac{3}{4}").scale(1.5).move_to(DOWN * 2.5)
+        self.play(Write(conversion_eq), run_time=2)
+        self.wait(10)
+        self.play(FadeOut(dividend, divisor, vert_line, horiz_line, quotient, sub_val, minus, sub_line, remainder, box_q, box_r, box_d, conversion_eq), run_time=1)
 
-        self.wait(33.0)
-        self.play(FadeOut(pizzas_t), FadeOut(frac_mixed), FadeOut(eq), FadeOut(tam_title), run_time=2)
+        # Tam Sayılı -> Bileşik
+        self.wait(4)
+        tam_part = MathTex("1").scale(2)
+        frac_line = Line(LEFT*0.3, RIGHT*0.3)
+        num_part = MathTex("3").scale(1.5).next_to(frac_line, UP, buff=0.1)
+        den_part = MathTex("4").scale(1.5).next_to(frac_line, DOWN, buff=0.1)
+        frac_group = VGroup(num_part, frac_line, den_part).next_to(tam_part, RIGHT, buff=0.2)
+        tam_to_bil_frac = VGroup(tam_part, frac_group).move_to(LEFT*1.5)
 
-        # S5: Conversion Bileşik -> Tam Sayılı (42.3s)
-        conv1_title = Tex(r"Dönüşüm: $\frac{7}{3} \rightarrow$ Tam Sayılı").to_edge(UP)
-        self.play(Write(conv1_title), run_time=2)
+        self.play(Write(tam_to_bil_frac), run_time=2)
+        self.wait(10)
 
-        eq_div = MathTex(r"7 \div 3 = 2 \text{ (Kalan } 1)").scale(1.2).move_to(UP*1)
-        res_mixed = MathTex(r"\frac{7}{3} = 2 \frac{1}{3}").scale(1.5).next_to(eq_div, DOWN, buff=1)
+        arrow_mul = CurvedArrow(den_part.get_bottom() + DOWN*0.2, tam_part.get_bottom() + DOWN*0.2, angle=PI/2, color=YELLOW)
+        mul_sign = MathTex(r"\times").scale(0.8).next_to(arrow_mul, DOWN, buff=0.1).set_color(YELLOW)
+        self.play(Create(arrow_mul), Write(mul_sign), run_time=2)
+        self.wait(8)
 
-        self.play(Write(eq_div), run_time=3)
-        self.play(Write(res_mixed), run_time=3)
+        arrow_add = CurvedArrow(tam_part.get_top() + UP*0.2, num_part.get_top() + UP*0.2, angle=-PI/2, color=GREEN)
+        add_sign = MathTex("+").scale(0.8).next_to(arrow_add, UP, buff=0.1).set_color(GREEN)
+        self.play(Create(arrow_add), Write(add_sign), run_time=2)
+        self.wait(8)
 
-        self.wait(32.3)
-        self.play(FadeOut(eq_div), FadeOut(res_mixed), FadeOut(conv1_title), run_time=2)
+        final_bilesik = MathTex(r"= \frac{7}{4}").scale(2).next_to(tam_to_bil_frac, RIGHT, buff=1.5)
+        self.play(Write(final_bilesik), run_time=2)
+        self.wait(10)
+        self.play(FadeOut(tam_to_bil_frac, arrow_mul, mul_sign, arrow_add, add_sign, final_bilesik), run_time=1)
 
-        # S6: Conversion Tam Sayılı -> Bileşik (38.8s)
-        conv2_title = Tex(r"Dönüşüm: $2 \frac{1}{3} \rightarrow$ Bileşik").to_edge(UP)
-        self.play(Write(conv2_title), run_time=2)
-
-        eq_mul = MathTex(r"(2 \times 3) + 1 = 7").scale(1.2).move_to(UP*1)
-        res_improper = MathTex(r"2 \frac{1}{3} = \frac{7}{3}").scale(1.5).next_to(eq_mul, DOWN, buff=1)
-
-        self.play(Write(eq_mul), run_time=3)
-        self.play(Write(res_improper), run_time=3)
-
-        self.wait(28.8)
-        self.play(FadeOut(eq_mul), FadeOut(res_improper), FadeOut(conv2_title), run_time=2)
-
-        # S7: Outro & Philosophy (63.67s)
-        phil_text1 = Tex("Matematikte ezber yoktur,").scale(1.2).move_to(UP*0.5)
-        phil_text2 = Tex("mantıksal ispat vardır.").scale(1.2).next_to(phil_text1, DOWN)
-
-        self.play(Write(phil_text1), run_time=2)
-        self.play(Write(phil_text2), run_time=2)
-
-        self.wait(57.67)
-        self.play(FadeOut(phil_text1), FadeOut(phil_text2), run_time=2)
+        # Outro
+        self.wait(4)
+        outro_text = Text("Bir sonraki derste görüşmek üzere, hoşça kalın.").scale(0.7).set_color(WHITE)
+        self.play(Write(outro_text), run_time=2)
+        self.wait(3.5)
+        self.play(FadeOut(outro_text), run_time=1)
