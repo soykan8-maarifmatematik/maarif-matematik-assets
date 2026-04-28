@@ -5,61 +5,54 @@ config.pixel_width = 1080
 config.frame_height = 16.0
 config.frame_width = 9.0
 
-class BirimKesirler(Scene):
+class MaarifScene(Scene):
     def construct(self):
         self.camera.background_color = "#FFFFFF"
-
-        # Title
-        title = Text("Birim Kesirler", color=BLACK, font_size=48).to_edge(UP, buff=2.0).scale(1.2)
-
-        # 1/2 Model
-        circle_half = Circle(radius=1.5, color=LIGHT_GRAY)
-        lines_half = VGroup(Line(circle_half.get_top(), circle_half.get_bottom(), color=LIGHT_GRAY))
-        sector_half = Sector(outer_radius=1.5, angle=PI, start_angle=PI/2, color=BLUE, fill_opacity=0.8)
-        label_half = MathTex(r"\frac{1}{2}", color=BLACK, font_size=80)
         
-        frac1_model = VGroup(circle_half, lines_half, sector_half)
-        frac1_group = VGroup(frac1_model, label_half).arrange(RIGHT, buff=1.0)
+        # Başlık ve Güvenli Alan Üst Sınırı
+        title = Text("Birim Kesirler", color=BLACK, font_size=60, weight=BOLD)
+        title.to_edge(UP, buff=2.0).scale(1.2)
+        self.play(Write(title))
+        self.wait(2.0)
 
-        # 1/8 Model
-        circle_eighth = Circle(radius=1.5, color=LIGHT_GRAY)
-        lines_eighth = VGroup()
-        for i in range(4):
-            angle = i * PI / 4
-            start = circle_eighth.get_center() + np.array([np.cos(angle)*1.5, np.sin(angle)*1.5, 0])
-            end = circle_eighth.get_center() + np.array([-np.cos(angle)*1.5, -np.sin(angle)*1.5, 0])
-            lines_eighth.add(Line(start, end, color=LIGHT_GRAY))
-        sector_eighth = Sector(outer_radius=1.5, angle=PI/4, start_angle=PI/2, color=RED, fill_opacity=0.8)
-        label_eighth = MathTex(r"\frac{1}{8}", color=BLACK, font_size=80)
-        
-        frac2_model = VGroup(circle_eighth, lines_eighth, sector_eighth)
-        frac2_group = VGroup(frac2_model, label_eighth).arrange(RIGHT, buff=1.0)
+        question = Text("Payda büyüdükçe ne olur?", color=BLACK, font_size=40)
+        question.next_to(title, DOWN, buff=0.5)
+        self.play(FadeIn(question))
+        self.wait(3.66)
 
-        # Layout
-        content = VGroup(frac1_group, frac2_group).arrange(DOWN, buff=2.5)
-        content.next_to(title, DOWN, buff=1.0)
+        # 1/2 Kesri Görseli
+        circle2 = Circle(radius=1.0, color=BLACK)
+        slice2 = Sector(radius=1.0, angle=TAU/2, color=BLUE, fill_opacity=0.8)
+        line2_1 = Line(circle2.get_center() + LEFT*1.0, circle2.get_center() + RIGHT*1.0, color=BLACK)
+        label2 = MathTex(r"\frac{1}{2}", color=BLACK, font_size=70)
+        group2 = VGroup(VGroup(circle2, slice2, line2_1), label2).arrange(RIGHT, buff=1.0)
 
-        # Animations and Sync
-        # "Merhaba, Maarif Matematik’e hoş geldiniz." (6 words = 2.0s)
-        self.play(Write(title), run_time=1.0)
-        self.wait(1.0)
+        # 1/4 Kesri Görseli
+        circle4 = Circle(radius=1.0, color=BLACK)
+        slice4 = Sector(radius=1.0, angle=TAU/4, color=GREEN, fill_opacity=0.8)
+        line4_1 = Line(circle4.get_center() + LEFT*1.0, circle4.get_center() + RIGHT*1.0, color=BLACK)
+        line4_2 = Line(circle4.get_center() + UP*1.0, circle4.get_center() + DOWN*1.0, color=BLACK)
+        label4 = MathTex(r"\frac{1}{4}", color=BLACK, font_size=70)
+        group4 = VGroup(VGroup(circle4, slice4, line4_1, line4_2), label4).arrange(RIGHT, buff=1.0)
 
-        # "Bugün birim kesirlerin büyüklüğünü karşılaştırıyoruz." (5 words = 1.6s)
-        self.wait(1.6)
+        # Merkezi Yerleşim ve Objelerin Birbirine Binmemesi
+        main_group = VGroup(group2, group4).arrange(DOWN, buff=2.5)
+        main_group.next_to(question, DOWN, buff=0.5)
 
-        # "Bir pastayı düşünün. Pastayı ikiye bölersek, bir dilim oldukça büyüktür." (10 words = 3.3s)
-        self.play(Create(circle_half), Create(lines_half), run_time=1.3)
-        self.play(FadeIn(sector_half), Write(label_half), run_time=1.0)
-        self.wait(1.0)
+        self.play(FadeIn(main_group))
+        self.wait(2.0)
 
-        # "Ama aynı pastayı sekiz parçaya bölersek, bir dilim çok daha küçük olur." (12 words = 4.0s)
-        self.play(Create(circle_eighth), Create(lines_eighth), run_time=1.5)
-        self.play(FadeIn(sector_eighth), Write(label_eighth), run_time=1.0)
-        self.wait(1.5)
+        self.play(Indicate(group2, color=BLUE, scale_factor=1.1))
+        self.wait(5.0)
 
-        # "Yani, payda büyüdükçe birim kesrin değeri küçülür." (7 words = 2.3s)
-        self.play(Indicate(label_half, color=BLUE), Indicate(label_eighth, color=RED), run_time=1.5)
-        self.wait(0.8)
+        self.play(Indicate(group4, color=GREEN, scale_factor=1.1))
+        self.wait(4.0)
 
-        # "Maarif Matematik ile mantığını kavra, takipte kal!" (7 words = 2.3s)
-        self.wait(2.3)
+        # Sonuç Metni (y = -4.5 sınırının üzerinde kalacak şekilde ayarlandı)
+        conclusion = Text("Payda = Kişi Sayısı", color=RED, font_size=45, weight=BOLD)
+        conclusion.next_to(main_group, DOWN, buff=0.5)
+        self.play(Write(conclusion))
+        self.wait(4.66)
+
+        # Kapanış
+        self.wait(2.33)
