@@ -2,85 +2,73 @@ from manim import *
 
 config.pixel_height = 1920
 config.pixel_width = 1080
-config.frame_height = 16.0
-config.frame_width = 9.0
+config.background_color = "#FFFFFF"
 
-class MaarifScene(Scene):
+class BirimKesirler(Scene):
     def construct(self):
-        # Title
-        title = Text("BİRİM KESİRLER", font_size=48, color=YELLOW).to_edge(UP, buff=2.0)
+        # 1. Başlık (Güvenli Alan: UP, buff=2.0)
+        title = Tex("BİRİM KESİRLER", color="#333333", font_size=70).to_edge(UP, buff=2.0)
+        self.play(Write(title))
+        self.wait(3.3) # "Bir pizzayı ikiye mi bölersen dilimin büyük olur, dörde mi?" (10 kelime)
+        self.wait(2.0) # "Gelin birim kesirlerin sırrını görselle ispatlayalım." (6 kelime)
 
-        # Helper function for fractions
-        def create_fraction(num, den):
-            n = MathTex(num, font_size=60)
-            l = Line(LEFT*0.4, RIGHT*0.4)
-            d = MathTex(den, font_size=60)
-            return VGroup(n, l, d).arrange(DOWN, buff=0.15)
+        # 2. Modellerin İnşası
+        # Model 1: 1/2
+        circle1 = Circle(radius=1.8, color="#333333", stroke_width=5)
+        line1 = Line(circle1.get_top(), circle1.get_bottom(), color="#333333", stroke_width=5)
+        group1_base = VGroup(circle1, line1)
+        sector1 = Sector(outer_radius=1.8, angle=PI, start_angle=PI/2, color="#007BFF", fill_opacity=0.9)
+        model1 = VGroup(group1_base, sector1)
 
-        # Pizza 1 (1/2)
-        c1 = Circle(radius=1.2, color=LIGHT_GRAY).move_to(UP*3.0)
-        l1 = Line(c1.get_top(), c1.get_bottom(), color=LIGHT_GRAY)
-        p1_group = VGroup(c1, l1)
-        s1 = Sector(radius=1.2, angle=PI, start_angle=PI/2, color=RED, fill_opacity=0.8).move_to(UP*3.0)
-        t1 = create_fraction("1", "2").next_to(c1, RIGHT, buff=1.0)
+        # Model 2: 1/4
+        circle2 = Circle(radius=1.8, color="#333333", stroke_width=5)
+        line2_v = Line(circle2.get_top(), circle2.get_bottom(), color="#333333", stroke_width=5)
+        line2_h = Line(circle2.get_left(), circle2.get_right(), color="#333333", stroke_width=5)
+        group2_base = VGroup(circle2, line2_v, line2_h)
+        sector2 = Sector(outer_radius=1.8, angle=PI/2, start_angle=PI/2, color="#FF0000", fill_opacity=0.9)
+        model2 = VGroup(group2_base, sector2)
 
-        # Pizza 2 (1/4)
-        c2 = Circle(radius=1.2, color=LIGHT_GRAY).move_to(ORIGIN)
-        l2_1 = Line(c2.get_top(), c2.get_bottom(), color=LIGHT_GRAY)
-        l2_2 = Line(c2.get_left(), c2.get_right(), color=LIGHT_GRAY)
-        p2_group = VGroup(c2, l2_1, l2_2)
-        s2 = Sector(radius=1.2, angle=PI/2, start_angle=PI/2, color=BLUE, fill_opacity=0.8).move_to(ORIGIN)
-        t2 = create_fraction("1", "4").next_to(c2, RIGHT, buff=1.0)
+        models = VGroup(model1, model2).arrange(RIGHT, buff=1.2)
 
-        # Pizza 3 (1/8)
-        c3 = Circle(radius=1.2, color=LIGHT_GRAY).move_to(DOWN*3.0)
-        l3_1 = Line(c3.get_top(), c3.get_bottom(), color=LIGHT_GRAY)
-        l3_2 = Line(c3.get_left(), c3.get_right(), color=LIGHT_GRAY)
-        l3_3 = Line(c3.point_at_angle(PI/4), c3.point_at_angle(5*PI/4), color=LIGHT_GRAY)
-        l3_4 = Line(c3.point_at_angle(3*PI/4), c3.point_at_angle(7*PI/4), color=LIGHT_GRAY)
-        p3_group = VGroup(c3, l3_1, l3_2, l3_3, l3_4)
-        s3 = Sector(radius=1.2, angle=PI/4, start_angle=PI/2, color=GREEN, fill_opacity=0.8).move_to(DOWN*3.0)
-        t3 = create_fraction("1", "8").next_to(c3, RIGHT, buff=1.0)
+        # 3. Etiketler ve Sembol
+        label1 = MathTex(r"\frac{1}{2}", color="#007BFF", font_size=110)
+        label2 = MathTex(r"\frac{1}{4}", color="#FF0000", font_size=110)
+        symbol = MathTex(">", color="#333333", font_size=120)
+        
+        equation = VGroup(label1, symbol, label2).arrange(RIGHT, buff=1.5)
 
-        # Animations
-        # 0.0 - 3.67 sn
-        self.play(Write(title), run_time=1.0)
-        self.wait(2.67)
+        # 4. Dikey Hizalama (Kural: VGroup(...).arrange(DOWN, buff=1.8))
+        main_group = VGroup(models, equation).arrange(DOWN, buff=1.8)
+        main_group.set_y(-0.5) # Güvenli alan içinde ortalama (Alt sınır y=-4.5'e çok uzak)
 
-        # 3.67 - 7.0 sn
-        self.play(Create(p1_group), run_time=1.0)
-        self.play(Create(s1), run_time=1.0)
-        self.wait(1.33)
+        # Animasyonlar
+        # "İşte bir tam! Önce iki eş parçaya bölelim." (8 kelime -> 2.6s)
+        self.play(Create(group1_base), run_time=1.0)
+        self.wait(1.6)
 
-        # 7.0 - 8.33 sn
-        self.play(Write(t1), run_time=0.5)
-        self.play(Indicate(t1[2], color=YELLOW), run_time=0.5)
-        self.wait(0.33)
+        # "Bu dilim, ikide birdir." (4 kelime -> 1.3s)
+        self.play(FadeIn(sector1), Write(label1), run_time=1.0)
+        self.wait(0.3)
 
-        # 8.33 - 12.0 sn
-        self.play(Create(p2_group), run_time=1.0)
-        self.play(Create(s2), run_time=1.0)
-        self.wait(1.67)
+        # "Şimdi aynı bütünü dört eş parçaya bölelim." (7 kelime -> 2.3s)
+        self.play(Create(group2_base), run_time=1.0)
+        self.wait(1.3)
 
-        # 12.0 - 13.33 sn
-        self.play(Write(t2), run_time=0.5)
-        self.play(Indicate(t2[2], color=YELLOW), run_time=0.5)
-        self.wait(0.33)
+        # "Bu dilim ise dörtte birdir." (5 kelime -> 1.6s)
+        self.play(FadeIn(sector2), Write(label2), run_time=1.0)
+        self.wait(0.6)
 
-        # 13.33 - 15.33 sn
-        self.play(Create(p3_group), run_time=1.0)
-        self.wait(1.0)
+        # "Gördüğünüz gibi, parça sayısı arttıkça dilim küçülüyor!" (7 kelime -> 2.3s)
+        self.play(Indicate(sector1, color="#007BFF", scale_factor=1.1), Indicate(sector2, color="#FF0000", scale_factor=1.1), run_time=1.5)
+        self.wait(0.8)
 
-        # 15.33 - 18.0 sn
-        self.play(Create(s3), run_time=1.0)
-        self.play(Write(t3), run_time=0.5)
-        self.play(Indicate(t3[2], color=YELLOW), run_time=0.5)
-        self.wait(0.67)
+        # "Yani ikide bir, büyüktür dörtte birden." (6 kelime -> 2.0s)
+        self.play(Write(symbol), run_time=0.5)
+        self.play(Circumscribe(symbol, color="#333333", time_width=2), run_time=1.0)
+        self.wait(0.5)
 
-        # 18.0 - 23.0 sn
-        self.play(Indicate(t1[2]), Indicate(t2[2]), Indicate(t3[2]), run_time=1.0)
-        self.play(Indicate(s1), Indicate(s2), Indicate(s3), run_time=1.0)
-        self.wait(3.0)
-
-        # Final FadeOut (Son 1 saniye)
-        self.play(*[FadeOut(mob) for mob in self.mobjects], run_time=1.0)
+        # "Payda büyüdükçe, birim kesir küçülür. Unutma!" (6 kelime -> 2.0s)
+        self.play(Circumscribe(equation, color="#007BFF", time_width=2), run_time=1.0)
+        
+        # Bitiş Kuralı: Son kelime sayısı (6) / 3.0 = 2.0s + 2s = 4.0s bekleme. Ekran temizlenmez.
+        self.wait(4.0)
