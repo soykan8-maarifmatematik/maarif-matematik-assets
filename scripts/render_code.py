@@ -1,54 +1,56 @@
 from manim import *
 
-class MaarifScene(Scene):
+config.pixel_height = 1920
+config.pixel_width = 1080
+
+class UnitFractions(Scene):
     def construct(self):
-        # Arka plan beyaz
         self.camera.background_color = "#FFFFFF"
+        text_color = BLACK
+        highlight_color = RED
+        pizza_color = ORANGE
 
-        # Başlık (Çentik güvenli alan)
-        title = Text("Birim Kesirler", color=BLACK, weight=BOLD).scale(1.2)
-        title.to_edge(UP, buff=2.8)
+        title = Text("BİRİM KESİRLER", color=text_color, weight=BOLD).to_edge(UP, buff=2.8)
         self.play(Write(title))
-        self.wait(1.5)
+        self.wait(4.0)
 
-        # 1/2 Kesri
-        c2 = Circle(radius=0.9, color=BLACK).move_to(UP * 1.5 + LEFT * 1.5)
-        s2 = Sector(radius=0.9, angle=PI, color=RED, fill_opacity=0.8).move_to(c2.get_center())
-        t2 = MathTex(r"\frac{1}{2}", color=BLACK).scale(1.5).next_to(c2, RIGHT, buff=1.5)
-        
-        self.play(Create(c2))
-        self.play(Create(s2), Write(t2))
-        self.wait(1.5)
-
-        # 1/3 Kesri
-        c3 = Circle(radius=0.9, color=BLACK).move_to(DOWN * 0.5 + LEFT * 1.5)
-        s3 = Sector(radius=0.9, angle=2*PI/3, color=BLUE, fill_opacity=0.8).move_to(c3.get_center())
-        t3 = MathTex(r"\frac{1}{3}", color=BLACK).scale(1.5).next_to(c3, RIGHT, buff=1.5)
-        
-        self.play(Create(c3))
-        self.play(Create(s3), Write(t3))
-        self.wait(1.5)
-
-        # 1/4 Kesri
-        c4 = Circle(radius=0.9, color=BLACK).move_to(DOWN * 2.5 + LEFT * 1.5)
-        s4 = Sector(radius=0.9, angle=PI/2, color=GREEN, fill_opacity=0.8).move_to(c4.get_center())
-        t4 = MathTex(r"\frac{1}{4}", color=BLACK).scale(1.5).next_to(c4, RIGHT, buff=1.5)
-        
-        self.play(Create(c4))
-        self.play(Create(s4), Write(t4))
-        self.wait(1.5)
-
-        # Paydaları vurgulama
-        self.play(
-            Indicate(t2[0][2], color=RED, scale_factor=1.5),
-            Indicate(t3[0][2], color=BLUE, scale_factor=1.5),
-            Indicate(t4[0][2], color=GREEN, scale_factor=1.5)
-        )
+        definition = Text("Payı 1 olan kesir", color=BLUE).next_to(title, DOWN, buff=0.5)
+        self.play(FadeIn(definition))
         self.wait(2.0)
 
-        # Alt özet metni (Alt güvenli alan sınırı y = -4.2, biz -4.0 kullanıyoruz)
-        summary = Text("Payda Buyurse Kesir Kuculur", color=BLACK, weight=BOLD).scale(0.65).move_to(DOWN * 4.0)
-        self.play(Write(summary))
-        
-        # Kapanış beklemesi (11 kelime / 3.0 + 2 = ~5.6 saniye)
-        self.wait(5.6)
+        frac_1_2 = MathTex(r"\frac{1}{2}", color=text_color).scale(2).shift(LEFT*2 + UP*1)
+        frac_1_4 = MathTex(r"\frac{1}{4}", color=text_color).scale(2).shift(RIGHT*2 + UP*1)
+        self.play(Write(frac_1_2), Write(frac_1_4))
+        self.wait(3.3)
+
+        pizza1 = Circle(radius=1.5, color=pizza_color, fill_opacity=0.2).next_to(frac_1_2, DOWN, buff=1)
+        pizza2 = Circle(radius=1.5, color=pizza_color, fill_opacity=0.2).next_to(frac_1_4, DOWN, buff=1)
+        self.play(Create(pizza1), Create(pizza2))
+        self.wait(2.3)
+
+        line1 = Line(pizza1.get_top(), pizza1.get_bottom(), color=text_color)
+        line2_v = Line(pizza2.get_top(), pizza2.get_bottom(), color=text_color)
+        line2_h = Line(pizza2.get_left(), pizza2.get_right(), color=text_color)
+        self.play(Create(line1), Create(line2_v), Create(line2_h))
+        self.wait(3.0)
+
+        slice1 = Sector(radius=1.5, angle=PI, start_angle=-PI/2, color=highlight_color, fill_opacity=0.6).move_to(pizza1.get_center())
+        slice2 = Sector(radius=1.5, angle=PI/2, start_angle=0, color=highlight_color, fill_opacity=0.6).move_to(pizza2.get_center())
+        self.play(FadeIn(slice1), FadeIn(slice2))
+        self.wait(4.0)
+
+        rule = Text("Payda büyürse dilim küçülür", color=text_color, weight=BOLD).scale(0.8).shift(DOWN*3.0)
+        self.play(Write(rule))
+        self.wait(1.6)
+
+        greater_sign = MathTex(">", color=RED).scale(2).move_to(UP*1)
+        self.play(Write(greater_sign))
+        self.wait(3.3)
+
+        arrow = Tex(r"$\rightarrow$", color=BLACK).scale(1.5).next_to(rule, DOWN, buff=0.2)
+        advice = Text("Kişi artarsa pay azalır", color=BLUE).scale(0.7).next_to(arrow, DOWN, buff=0.2)
+        self.play(Write(arrow), Write(advice))
+        self.wait(7.2)
+
+        self.wait(1.5)
+        self.play(FadeOut(Group(*self.mobjects)))
