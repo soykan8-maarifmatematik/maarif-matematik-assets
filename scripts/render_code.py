@@ -7,68 +7,51 @@ config.frame_width = 9.0
 
 class BirimKesirler(Scene):
     def construct(self):
-        # Arka plan
+        # Arka plan rengi (Kural 2)
         self.camera.background_color = "#FFFFFF"
-
-        # Başlık (UP, buff=2.0, scale=1.2)
-        title = Tex("Birim Kesirler", color=BLACK).scale(1.2).to_edge(UP, buff=2.0)
-
-        # Modeller (Pizzalar)
-        # 1/2
-        c1_outline = Circle(radius=1.2, color=BLACK)
-        s1 = Sector(outer_radius=1.2, angle=PI, color=BLUE, fill_opacity=0.7)
-        t1 = MathTex(r"\frac{1}{2}", color=BLACK).scale(1.5).next_to(c1_outline, DOWN)
-        g1 = VGroup(c1_outline, s1, t1)
-
-        # 1/10
-        c2_outline = Circle(radius=1.2, color=BLACK)
-        s2 = Sector(outer_radius=1.2, angle=TAU/10, color=RED, fill_opacity=0.7)
-        lines = VGroup(*[Line(ORIGIN, [1.2*np.cos(i*TAU/10), 1.2*np.sin(i*TAU/10), 0], color=BLACK) for i in range(10)])
-        t2 = MathTex(r"\frac{1}{10}", color=BLACK).scale(1.5).next_to(c2_outline, DOWN)
-        g2 = VGroup(c2_outline, s2, lines, t2)
-
-        circles_group = VGroup(g1, g2).arrange(RIGHT, buff=1.0)
-
-        # Kural Yazısı
-        rule_text = Tex(r"Payda Büyür $\rightarrow$ Dilim Küçülür", color=BLACK).scale(1.2)
-
-        # Merkezi Yerleşim (arrange DOWN buff=2.5)
-        main_group = VGroup(circles_group, rule_text).arrange(DOWN, buff=2.5)
-        main_group.move_to(ORIGIN)
-
-        # Animasyonlar ve Senkronizasyon
-        # "Merhaba, Maarif Matematik’e hoş geldiniz." (6 kelime -> 2.0 sn)
-        self.play(Write(title))
-        self.wait(2.0)
-
-        # "Birim kesirleri sıralarken kafan mı karışıyor? Hemen halledelim." (8 kelime -> 2.6 sn)
-        self.wait(2.6)
-
-        # "Bir pizzayı düşünün. İki kişiye bölerseniz mi daha çok yersiniz, yoksa on kişiye bölerseniz mi?" (15 kelime -> 5.0 sn)
-        self.play(FadeIn(circles_group))
-        self.wait(5.0)
-
-        # "Tabii ki iki kişiye böldüğünüzde! Yani payda büyüdükçe, dilim küçülür." (10 kelime -> 3.3 sn)
-        self.play(Write(rule_text))
-        self.wait(3.3)
-
-        # "Bu yüzden bir bölü iki, bir bölü ondan daha büyüktür." (10 kelime -> 3.3 sn)
-        comparison = MathTex(r"\frac{1}{2} > \frac{1}{10}", color=BLACK).scale(2.0)
-        comparison.move_to(rule_text.get_center())
-        self.play(ReplacementTransform(rule_text, comparison))
-        self.wait(3.3)
-
-        # Son cümle bittikten sonra + 1.5 saniye bekle
-        self.wait(1.5)
-
-        # FadeOut(all) ve Kapanış (CTA)
-        self.play(FadeOut(Group(*self.mobjects)))
         
-        # "Maarif Matematik ile mantığını kavra, takipte kal!" (7 kelime -> 2.3 sn)
-        cta = VGroup(
-            Tex("Maarif Matematik ile", color=BLACK),
-            Tex("mantığını kavra,", color=BLACK),
-            Tex("takipte kal!", color=BLACK)
-        ).arrange(DOWN, buff=0.5).scale(1.2)
-        self.play(Write(cta))
-        self.wait(2.3)
+        # Başlık (Kural 2: UP, buff=2.0, scale(1.2))
+        title = Tex("Birim Kesirlerde Siralama", color=BLACK)
+        title.scale(1.2)
+        title.to_edge(UP, buff=2.0)
+        self.play(Write(title))
+        
+        # 1/2 Kesri Görseli (Kural 1: SADECE radius)
+        circle1_bg = Circle(radius=1.5, color=GRAY, fill_opacity=0.2)
+        sector1 = Sector(radius=1.5, angle=PI, color=BLUE, fill_opacity=0.8)
+        frac1 = MathTex(r"\frac{1}{2}", color=BLACK).scale(1.5)
+        group1 = VGroup(VGroup(circle1_bg, sector1), frac1).arrange(DOWN, buff=0.5)
+        
+        # 1/4 Kesri Görseli (Kural 1: SADECE radius)
+        circle2_bg = Circle(radius=1.5, color=GRAY, fill_opacity=0.2)
+        sector2 = Sector(radius=1.5, angle=PI/2, color=RED, fill_opacity=0.8)
+        frac2 = MathTex(r"\frac{1}{4}", color=BLACK).scale(1.5)
+        group2 = VGroup(VGroup(circle2_bg, sector2), frac2).arrange(DOWN, buff=0.5)
+        
+        # Kesirleri yan yana dizme
+        fractions_group = VGroup(group1, group2).arrange(RIGHT, buff=1.0)
+        
+        # Sonuç Metni (Kural 4: Ok ve LaTeX formatı)
+        conclusion = Tex(r"Payda Büyüdükçe $\rightarrow$ Değer Küçülür", color=BLACK).scale(1.1)
+        
+        # Merkezi Yerleşim (Kural 2: arrange(DOWN, buff=2.5) ve y ekseni sınırları)
+        main_content = VGroup(fractions_group, conclusion).arrange(DOWN, buff=2.5)
+        main_content.move_to(ORIGIN) # [-4.5, 3.5] aralığında kalmasını garantiler
+        
+        # Animasyonlar
+        self.play(FadeIn(circle1_bg), FadeIn(circle2_bg))
+        self.wait(0.5)
+        self.play(Create(sector1), Write(frac1))
+        self.wait(0.5)
+        self.play(Create(sector2), Write(frac2))
+        self.wait(0.5)
+        
+        # Büyüktür işareti
+        greater_sign = MathTex(">", color=BLACK).scale(2.5)
+        greater_sign.move_to(fractions_group.get_center() + UP*0.7)
+        self.play(Write(greater_sign))
+        self.wait(1)
+        
+        # Sonuç yazısı animasyonu
+        self.play(Write(conclusion))
+        self.wait(2)
