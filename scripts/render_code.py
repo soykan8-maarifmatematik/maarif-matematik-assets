@@ -1,62 +1,61 @@
 from manim import *
 
-config.pixel_height = 1920
-config.pixel_width = 1080
-config.frame_height = 16.0
-config.frame_width = 9.0
-
 class MaarifScene(Scene):
     def construct(self):
-        self.camera.background_color = "#FFFFFF"
-        
-        # Title
-        title = Text("Birim Kesirler", color=BLACK, weight=BOLD).scale(1.2).to_edge(UP, buff=2.0)
-        
-        # Visuals
-        circle_half = Circle(radius=1.5, color=BLACK)
-        sector_half = Sector(radius=1.5, angle=PI, color=BLUE, fill_opacity=0.8)
-        group_half = VGroup(circle_half, sector_half)
-        label_half = MathTex(r"\frac{1}{2}", color=BLACK).scale(1.5).next_to(group_half, DOWN)
-        half_comp = VGroup(group_half, label_half)
-        
-        circle_quarter = Circle(radius=1.5, color=BLACK)
-        sector_quarter = Sector(radius=1.5, angle=PI/2, color=RED, fill_opacity=0.8)
-        group_quarter = VGroup(circle_quarter, sector_quarter)
-        label_quarter = MathTex(r"\frac{1}{4}", color=BLACK).scale(1.5).next_to(group_quarter, DOWN)
-        quarter_comp = VGroup(group_quarter, label_quarter)
-        
-        visuals = VGroup(half_comp, quarter_comp).arrange(RIGHT, buff=1.0)
-        
-        # Math Text
-        math_text = MathTex(r"\frac{1}{2} > \frac{1}{4}", color=BLACK).scale(2.5)
-        
-        # Central Layout
-        main_group = VGroup(visuals, math_text).arrange(DOWN, buff=2.5)
-        main_group.move_to(ORIGIN)
-        
-        # Animations & Sync
-        # "Merhaba, Maarif Matematik’e hoş geldiniz." (6 kelime -> 2.0s)
+        # 1. Intro
+        self.wait(1.67) # Merhaba, Maarif Matematik’e hoş geldiniz.
+
+        # 2. Title
+        title = Text("Birim Kesirler", font_size=48).to_edge(UP, buff=2.0).scale(1.2)
         self.play(Write(title))
-        self.wait(2.0)
+        self.wait(1.67) # Bugün birim kesirlerin büyüklüklerini karşılaştırıyoruz.
+
+        # 3. Models Setup
+        circle1_outline = Circle(radius=1.2, color=WHITE)
+        sector1 = Sector(radius=1.2, angle=PI, color=BLUE, fill_opacity=0.8)
+        frac1 = MathTex(r"\frac{1}{2}", font_size=72)
+        group1 = VGroup(VGroup(circle1_outline, sector1), frac1).arrange(RIGHT, buff=1.0)
+
+        circle2_outline = Circle(radius=1.2, color=WHITE)
+        sector2 = Sector(radius=1.2, angle=PI/2, color=RED, fill_opacity=0.8)
+        frac2 = MathTex(r"\frac{1}{4}", font_size=72)
+        group2 = VGroup(VGroup(circle2_outline, sector2), frac2).arrange(RIGHT, buff=1.0)
+
+        # Central Placement (Safe Zone Uyumlu)
+        main_group = VGroup(group1, group2).arrange(DOWN, buff=2.5)
+        main_group.move_to(ORIGIN).shift(DOWN * 0.5)
+
+        # 4. Animate 1/2
+        self.play(Create(circle1_outline))
+        self.play(Create(sector1))
+        self.play(Write(frac1))
+        self.wait(4.00) # Bir bütünü iki eş parçaya bölelim ve birini alalım. Bu ikide birdir.
+
+        # 5. Transformation to 1/4
+        circle2_copy = circle1_outline.copy()
+        sector2_copy = sector1.copy()
         
-        # "Birim kesirleri karşılaştırırken paydanın büyüklüğüne dikkat etmeliyiz." (7 kelime -> 2.33s)
-        self.wait(2.33)
-        
-        # "Bir pastayı ikiye bölerseniz mi daha büyük bir dilim yersiniz, yoksa dörde bölerseniz mi?" (14 kelime -> 4.67s)
-        self.play(FadeIn(visuals))
-        self.wait(4.67)
-        
-        # "Tabii ki ikiye böldüğünüzde! Yani payda büyüdükçe, dilim küçülür." (9 kelime -> 3.0s)
         self.play(
-            sector_half.animate.scale(1.1),
-            sector_quarter.animate.scale(0.9)
+            circle2_copy.animate.move_to(circle2_outline.get_center()),
+            sector2_copy.animate.move_to(circle2_outline.get_center())
         )
-        self.wait(3.0)
         
-        # "Bu yüzden bir bölü iki, bir bölü dörtten daha büyüktür." (10 kelime -> 3.33s)
-        self.play(Write(math_text))
-        self.wait(3.33)
-        
-        # "Maarif Matematik ile mantığını kavra, takipte kal!" (7 kelime -> 2.33s)
-        self.play(Circumscribe(math_text, color=GREEN, time_width=2.0))
-        self.wait(2.33)
+        self.play(
+            Transform(sector2_copy, sector2),
+            circle2_copy.animate.set_color(WHITE)
+        )
+        self.play(Write(frac2))
+        self.wait(4.67) # Şimdi aynı bütünü dört eş parçaya bölelim ve birini alalım. Bu da dörtte birdir.
+
+        self.wait(2.33) # Gördüğünüz gibi, parça sayısı arttıkça dilim küçülüyor.
+
+        # 6. Symbol Animation
+        symbol = MathTex(">", font_size=96, color=YELLOW)
+        symbol.move_to(VGroup(group1, group2).get_center())
+
+        self.play(GrowFromCenter(symbol))
+        self.play(Indicate(symbol, scale_factor=1.5, color=RED))
+        self.wait(2.33) # Yani ikide bir, dörtte birden daha büyüktür.
+
+        # 7. Outro
+        self.wait(2.33) # Maarif Matematik ile mantığını kavra, takipte kal!
