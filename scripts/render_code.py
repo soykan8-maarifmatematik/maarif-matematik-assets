@@ -1,177 +1,145 @@
 from manim import *
 
 class MaarifScene(Scene):
-    def create_pizza(self, slices, filled_slices, radius=1.5, color="#007BFF"):
-        pizza = VGroup()
-        angle = TAU / slices
-        for i in range(slices):
-            fill_opacity = 0.8 if i < filled_slices else 0.2
-            sector = Sector(radius=radius, angle=angle, start_angle=i*angle,
-                            color=color, fill_opacity=fill_opacity, stroke_width=2, stroke_color="#FFFFFF")
-            pizza.add(sector)
-        return pizza
-
     def construct(self):
+        # Arka plan ve renk ayarları
         self.camera.background_color = "#FFFFFF"
+        maarif_blue = "#007BFF"
+        navy_blue = "#002B4D"
+        dark_gray = "#333333"
 
-        # SCENE 1: Intro (25.38s)
-        title = Text("Kesir Çeşitleri ve Dönüşümler", color="#002B4D", font_size=48)
-        self.play(Write(title), run_time=3)
-        self.wait(5)
-        subtitle = Text("Maarif Modeli ile Mantıksal Yaklaşım", color="#007BFF", font_size=36).next_to(title, DOWN)
-        self.play(FadeIn(subtitle), run_time=2)
-        self.wait(10.38)
-        self.play(FadeOut(title), FadeOut(subtitle), run_time=2)
-        self.wait(3)
+        # BÖLÜM 1: Giriş (19.3 saniye)
+        title = Text("Doğal Sayı ve Kesir Karşılaştırması", color=navy_blue, font_size=40)
+        self.play(Write(title), run_time=2)
+        self.wait(16.3)
+        self.play(FadeOut(title), run_time=1)
 
-        # SCENE 2: Simple Fractions (37.56s)
-        simple_title = Text("Basit Kesir", color="#002B4D", font_size=42).to_edge(UP)
-        self.play(Write(simple_title), run_time=2)
-        self.wait(4)
+        # BÖLÜM 2: Mantık ve İki Dil (34.0 saniye)
+        num_3 = MathTex("3", color=dark_gray, font_size=72).shift(LEFT * 2)
+        frac_7_2 = MathTex("\\frac{7}{2}", color=maarif_blue, font_size=72).shift(RIGHT * 2)
+        vs_text = Text("vs", color=dark_gray, font_size=36).move_to(ORIGIN)
 
-        frac_3_4 = MathTex(r"\frac{3}{4}", color="#333333", font_size=72).shift(LEFT*3)
-        self.play(Write(frac_3_4), run_time=2)
-        self.wait(4)
+        self.play(Write(num_3), run_time=1.5)
+        self.play(Write(vs_text), run_time=1)
+        self.play(Write(frac_7_2), run_time=1.5)
+        self.wait(29)
+        self.play(FadeOut(num_3, vs_text, frac_7_2), run_time=1)
 
-        pizza1 = self.create_pizza(4, 3, radius=1.5, color="#007BFF").shift(RIGHT*2)
-        self.play(FadeIn(pizza1), run_time=3)
+        # BÖLÜM 3: Bölme Evi (27.9 saniye)
+        dividend = MathTex("7", color=dark_gray, font_size=60).shift(LEFT * 1 + UP * 1)
+        divisor = MathTex("2", color=dark_gray, font_size=60).shift(RIGHT * 0.5 + UP * 1)
+
+        # Dikey çizgi (Bölünen ile Bölen arası)
+        v_line = Line(UP * 1.5, UP * 0.5, color=dark_gray).shift(LEFT * 0.25)
+        # Yatay çizgi (Bölenin ALTI)
+        h_line = Line(LEFT * 0.25, RIGHT * 1.25, color=dark_gray).shift(UP * 0.5)
+
+        self.play(Write(dividend), Write(divisor), run_time=2)
+        self.play(Create(v_line), Create(h_line), run_time=2)
+
+        quotient = MathTex("3", color=maarif_blue, font_size=60).next_to(h_line, DOWN, buff=0.3).align_to(divisor, LEFT)
+        self.wait(10.9)
+        self.play(Write(quotient), run_time=1.5)
+
+        minus_six = MathTex("-6", color=dark_gray, font_size=60).next_to(dividend, DOWN, buff=0.3)
+        sub_line = Line(LEFT * 1.5, LEFT * 0.5, color=dark_gray).next_to(minus_six, DOWN, buff=0.1)
+        remainder = MathTex("1", color=navy_blue, font_size=60).next_to(sub_line, DOWN, buff=0.2)
+
         self.wait(6)
-
-        desc1 = Text("Pay < Payda", color="#333333", font_size=36).next_to(frac_3_4, DOWN, buff=1)
-        self.play(Write(desc1), run_time=2)
-        self.wait(10.56)
-
-        self.play(FadeOut(simple_title), FadeOut(frac_3_4), FadeOut(pizza1), FadeOut(desc1), run_time=4)
-
-        # SCENE 3: Improper Fractions (46.19s)
-        imp_title = Text("Bileşik Kesir", color="#002B4D", font_size=42).to_edge(UP)
-        self.play(Write(imp_title), run_time=2)
-        self.wait(4)
-
-        frac_7_4 = MathTex(r"\frac{7}{4}", color="#333333", font_size=72).shift(LEFT*4)
-        self.play(Write(frac_7_4), run_time=2)
-        self.wait(5)
-
-        pizza2 = self.create_pizza(4, 4, radius=1.5, color="#007BFF").shift(RIGHT*0.5)
-        pizza3 = self.create_pizza(4, 3, radius=1.5, color="#007BFF").shift(RIGHT*4)
-        self.play(FadeIn(pizza2), run_time=3)
-        self.play(FadeIn(pizza3), run_time=3)
-        self.wait(8)
-
-        desc2 = Text("Pay ≥ Payda", color="#333333", font_size=36).next_to(frac_7_4, DOWN, buff=1)
-        self.play(Write(desc2), run_time=2)
-        self.wait(13.19)
-
-        self.play(FadeOut(imp_title), FadeOut(desc2), run_time=4)
-
-        # SCENE 4: Mixed Fractions Intro (35.53s)
-        mix_title = Text("Tam Sayılı Kesir", color="#002B4D", font_size=42).to_edge(UP)
-        self.play(Write(mix_title), run_time=2)
-        self.wait(6)
-
-        mix_frac = MathTex(r"1 \frac{3}{4}", color="#333333", font_size=72).next_to(frac_7_4, RIGHT, buff=1)
-        eq_sign = MathTex("=", color="#333333", font_size=60).move_to((frac_7_4.get_right() + mix_frac.get_left())/2)
-
-        self.play(Write(eq_sign), Write(mix_frac), run_time=3)
-        self.wait(8)
-
-        q_text = Text("Neden Bölme Yaparız?", color="#007BFF", font_size=36).to_edge(DOWN)
-        self.play(Write(q_text), run_time=2)
-        self.wait(10.53)
-
-        self.play(FadeOut(mix_title), FadeOut(q_text), FadeOut(pizza2), FadeOut(pizza3), FadeOut(frac_7_4), FadeOut(eq_sign), FadeOut(mix_frac), run_time=4)
-
-        # SCENE 5: Division House (37.05s)
-        div_title = Text("Bölme Evi ile Dönüşüm", color="#002B4D", font_size=42).to_edge(UP)
-        self.play(Write(div_title), run_time=2)
+        self.play(Write(minus_six), Create(sub_line), run_time=2)
+        self.play(Write(remainder), run_time=1.5)
         self.wait(2)
 
-        dividend = MathTex("7", color="#333333", font_size=60)
-        divisor = MathTex("4", color="#333333", font_size=60)
-        v_line = Line(UP*0.8, DOWN*0.8, color="#333333", stroke_width=4)
-        h_line = Line(LEFT*0.5, RIGHT*0.8, color="#333333", stroke_width=4)
+        # BÖLÜM 4: Vurgular ve Tam Sayılı Kesir (54.8 saniye)
+        box_quotient = SurroundingRectangle(quotient, color=maarif_blue, buff=0.1)
+        box_remainder = SurroundingRectangle(remainder, color=navy_blue, buff=0.1)
 
-        v_line.next_to(dividend, RIGHT, buff=0.3)
-        divisor.next_to(v_line, RIGHT, buff=0.3).align_to(dividend, UP)
-        h_line.next_to(divisor, DOWN, buff=0.1).align_to(v_line, LEFT)
-
-        div_group = VGroup(dividend, divisor, v_line, h_line).move_to(ORIGIN).shift(UP*0.5)
-        self.play(Create(div_group), run_time=3)
-        self.wait(3)
-
-        quotient = MathTex("1", color="#333333", font_size=60).next_to(h_line, DOWN, buff=0.3)
-        self.play(Write(quotient), run_time=2)
-        self.wait(2)
-
-        sub_val = MathTex("4", color="#333333", font_size=60).next_to(dividend, DOWN, buff=0.3)
-        minus = MathTex("-", color="#333333", font_size=60).next_to(sub_val, LEFT, buff=0.2)
-        sub_line = Line(minus.get_left() + LEFT*0.1, sub_val.get_right() + RIGHT*0.1, color="#333333", stroke_width=4).next_to(sub_val, DOWN, buff=0.1)
-
-        self.play(Write(sub_val), Write(minus), Create(sub_line), run_time=3)
-        self.wait(1)
-
-        remainder = MathTex("3", color="#333333", font_size=60).next_to(sub_line, DOWN, buff=0.3)
-        self.play(Write(remainder), run_time=2)
-        self.wait(3)
-
-        box_q = SurroundingRectangle(quotient, color="#007BFF", buff=0.1)
-        label_q = Text("Tam Kısım", color="#007BFF", font_size=24).next_to(box_q, RIGHT)
-
-        box_r = SurroundingRectangle(remainder, color="#002B4D", buff=0.1)
-        label_r = Text("Yeni Pay", color="#002B4D", font_size=24).next_to(box_r, RIGHT)
-
-        box_d = SurroundingRectangle(divisor, color="#333333", buff=0.1)
-        label_d = Text("Payda (Değişmez)", color="#333333", font_size=24).next_to(box_d, RIGHT)
-
-        self.play(Create(box_q), Write(label_q), run_time=2)
-        self.play(Create(box_r), Write(label_r), run_time=2)
-        self.play(Create(box_d), Write(label_d), run_time=2)
-        self.wait(4.05)
-
-        self.play(FadeOut(div_title), FadeOut(div_group), FadeOut(quotient), FadeOut(sub_val), FadeOut(minus), FadeOut(sub_line), FadeOut(remainder), FadeOut(box_q), FadeOut(label_q), FadeOut(box_r), FadeOut(label_r), FadeOut(box_d), FadeOut(label_d), run_time=4)
-
-        # SCENE 6: Mixed to Improper (48.73s)
-        rev_title = Text("Tam Sayılıdan Bileşiğe", color="#002B4D", font_size=42).to_edge(UP)
-        self.play(Write(rev_title), run_time=2)
+        self.play(Create(box_quotient), run_time=1.5)
+        self.wait(4)
+        self.play(Create(box_remainder), run_time=1.5)
         self.wait(4)
 
-        mix2 = MathTex(r"2 \frac{1}{3}", color="#333333", font_size=72).shift(LEFT*4 + UP*1)
-        self.play(Write(mix2), run_time=2)
+        mixed_num = MathTex("3", "\\frac{1}{2}", color=dark_gray, font_size=60).shift(RIGHT * 3 + DOWN * 1)
+        mixed_num[0].set_color(maarif_blue)
+        mixed_num[1].set_color(navy_blue)
+
+        arrow = Arrow(start=RIGHT * 1, end=RIGHT * 2 + DOWN * 1, color=dark_gray)
+
+        self.play(Create(arrow), Write(mixed_num), run_time=2)
+        self.wait(10)
+
+        self.play(FadeOut(dividend, divisor, v_line, h_line, quotient, minus_six, sub_line, remainder, box_quotient, box_remainder, arrow), run_time=2)
+        self.play(mixed_num.animate.move_to(RIGHT * 2), run_time=1.5)
+
+        num_3_again = MathTex("3", color=dark_gray, font_size=60).shift(LEFT * 2)
+        self.play(Write(num_3_again), run_time=1.5)
+        self.wait(16.8)
+
+        less_than = MathTex("<", color=maarif_blue, font_size=60).move_to(ORIGIN)
+        self.play(Write(less_than), run_time=1)
+        self.wait(7)
+
+        self.play(FadeOut(num_3_again, mixed_num, less_than), run_time=2)
+
+        # BÖLÜM 5: Sayı Doğrusu (45.2 saniye)
+        nl = NumberLine(
+            x_range=[0, 5, 1],
+            length=10,
+            color=dark_gray,
+            include_numbers=True,
+            numbers_to_include=[0, 1, 2, 3, 4, 5]
+        ).shift(DOWN * 1)
+
+        self.play(Create(nl), run_time=2)
+        self.wait(8)
+
+        dot_3 = Dot(nl.n2p(3), color=maarif_blue, radius=0.15)
+        label_3 = MathTex("3", color=maarif_blue).next_to(dot_3, UP)
+        self.play(FadeIn(dot_3, label_3), run_time=1.5)
+        self.wait(8.7)
+
+        dot_3_5 = Dot(nl.n2p(3.5), color=navy_blue, radius=0.15)
+        label_7_2 = MathTex("\\frac{7}{2}", color=navy_blue).next_to(dot_3_5, UP)
+        self.play(FadeIn(dot_3_5, label_7_2), run_time=1.5)
+        self.wait(10)
+
+        arrow_right = Arrow(start=nl.n2p(3) + UP*0.5, end=nl.n2p(3.5) + UP*0.5, color=dark_gray, buff=0.1)
+        self.play(Create(arrow_right), run_time=1.5)
+        self.wait(10)
+
+        self.play(FadeOut(nl, dot_3, label_3, dot_3_5, label_7_2, arrow_right), run_time=2)
+
+        # BÖLÜM 6: Payda Eşitleme (36.0 saniye)
+        eq_3 = MathTex("3", color=dark_gray, font_size=60).shift(LEFT * 3)
+        eq_3_1 = MathTex("=", "\\frac{3}{1}", color=dark_gray, font_size=60).next_to(eq_3, RIGHT)
+
+        self.wait(8)
+        self.play(Write(eq_3), run_time=1.5)
         self.wait(5)
+        self.play(Write(eq_3_1), run_time=1.5)
+        self.wait(6)
 
-        p1 = self.create_pizza(3, 3, radius=1, color="#007BFF").shift(RIGHT*0 + UP*1)
-        p2 = self.create_pizza(3, 3, radius=1, color="#007BFF").shift(RIGHT*2.5 + UP*1)
-        p3 = self.create_pizza(3, 1, radius=1, color="#007BFF").shift(RIGHT*5 + UP*1)
+        multiply_2 = MathTex("\\times \\frac{2}{2}", color=maarif_blue, font_size=50).next_to(eq_3_1, RIGHT)
+        eq_6_2 = MathTex("=", "\\frac{6}{2}", color=navy_blue, font_size=60).next_to(multiply_2, RIGHT)
 
-        self.play(FadeIn(p1), FadeIn(p2), run_time=3)
-        self.wait(4)
-
-        calc_text1 = MathTex(r"2 \times 3 = 6 \text{ dilim}", color="#333333", font_size=48).shift(DOWN*1.5)
-        self.play(Write(calc_text1), run_time=2)
-        self.wait(4)
-
-        self.play(FadeIn(p3), run_time=2)
+        self.play(Write(multiply_2), run_time=1.5)
         self.wait(3)
+        self.play(Write(eq_6_2), run_time=1.5)
+        self.wait(8)
 
-        calc_text2 = MathTex(r"6 + 1 = 7 \text{ dilim}", color="#333333", font_size=48).next_to(calc_text1, DOWN)
-        self.play(Write(calc_text2), run_time=2)
-        self.wait(4)
+        # BÖLÜM 7: Son Karşılaştırma ve Çıkış (41.1 saniye)
+        self.play(FadeOut(eq_3, eq_3_1, multiply_2), eq_6_2.animate.move_to(LEFT * 2), run_time=2)
 
-        final_ans = MathTex(r"= \frac{7}{3}", color="#002B4D", font_size=72).next_to(mix2, RIGHT, buff=0.5)
-        self.play(Write(final_ans), run_time=2)
-        self.wait(5.73)
+        final_7_2 = MathTex("\\frac{7}{2}", color=maarif_blue, font_size=60).shift(RIGHT * 2)
+        self.play(Write(final_7_2), run_time=1.5)
+        self.wait(10)
 
-        self.play(FadeOut(rev_title), FadeOut(mix2), FadeOut(p1), FadeOut(p2), FadeOut(p3), FadeOut(calc_text1), FadeOut(calc_text2), FadeOut(final_ans), run_time=4)
+        final_less = MathTex("<", color=dark_gray, font_size=60).move_to(ORIGIN)
+        self.play(Write(final_less), run_time=1.5)
+        self.wait(10)
 
-        # SCENE 7: Outro (19.81s)
-        outro_text1 = Text("Matematikte hiçbir kural sebepsiz değildir.", color="#002B4D", font_size=36)
-        self.play(Write(outro_text1), run_time=3)
-        self.wait(4)
+        box_final = SurroundingRectangle(VGroup(eq_6_2, final_less, final_7_2), color=navy_blue, buff=0.3)
+        self.play(Create(box_final), run_time=1.5)
+        self.wait(13.6)
 
-        outro_text2 = Text("Mantığını kavra, ezberleme!", color="#007BFF", font_size=42).next_to(outro_text1, DOWN, buff=0.5)
-        self.play(Write(outro_text2), run_time=3)
-        self.wait(5.81)
-
-        logo = Text("Maarif Matematik", color="#333333", font_size=60)
-        self.play(FadeOut(outro_text1), FadeOut(outro_text2), FadeIn(logo), run_time=3)
         self.wait(1)
