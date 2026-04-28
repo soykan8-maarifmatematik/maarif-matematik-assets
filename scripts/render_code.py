@@ -2,73 +2,57 @@ from manim import *
 
 config.pixel_height = 1920
 config.pixel_width = 1080
-config.background_color = "#FFFFFF"
 
 class BirimKesirler(Scene):
     def construct(self):
-        # 1. Başlık (Güvenli Alan: UP, buff=2.0)
-        title = Tex("BİRİM KESİRLER", color="#333333", font_size=70).to_edge(UP, buff=2.0)
-        self.play(Write(title))
-        self.wait(3.3) # "Bir pizzayı ikiye mi bölersen dilimin büyük olur, dörde mi?" (10 kelime)
-        self.wait(2.0) # "Gelin birim kesirlerin sırrını görselle ispatlayalım." (6 kelime)
-
-        # 2. Modellerin İnşası
-        # Model 1: 1/2
-        circle1 = Circle(radius=1.8, color="#333333", stroke_width=5)
-        line1 = Line(circle1.get_top(), circle1.get_bottom(), color="#333333", stroke_width=5)
-        group1_base = VGroup(circle1, line1)
-        sector1 = Sector(outer_radius=1.8, angle=PI, start_angle=PI/2, color="#007BFF", fill_opacity=0.9)
-        model1 = VGroup(group1_base, sector1)
-
-        # Model 2: 1/4
-        circle2 = Circle(radius=1.8, color="#333333", stroke_width=5)
-        line2_v = Line(circle2.get_top(), circle2.get_bottom(), color="#333333", stroke_width=5)
-        line2_h = Line(circle2.get_left(), circle2.get_right(), color="#333333", stroke_width=5)
-        group2_base = VGroup(circle2, line2_v, line2_h)
-        sector2 = Sector(outer_radius=1.8, angle=PI/2, start_angle=PI/2, color="#FF0000", fill_opacity=0.9)
-        model2 = VGroup(group2_base, sector2)
-
-        models = VGroup(model1, model2).arrange(RIGHT, buff=1.2)
-
-        # 3. Etiketler ve Sembol
-        label1 = MathTex(r"\frac{1}{2}", color="#007BFF", font_size=110)
-        label2 = MathTex(r"\frac{1}{4}", color="#FF0000", font_size=110)
-        symbol = MathTex(">", color="#333333", font_size=120)
+        # 1. ARKA PLAN VE RENK MÜHRÜ
+        self.camera.background_color = "#FFFFFF"
+        koyu_gri = "#333333"
+        maarif_mavisi = "#007BFF"
+        kirmizi = "#FF0000"
         
-        equation = VGroup(label1, symbol, label2).arrange(RIGHT, buff=1.5)
-
-        # 4. Dikey Hizalama (Kural: VGroup(...).arrange(DOWN, buff=1.8))
-        main_group = VGroup(models, equation).arrange(DOWN, buff=1.8)
-        main_group.set_y(-0.5) # Güvenli alan içinde ortalama (Alt sınır y=-4.5'e çok uzak)
-
-        # Animasyonlar
-        # "İşte bir tam! Önce iki eş parçaya bölelim." (8 kelime -> 2.6s)
-        self.play(Create(group1_base), run_time=1.0)
-        self.wait(1.6)
-
-        # "Bu dilim, ikide birdir." (4 kelime -> 1.3s)
-        self.play(FadeIn(sector1), Write(label1), run_time=1.0)
-        self.wait(0.3)
-
-        # "Şimdi aynı bütünü dört eş parçaya bölelim." (7 kelime -> 2.3s)
-        self.play(Create(group2_base), run_time=1.0)
+        # 3. KADRAJ VE YERLEŞİM (Güvenli Alan)
+        baslik = Tex("Birim Kesirler", color=koyu_gri, font_size=72).to_edge(UP, buff=2.0)
+        
+        # 2. MODERN İNŞA - 1/2 Modeli
+        cember_yarim = Circle(radius=1.5, color=koyu_gri, stroke_width=4)
+        cizgi_yarim = Line(cember_yarim.get_top(), cember_yarim.get_bottom(), color=koyu_gri, stroke_width=2)
+        dilim_yarim = Sector(outer_radius=1.5, angle=PI, start_angle=PI/2, color=maarif_mavisi, fill_opacity=0.8)
+        yazi_yarim = MathTex(r"\frac{1}{2}", color=koyu_gri, font_size=80)
+        grup_yarim = VGroup(VGroup(cember_yarim, cizgi_yarim, dilim_yarim), yazi_yarim).arrange(RIGHT, buff=1.0)
+        
+        # 2. MODERN İNŞA - 1/4 Modeli
+        cember_ceyrek = Circle(radius=1.5, color=koyu_gri, stroke_width=4)
+        cizgi_c1 = Line(cember_ceyrek.get_top(), cember_ceyrek.get_bottom(), color=koyu_gri, stroke_width=2)
+        cizgi_c2 = Line(cember_ceyrek.get_left(), cember_ceyrek.get_right(), color=koyu_gri, stroke_width=2)
+        dilim_ceyrek = Sector(outer_radius=1.5, angle=PI/2, start_angle=PI/2, color=kirmizi, fill_opacity=0.8)
+        yazi_ceyrek = MathTex(r"\frac{1}{4}", color=koyu_gri, font_size=80)
+        grup_ceyrek = VGroup(VGroup(cember_ceyrek, cizgi_c1, cizgi_c2, dilim_ceyrek), yazi_ceyrek).arrange(RIGHT, buff=1.0)
+        
+        # 2. SEMBOLİK KARŞILAŞTIRMA
+        sembol = MathTex(">", color=koyu_gri, font_size=120)
+        
+        # 3. HİZALAMA VE MERKEZLEME
+        ana_grup = VGroup(grup_yarim, sembol, grup_ceyrek).arrange(DOWN, buff=1.8)
+        ana_grup.move_to(ORIGIN)
+        
+        # --- ANİMASYONLAR VE 4. MİLİMETRİK SENKRON ---
+        self.play(Write(baslik), run_time=1)
+        
+        # "Bir pastayı iki kişiye mi bölersen daha çok yersin, yoksa dört kişiye mi?" (13 kelime -> ~4.3 sn)
+        self.play(Create(cember_yarim), Create(cizgi_yarim), run_time=1.5)
+        self.play(FadeIn(dilim_yarim), Write(yazi_yarim), run_time=1.5)
         self.wait(1.3)
-
-        # "Bu dilim ise dörtte birdir." (5 kelime -> 1.6s)
-        self.play(FadeIn(sector2), Write(label2), run_time=1.0)
-        self.wait(0.6)
-
-        # "Gördüğünüz gibi, parça sayısı arttıkça dilim küçülüyor!" (7 kelime -> 2.3s)
-        self.play(Indicate(sector1, color="#007BFF", scale_factor=1.1), Indicate(sector2, color="#FF0000", scale_factor=1.1), run_time=1.5)
-        self.wait(0.8)
-
-        # "Yani ikide bir, büyüktür dörtte birden." (6 kelime -> 2.0s)
-        self.play(Write(symbol), run_time=0.5)
-        self.play(Circumscribe(symbol, color="#333333", time_width=2), run_time=1.0)
-        self.wait(0.5)
-
-        # "Payda büyüdükçe, birim kesir küçülür. Unutma!" (6 kelime -> 2.0s)
-        self.play(Circumscribe(equation, color="#007BFF", time_width=2), run_time=1.0)
         
-        # Bitiş Kuralı: Son kelime sayısı (6) / 3.0 = 2.0s + 2s = 4.0s bekleme. Ekran temizlenmez.
-        self.wait(4.0)
+        # "İşte birim kesirlerin sırrı budur! Payda büyüdükçe, dilim küçülür." (9 kelime -> 3.0 sn)
+        self.play(Create(cember_ceyrek), Create(cizgi_c1), Create(cizgi_c2), run_time=1.5)
+        self.play(FadeIn(dilim_ceyrek), Write(yazi_ceyrek), run_time=1.5)
+        
+        # "Gelin bunu matematikle ispatlayalım. Bir bölü iki, büyüktür, bir bölü dört." (11 kelime -> ~3.6 sn)
+        self.play(Write(sembol), run_time=1)
+        self.play(Circumscribe(sembol, color=maarif_mavisi, time_width=2, stroke_width=8), run_time=1.5)
+        self.wait(1.1)
+        
+        # "Matematik ezber değil, mantıktır. Maarif Matematik ile keşfet!" (8 kelime)
+        # 4. BİTİŞ KURALI: 8 kelime / 3.0 + 2 saniye = 4.66 saniye bekleme. Ekran temizlenmez.
+        self.wait(4.66)
