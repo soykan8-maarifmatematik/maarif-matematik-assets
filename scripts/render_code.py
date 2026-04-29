@@ -1,43 +1,50 @@
 from manim import *
-
 config.pixel_height = 1920
 config.pixel_width = 1080
 
-class UnitFractions(Scene):
+class BirimKesirler(Scene):
     def construct(self):
         self.camera.background_color = "#FFFFFF"
         
-        # Title
-        title = Text("BİRİM KESİRLER", color=BLACK, weight=BOLD).to_edge(UP, buff=1.0)
-        self.play(Write(title))
+        # BAŞLIK
+        title = Text("Birim Kesirler", font_size=90, color=BLACK, weight=BOLD).to_edge(UP, buff=1.0)
+        
+        # GÖRSELLER (Pizzalar)
+        pizza1_group = VGroup()
+        circle1 = Circle(radius=1.5, color=BLACK, stroke_width=6)
+        slice1 = Sector(radius=1.5, angle=PI, color="#FF5733", fill_opacity=0.9)
+        label1 = MathTex(r"\frac{1}{2}", font_size=110, color=BLACK).next_to(circle1, DOWN, buff=0.5)
+        pizza1_group.add(circle1, slice1, label1).shift(LEFT * 2.5 + UP * 0.5)
+        
+        pizza2_group = VGroup()
+        circle2 = Circle(radius=1.5, color=BLACK, stroke_width=6)
+        slice2 = Sector(radius=1.5, angle=PI/2, color="#33A1FF", fill_opacity=0.9)
+        line1 = Line(circle2.get_top(), circle2.get_bottom(), color=BLACK, stroke_width=4)
+        line2 = Line(circle2.get_left(), circle2.get_right(), color=BLACK, stroke_width=4)
+        label2 = MathTex(r"\frac{1}{4}", font_size=110, color=BLACK).next_to(circle2, DOWN, buff=0.5)
+        pizza2_group.add(circle2, slice2, line1, line2, label2).shift(RIGHT * 2.5 + UP * 0.5)
+        
+        greater_than = MathTex(">", font_size=150, color=BLACK).move_to(UP * 0.5)
+        
+        # ALT METİN
+        result = Text("Payda büyüdükçe\nkesir KÜÇÜLÜR!", font_size=80, color=BLACK, weight=BOLD, t2c={"KÜÇÜLÜR!": RED}, text_align="CENTER").to_edge(DOWN, buff=2.0)
+        
+        # ANİMASYONLAR
+        self.play(Write(title), run_time=1.5)
         self.wait(2)
         
-        # Circle 1 (1/2)
-        circle1 = Circle(radius=1.5, color=BLUE).shift(UP * 3.5)
-        slice1 = Sector(radius=1.5, angle=PI, color=BLUE, fill_opacity=0.8).shift(UP * 3.5)
-        label1 = MathTex(r"\frac{1}{2}", color=BLACK).scale(2.5).next_to(circle1, RIGHT, buff=0.8)
-        
-        self.play(Create(circle1))
-        self.wait(1)
-        self.play(Create(slice1), Write(label1))
+        self.play(Create(circle1), Create(circle2), run_time=1.5)
+        self.play(Create(line1), Create(line2), run_time=1)
         self.wait(2)
         
-        # Circle 2 (1/4)
-        circle2 = Circle(radius=1.5, color=RED).shift(ORIGIN)
-        slice2 = Sector(radius=1.5, angle=PI/2, color=RED, fill_opacity=0.8).shift(ORIGIN)
-        label2 = MathTex(r"\frac{1}{4}", color=BLACK).scale(2.5).next_to(circle2, RIGHT, buff=0.8)
-        
-        self.play(Create(circle2))
-        self.wait(1)
-        self.play(Create(slice2), Write(label2))
+        self.play(FadeIn(slice1), Write(label1), run_time=1.5)
         self.wait(2)
         
-        # Comparison
-        comp = MathTex(r"\frac{1}{2} > \frac{1}{4}", color=BLACK).scale(2.5).shift(DOWN * 3.0)
-        self.play(Write(comp))
+        self.play(FadeIn(slice2), Write(label2), run_time=1.5)
         self.wait(2)
         
-        # Bottom Text
-        result = Text("Payda Büyüdükçe Değer Küçülür!", color=BLACK, weight=BOLD).to_edge(DOWN, buff=2.0)
-        self.play(Write(result))
-        self.wait(3)
+        self.play(Write(greater_than), run_time=1)
+        self.wait(2)
+        
+        self.play(Write(result), run_time=2)
+        self.wait(4)
