@@ -1,52 +1,46 @@
 from manim import *
+
 config.pixel_height = 1920
 config.pixel_width = 1080
 
-class UnitFractions(Scene):
+class BirimKesirler(Scene):
     def construct(self):
         self.camera.background_color = "#FFFFFF"
-        
-        # Title
-        title = Text("Birim Kesirler", color=BLACK, weight=BOLD, font_size=60)
+
+        title = Text("BİRİM KESİRLER", color=BLACK, weight=BOLD, font_size=65)
         title.to_edge(UP, buff=1.0)
         self.play(Write(title))
-        self.wait(11 / 3.0)
-        
-        # Pizzas
-        pizza1_outline = Circle(radius=1.5, color=BLACK, stroke_width=4).move_to(UP * 2.0 + LEFT * 1.5)
-        pizza2_outline = Circle(radius=1.5, color=BLACK, stroke_width=4).move_to(DOWN * 1.5 + LEFT * 1.5)
-        
-        self.play(Create(pizza1_outline), Create(pizza2_outline))
-        self.wait(6 / 3.0)
-        
-        # Pizza 1 slices
-        slice1 = Sector(radius=1.5, angle=PI, color=ORANGE, fill_opacity=0.8)
-        slice1.shift(pizza1_outline.get_center())
-        label1 = MathTex(r"\frac{1}{2}", color=BLACK, font_size=80).next_to(pizza1_outline, RIGHT, buff=1.0)
-        
+        self.wait(13 / 3.0)
+
+        pizza1 = Circle(radius=1.5, color=ORANGE, fill_opacity=0.3).shift(UP * 2.5)
+        line1 = Line(pizza1.get_top(), pizza1.get_bottom(), color=BLACK)
+        slice1 = Sector(radius=1.5, angle=PI, start_angle=PI/2, color=RED, fill_opacity=0.8).shift(UP * 2.5)
+        label1 = MathTex(r"\frac{1}{2}", color=BLACK, font_size=90).next_to(pizza1, LEFT, buff=0.8)
+
+        pizza2 = Circle(radius=1.5, color=ORANGE, fill_opacity=0.3).shift(DOWN * 0.8)
+        line2_v = Line(pizza2.get_top(), pizza2.get_bottom(), color=BLACK)
+        line2_h = Line(pizza2.get_left(), pizza2.get_right(), color=BLACK)
+        slice2 = Sector(radius=1.5, angle=PI/2, start_angle=PI/2, color=RED, fill_opacity=0.8).shift(DOWN * 0.8)
+        label2 = MathTex(r"\frac{1}{4}", color=BLACK, font_size=90).next_to(pizza2, LEFT, buff=0.8)
+
+        self.play(Create(pizza1), Create(pizza2))
+        self.play(Create(line1), Create(line2_v), Create(line2_h))
+        self.wait(14 / 3.0)
+
         self.play(Create(slice1), Write(label1))
-        self.wait(8 / 3.0)
-        
-        # Pizza 2 slices
-        slice2 = Sector(radius=1.5, angle=PI/2, color=RED, fill_opacity=0.8)
-        slice2.shift(pizza2_outline.get_center())
-        label2 = MathTex(r"\frac{1}{4}", color=BLACK, font_size=80).next_to(pizza2_outline, RIGHT, buff=1.0)
-        
+        self.wait(12 / 3.0)
+
         self.play(Create(slice2), Write(label2))
-        self.wait(9 / 3.0)
-        
-        # Comparison
-        self.play(Indicate(slice1, color=YELLOW, scale_factor=1.1))
-        self.wait(10 / 3.0)
-        
-        # Bottom Text
-        result_text = Text("Payda Büyüdükçe\nDeğer Küçülür!", color=RED, weight=BOLD, font_size=50, text_align="CENTER")
+        self.wait(14 / 3.0)
+
+        result_text = Text("Payda büyüdükçe kesir küçülür!", color=BLACK, weight=BOLD, font_size=45)
         result_text.to_edge(DOWN, buff=2.0)
-        
+
+        compare_text = MathTex(r"\frac{1}{2} > \frac{1}{4}", color=RED, font_size=90)
+        compare_text.next_to(result_text, UP, buff=1.0)
+
+        self.play(Write(compare_text))
+        self.wait(10 / 3.0)
+
         self.play(Write(result_text))
-        self.wait(8 / 3.0)
-        
-        # Outro
-        outro = Text("Maarif Matematik", color=BLUE, weight=BOLD, font_size=40).next_to(result_text, DOWN, buff=0.5)
-        self.play(FadeIn(outro))
-        self.wait(8 / 3.0)
+        self.wait(11 / 3.0)
