@@ -1,85 +1,58 @@
 from manim import *
-
 config.pixel_height = 1920
 config.pixel_width = 1080
 
-class BirimKesirler(Scene):
+class UnitFractions(Scene):
     def construct(self):
         self.camera.background_color = "#FFFFFF"
         
-        # Title
+        # Başlık
         title = Text("BİRİM KESİRLER", color=BLACK, weight=BOLD, font_size=72)
         title.to_edge(UP, buff=1.0)
+        
+        # 1/2 Pizza Modeli
+        pizza1_group = VGroup()
+        circle1 = Circle(radius=1.5, color=BLACK, stroke_width=6)
+        slice1 = Sector(radius=1.5, angle=PI, start_angle=0, color=ORANGE, fill_opacity=0.8)
+        line1 = Line(circle1.get_top(), circle1.get_bottom(), color=BLACK, stroke_width=6)
+        label1 = MathTex(r"\frac{1}{2}", color=BLACK, font_size=72).move_to(slice1.get_center())
+        pizza1_group.add(circle1, slice1, line1, label1).move_to(UP * 2.5)
+        
+        # 1/4 Pizza Modeli
+        pizza2_group = VGroup()
+        circle2 = Circle(radius=1.5, color=BLACK, stroke_width=6)
+        slice2 = Sector(radius=1.5, angle=PI/2, start_angle=0, color=RED, fill_opacity=0.8)
+        line2_1 = Line(circle2.get_top(), circle2.get_bottom(), color=BLACK, stroke_width=6)
+        line2_2 = Line(circle2.get_left(), circle2.get_right(), color=BLACK, stroke_width=6)
+        label2 = MathTex(r"\frac{1}{4}", color=BLACK, font_size=72).move_to(slice2.get_center())
+        pizza2_group.add(circle2, slice2, line2_1, line2_2, label2).move_to(DOWN * 1.5)
+        
+        # Alt Metin
+        result_text = Text("Payda Büyüdükçe Değer Küçülür!", color=BLUE, weight=BOLD, font_size=48)
+        result_text.to_edge(DOWN, buff=2.0)
+        
+        # Animasyonlar ve Senkronizasyon (Saniyede 3 kelime)
+        
+        # Cümle 1: Birim kesirleri karşılaştırırken kafan mı karışıyor? (7 kelime -> 2.33s)
         self.play(Write(title))
-        self.wait(10 / 3.0)
+        self.wait(1.33)
         
-        # Bottom Text 1
-        bottom_text = Text("Payı 1 olan kesirlerdir", color=BLUE, weight=BOLD, font_size=48)
-        bottom_text.to_edge(DOWN, buff=2.0)
-        self.play(FadeIn(bottom_text))
-        self.wait(6 / 3.0)
+        # Cümle 2: Gel, pizzalarla çok kolay bir şekilde öğrenelim! (7 kelime -> 2.33s)
+        self.wait(2.33)
         
-        self.wait(6 / 3.0)
-        
-        # Pizza 1 (1/2)
-        circle1 = Circle(radius=2.5, color=BLACK, stroke_width=4)
-        line1 = Line(circle1.get_top(), circle1.get_bottom(), color=BLACK)
-        sector1 = Sector(radius=2.5, angle=PI, start_angle=PI/2, color=ORANGE, fill_opacity=0.8)
-        frac1 = MathTex(r"\frac{1}{2}", color=BLACK, font_size=96).next_to(circle1, RIGHT, buff=1.0)
-        
-        group1 = VGroup(circle1, line1, sector1).move_to(ORIGIN)
-        
+        # Cümle 3: Bir pizzayı ikiye bölersek, bir dilimi yarım pizza eder. Bu bir bölü ikidir. (13 kelime -> 4.33s)
         self.play(Create(circle1), Create(line1))
-        self.play(FadeIn(sector1))
-        self.play(Write(frac1))
-        self.wait(10 / 3.0)
+        self.play(FadeIn(slice1), Write(label1))
+        self.wait(2.33)
         
-        # Pizza 2 (1/4)
-        circle2 = Circle(radius=2.5, color=BLACK, stroke_width=4)
-        lines2 = VGroup(
-            Line(circle2.get_top(), circle2.get_bottom(), color=BLACK),
-            Line(circle2.get_left(), circle2.get_right(), color=BLACK)
-        )
-        sector2 = Sector(radius=2.5, angle=PI/2, start_angle=PI/2, color=RED, fill_opacity=0.8)
-        frac2 = MathTex(r"\frac{1}{4}", color=BLACK, font_size=96).next_to(circle2, RIGHT, buff=1.0)
+        # Cümle 4: Aynı pizzayı dörde bölersek, dilimler küçülür. Bu da bir bölü dörttür. (11 kelime -> 3.66s)
+        self.play(Create(circle2), Create(line2_1), Create(line2_2))
+        self.play(FadeIn(slice2), Write(label2))
+        self.wait(1.66)
         
-        group2 = VGroup(circle2, lines2, sector2).move_to(ORIGIN)
+        # Cümle 5: Yani payda büyüdükçe, dilim küçülür, kesrin değeri azalır! (8 kelime -> 2.66s)
+        self.play(Write(result_text))
+        self.wait(1.66)
         
-        self.play(ReplacementTransform(group1, group2), ReplacementTransform(frac1, frac2))
-        self.wait(10 / 3.0)
-        
-        # Pizza 3 (1/8)
-        circle3 = Circle(radius=2.5, color=BLACK, stroke_width=4)
-        lines3 = VGroup(
-            Line(circle3.get_top(), circle3.get_bottom(), color=BLACK),
-            Line(circle3.get_left(), circle3.get_right(), color=BLACK),
-            Line(circle3.point_at_angle(PI/4), circle3.point_at_angle(5*PI/4), color=BLACK),
-            Line(circle3.point_at_angle(3*PI/4), circle3.point_at_angle(7*PI/4), color=BLACK)
-        )
-        sector3 = Sector(radius=2.5, angle=PI/4, start_angle=PI/2, color=PURPLE, fill_opacity=0.8)
-        frac3 = MathTex(r"\frac{1}{8}", color=BLACK, font_size=96).next_to(circle3, RIGHT, buff=1.0)
-        
-        group3 = VGroup(circle3, lines3, sector3).move_to(ORIGIN)
-        
-        self.play(ReplacementTransform(group2, group3), ReplacementTransform(frac2, frac3))
-        self.wait(11 / 3.0)
-        
-        # Conclusion
-        bottom_text_2 = Text("Payda BÜYÜDÜKÇE kesir KÜÇÜLÜR!", color=RED, weight=BOLD, font_size=48)
-        bottom_text_2.to_edge(DOWN, buff=2.0)
-        
-        self.play(ReplacementTransform(bottom_text, bottom_text_2))
-        self.wait(6 / 3.0)
-        
-        # Final inequality
-        final_ineq = MathTex(r"\frac{1}{2} > \frac{1}{4} > \frac{1}{8}", color=BLACK, font_size=96)
-        final_ineq.move_to(ORIGIN)
-        
-        self.play(FadeOut(group3), FadeOut(frac3))
-        self.play(Write(final_ineq))
-        self.wait(10 / 3.0)
-        
-        # Outro
-        outro = Text("Maarif Matematik", color=BLUE, weight=BOLD, font_size=60).next_to(final_ineq, UP, buff=1.5)
-        self.play(FadeIn(outro))
-        self.wait(6 / 3.0)
+        # Cümle 6: Maarif Matematik ile matematiği görerek anla! (6 kelime -> 2.0s)
+        self.wait(2.0)
