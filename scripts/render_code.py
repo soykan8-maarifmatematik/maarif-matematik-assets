@@ -6,71 +6,49 @@ config.pixel_width = 1080
 class MaarifScene(Scene):
     def construct(self):
         self.camera.background_color = "#FFFFFF"
-        
-        # TITLE
-        title = Text("BIRIM KESIRLER", color=BLACK, weight=BOLD).scale(1.1)
-        title.to_edge(UP, buff=1.5)
+
+        # BAŞLIK
+        title = Text("BİRİM KESİRLERİ KARŞILAŞTIRMA", color=BLACK, weight=BOLD)
+        title.scale(1.2).to_edge(UP, buff=1.0)
         self.play(Write(title))
-        self.wait(2.0)
-        
-        # MODELS
-        pizza1 = VGroup()
-        circle1 = Circle(radius=1.5, color=BLACK, stroke_width=4)
-        pizza1.add(circle1)
-        for i in range(3):
-            line = Line(ORIGIN, [1.5*np.cos(i*2*PI/3), 1.5*np.sin(i*2*PI/3), 0], color=BLACK)
-            pizza1.add(line)
-        pizza1.move_to(LEFT * 2.5)
-        
-        pizza2 = VGroup()
-        circle2 = Circle(radius=1.5, color=BLACK, stroke_width=4)
-        pizza2.add(circle2)
-        for i in range(6):
-            line = Line(ORIGIN, [1.5*np.cos(i*2*PI/6), 1.5*np.sin(i*2*PI/6), 0], color=BLACK)
-            pizza2.add(line)
-        pizza2.move_to(RIGHT * 2.5)
-        
-        pizzas = VGroup(pizza1, pizza2).shift(UP * 1.5)
-        
-        self.play(Create(pizza1), Create(pizza2))
-        self.wait(3.0)
-        
-        # SLICE 1 AND FRACTION 1
-        slice1 = Sector(radius=1.5, angle=2*PI/3, start_angle=0, color=ORANGE, fill_opacity=0.8)
-        slice1.shift(pizza1.get_center())
-        
-        frac1 = MathTex(r"\frac{1}{3}", color=BLACK).scale(2.5)
-        frac1.next_to(pizza1, DOWN, buff=0.8)
-        
-        self.play(FadeIn(slice1), Write(frac1))
-        self.wait(4.3)
-        
-        # SLICE 2 AND FRACTION 2
-        slice2 = Sector(radius=1.5, angle=2*PI/6, start_angle=0, color=ORANGE, fill_opacity=0.8)
-        slice2.shift(pizza2.get_center())
-        
-        frac2 = MathTex(r"\frac{1}{6}", color=BLACK).scale(2.5)
-        frac2.next_to(pizza2, DOWN, buff=0.8)
-        
-        self.play(FadeIn(slice2), Write(frac2))
-        self.wait(5.3)
-        
-        # COMPARISON SYMBOL
-        comp_symbol = Text(">", color=RED, weight=BOLD).scale(2.5)
-        comp_symbol.move_to(pizzas.get_center())
-        
-        self.play(Write(comp_symbol))
-        self.wait(2.6)
-        
-        # BOTTOM TEXT
-        bottom_text = VGroup(
-            Text("Payda Buyudukce", color=BLUE, weight=BOLD),
-            Text("Deger Kuculur", color=RED, weight=BOLD)
-        ).arrange(DOWN, buff=0.5).scale(1.2)
-        bottom_text.to_edge(DOWN, buff=3.5)
-        
-        self.play(Write(bottom_text[0]))
-        self.wait(3.3)
-        
-        self.play(Write(bottom_text[1]))
-        self.wait(5.3)
+        self.wait(2.0) # 6 kelime
+
+        # MODELLER
+        circle_3 = Circle(radius=1.5, color=BLACK, stroke_width=4)
+        sector_3 = Sector(radius=1.5, angle=TAU/3, start_angle=0, color=BLUE, fill_opacity=0.8)
+        lines_3 = VGroup(*[Line(ORIGIN, [1.5*np.cos(i*TAU/3), 1.5*np.sin(i*TAU/3), 0], color=BLACK, stroke_width=4) for i in range(3)])
+        model_1_3 = VGroup(circle_3, sector_3, lines_3).shift(UP * 2.0 + LEFT * 2.5)
+
+        circle_5 = Circle(radius=1.5, color=BLACK, stroke_width=4)
+        sector_5 = Sector(radius=1.5, angle=TAU/5, start_angle=0, color=RED, fill_opacity=0.8)
+        lines_5 = VGroup(*[Line(ORIGIN, [1.5*np.cos(i*TAU/5), 1.5*np.sin(i*TAU/5), 0], color=BLACK, stroke_width=4) for i in range(5)])
+        model_1_5 = VGroup(circle_5, sector_5, lines_5).shift(UP * 2.0 + RIGHT * 2.5)
+
+        # KESİR SAYILARI
+        frac_1_3 = MathTex(r"\frac{1}{3}", color=BLACK).scale(2.5).next_to(model_1_3, DOWN, buff=0.8)
+        frac_1_5 = MathTex(r"\frac{1}{5}", color=BLACK).scale(2.5).next_to(model_1_5, DOWN, buff=0.8)
+
+        self.play(FadeIn(frac_1_3), FadeIn(frac_1_5))
+        self.wait(4.0) # 12 kelime
+
+        self.play(Create(circle_3), Create(circle_5))
+        self.wait(1.33) # 4 kelime
+
+        self.play(Create(lines_3))
+        self.play(FadeIn(sector_3))
+        self.wait(1.33) # 10 kelime (animasyon süreleri düşüldü)
+
+        self.play(Create(lines_5))
+        self.play(FadeIn(sector_5))
+        self.wait(2.0) # 12 kelime (animasyon süreleri düşüldü)
+
+        # KARŞILAŞTIRMA SEMBOLÜ
+        comp_sym = Text(">", color=BLACK, weight=BOLD).scale(3.0).move_to(UP * 2.0)
+        self.play(Write(comp_sym))
+        self.wait(2.33) # 7 kelime
+
+        # SONUÇ METNİ
+        result_text = Text("Payda Büyüdükçe\nKesir Küçülür!", color=BLACK, weight=BOLD, text_alignment="CENTER")
+        result_text.scale(1.5).to_edge(DOWN, buff=3.0)
+        self.play(Write(result_text))
+        self.wait(5.33) # 10 kelime + 2.0s bitiş payı
