@@ -6,53 +6,47 @@ class UnitFractions(Scene):
     def construct(self):
         self.camera.background_color = "#FFFFFF"
         
-        # Başlık
-        title = Text("BİRİM KESİRLER", color=BLACK, weight=BOLD, font_size=72)
+        # Title
+        title = Text("Birim Kesirler", color=BLACK, weight=BOLD, font_size=60)
         title.to_edge(UP, buff=1.0)
+        self.play(Write(title))
+        self.wait(11 / 3.0)
         
-        # 1/2 Pizza Modeli
-        pizza1_group = VGroup()
-        circle1 = Circle(radius=1.5, color=BLACK, stroke_width=6)
-        slice1 = Sector(radius=1.5, angle=PI, start_angle=0, color=ORANGE, fill_opacity=0.8)
-        line1 = Line(circle1.get_top(), circle1.get_bottom(), color=BLACK, stroke_width=6)
-        label1 = MathTex(r"\frac{1}{2}", color=BLACK, font_size=72).move_to(slice1.get_center())
-        pizza1_group.add(circle1, slice1, line1, label1).move_to(UP * 2.5)
+        # Pizzas
+        pizza1_outline = Circle(radius=1.5, color=BLACK, stroke_width=4).move_to(UP * 2.0 + LEFT * 1.5)
+        pizza2_outline = Circle(radius=1.5, color=BLACK, stroke_width=4).move_to(DOWN * 1.5 + LEFT * 1.5)
         
-        # 1/4 Pizza Modeli
-        pizza2_group = VGroup()
-        circle2 = Circle(radius=1.5, color=BLACK, stroke_width=6)
-        slice2 = Sector(radius=1.5, angle=PI/2, start_angle=0, color=RED, fill_opacity=0.8)
-        line2_1 = Line(circle2.get_top(), circle2.get_bottom(), color=BLACK, stroke_width=6)
-        line2_2 = Line(circle2.get_left(), circle2.get_right(), color=BLACK, stroke_width=6)
-        label2 = MathTex(r"\frac{1}{4}", color=BLACK, font_size=72).move_to(slice2.get_center())
-        pizza2_group.add(circle2, slice2, line2_1, line2_2, label2).move_to(DOWN * 1.5)
+        self.play(Create(pizza1_outline), Create(pizza2_outline))
+        self.wait(6 / 3.0)
         
-        # Alt Metin
-        result_text = Text("Payda Büyüdükçe Değer Küçülür!", color=BLUE, weight=BOLD, font_size=48)
+        # Pizza 1 slices
+        slice1 = Sector(radius=1.5, angle=PI, color=ORANGE, fill_opacity=0.8)
+        slice1.shift(pizza1_outline.get_center())
+        label1 = MathTex(r"\frac{1}{2}", color=BLACK, font_size=80).next_to(pizza1_outline, RIGHT, buff=1.0)
+        
+        self.play(Create(slice1), Write(label1))
+        self.wait(8 / 3.0)
+        
+        # Pizza 2 slices
+        slice2 = Sector(radius=1.5, angle=PI/2, color=RED, fill_opacity=0.8)
+        slice2.shift(pizza2_outline.get_center())
+        label2 = MathTex(r"\frac{1}{4}", color=BLACK, font_size=80).next_to(pizza2_outline, RIGHT, buff=1.0)
+        
+        self.play(Create(slice2), Write(label2))
+        self.wait(9 / 3.0)
+        
+        # Comparison
+        self.play(Indicate(slice1, color=YELLOW, scale_factor=1.1))
+        self.wait(10 / 3.0)
+        
+        # Bottom Text
+        result_text = Text("Payda Büyüdükçe\nDeğer Küçülür!", color=RED, weight=BOLD, font_size=50, text_align="CENTER")
         result_text.to_edge(DOWN, buff=2.0)
         
-        # Animasyonlar ve Senkronizasyon (Saniyede 3 kelime)
-        
-        # Cümle 1: Birim kesirleri karşılaştırırken kafan mı karışıyor? (7 kelime -> 2.33s)
-        self.play(Write(title))
-        self.wait(1.33)
-        
-        # Cümle 2: Gel, pizzalarla çok kolay bir şekilde öğrenelim! (7 kelime -> 2.33s)
-        self.wait(2.33)
-        
-        # Cümle 3: Bir pizzayı ikiye bölersek, bir dilimi yarım pizza eder. Bu bir bölü ikidir. (13 kelime -> 4.33s)
-        self.play(Create(circle1), Create(line1))
-        self.play(FadeIn(slice1), Write(label1))
-        self.wait(2.33)
-        
-        # Cümle 4: Aynı pizzayı dörde bölersek, dilimler küçülür. Bu da bir bölü dörttür. (11 kelime -> 3.66s)
-        self.play(Create(circle2), Create(line2_1), Create(line2_2))
-        self.play(FadeIn(slice2), Write(label2))
-        self.wait(1.66)
-        
-        # Cümle 5: Yani payda büyüdükçe, dilim küçülür, kesrin değeri azalır! (8 kelime -> 2.66s)
         self.play(Write(result_text))
-        self.wait(1.66)
+        self.wait(8 / 3.0)
         
-        # Cümle 6: Maarif Matematik ile matematiği görerek anla! (6 kelime -> 2.0s)
-        self.wait(2.0)
+        # Outro
+        outro = Text("Maarif Matematik", color=BLUE, weight=BOLD, font_size=40).next_to(result_text, DOWN, buff=0.5)
+        self.play(FadeIn(outro))
+        self.wait(8 / 3.0)
