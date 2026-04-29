@@ -1,50 +1,52 @@
 from manim import *
+
 config.pixel_height = 1920
 config.pixel_width = 1080
 
-class BirimKesirler(Scene):
+class UnitFractions(Scene):
     def construct(self):
         self.camera.background_color = "#FFFFFF"
         
-        # BAŞLIK
-        title = Text("Birim Kesirler", font_size=90, color=BLACK, weight=BOLD).to_edge(UP, buff=1.0)
+        # BASLIK (TITLE) - Kesinlikle to_edge(UP, buff=1.0)
+        title = Text("Birim Kesirlerde Büyüklük", color=BLACK, weight=BOLD).to_edge(UP, buff=1.0)
+        self.play(Write(title))
+
+        # 1/2 KESRI VE GORSELI
+        frac_half = MathTex(r"\frac{1}{2}", color=BLACK).scale(2.5).move_to(UP * 3 + LEFT * 2)
+        circle_half = Circle(radius=1.2, color=BLACK)
+        sector_half = Sector(radius=1.2, angle=PI, color=RED, fill_opacity=0.8)
+        circle_half.shift(UP * 3 + RIGHT * 1.5)
+        sector_half.shift(UP * 3 + RIGHT * 1.5)
         
-        # GÖRSELLER (Pizzalar)
-        pizza1_group = VGroup()
-        circle1 = Circle(radius=1.5, color=BLACK, stroke_width=6)
-        slice1 = Sector(radius=1.5, angle=PI, color="#FF5733", fill_opacity=0.9)
-        label1 = MathTex(r"\frac{1}{2}", font_size=110, color=BLACK).next_to(circle1, DOWN, buff=0.5)
-        pizza1_group.add(circle1, slice1, label1).shift(LEFT * 2.5 + UP * 0.5)
-        
-        pizza2_group = VGroup()
-        circle2 = Circle(radius=1.5, color=BLACK, stroke_width=6)
-        slice2 = Sector(radius=1.5, angle=PI/2, color="#33A1FF", fill_opacity=0.9)
-        line1 = Line(circle2.get_top(), circle2.get_bottom(), color=BLACK, stroke_width=4)
-        line2 = Line(circle2.get_left(), circle2.get_right(), color=BLACK, stroke_width=4)
-        label2 = MathTex(r"\frac{1}{4}", font_size=110, color=BLACK).next_to(circle2, DOWN, buff=0.5)
-        pizza2_group.add(circle2, slice2, line1, line2, label2).shift(RIGHT * 2.5 + UP * 0.5)
-        
-        greater_than = MathTex(">", font_size=150, color=BLACK).move_to(UP * 0.5)
-        
-        # ALT METİN
-        result = Text("Payda büyüdükçe\nkesir KÜÇÜLÜR!", font_size=80, color=BLACK, weight=BOLD, t2c={"KÜÇÜLÜR!": RED}, text_align="CENTER").to_edge(DOWN, buff=2.0)
-        
-        # ANİMASYONLAR
-        self.play(Write(title), run_time=1.5)
+        self.play(Write(frac_half))
+        self.play(Create(circle_half), FadeIn(sector_half))
+
+        # 1/3 KESRI VE GORSELI
+        frac_third = MathTex(r"\frac{1}{3}", color=BLACK).scale(2.5).move_to(ORIGIN + LEFT * 2)
+        circle_third = Circle(radius=1.2, color=BLACK)
+        sector_third = Sector(radius=1.2, angle=TAU/3, color=BLUE, fill_opacity=0.8)
+        circle_third.shift(ORIGIN + RIGHT * 1.5)
+        sector_third.shift(ORIGIN + RIGHT * 1.5)
+
+        self.play(Write(frac_third))
+        self.play(Create(circle_third), FadeIn(sector_third))
+
+        # 1/4 KESRI VE GORSELI
+        frac_quarter = MathTex(r"\frac{1}{4}", color=BLACK).scale(2.5).move_to(DOWN * 3 + LEFT * 2)
+        circle_quarter = Circle(radius=1.2, color=BLACK)
+        sector_quarter = Sector(radius=1.2, angle=TAU/4, color=GREEN, fill_opacity=0.8)
+        circle_quarter.shift(DOWN * 3 + RIGHT * 1.5)
+        sector_quarter.shift(DOWN * 3 + RIGHT * 1.5)
+
+        self.play(Write(frac_quarter))
+        self.play(Create(circle_quarter), FadeIn(sector_quarter))
+
+        # KARSILASTIRMA ISARETLERI
+        gt1 = MathTex(">", color=BLACK).scale(2).move_to(UP * 1.5 + LEFT * 2)
+        gt2 = MathTex(">", color=BLACK).scale(2).move_to(DOWN * 1.5 + LEFT * 2)
+        self.play(Write(gt1), Write(gt2))
+
+        # ALT METIN (RESULT) - Kesinlikle to_edge(DOWN, buff=2.0)
+        result = Text("Payda Büyüdükçe Kesir KÜÇÜLÜR!", color=RED, weight=BOLD).scale(0.8).to_edge(DOWN, buff=2.0)
+        self.play(Write(result))
         self.wait(2)
-        
-        self.play(Create(circle1), Create(circle2), run_time=1.5)
-        self.play(Create(line1), Create(line2), run_time=1)
-        self.wait(2)
-        
-        self.play(FadeIn(slice1), Write(label1), run_time=1.5)
-        self.wait(2)
-        
-        self.play(FadeIn(slice2), Write(label2), run_time=1.5)
-        self.wait(2)
-        
-        self.play(Write(greater_than), run_time=1)
-        self.wait(2)
-        
-        self.play(Write(result), run_time=2)
-        self.wait(4)
