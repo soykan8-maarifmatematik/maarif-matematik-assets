@@ -1,49 +1,48 @@
 from manim import *
+
 config.pixel_height = 1920
 config.pixel_width = 1080
 config.frame_height = 14.22
 config.frame_width = 8.0
+config.background_color = "#FFFFFF"
 
 class MaarifScene(Scene):
     def construct(self):
-        self.camera.background_color = "#FFFFFF"
+        text_color = "#333333"
 
-        # BASLIK
-        title = Text("Birim Kesirleri\nKarşılaştırma", color=BLACK, weight=BOLD).to_edge(UP, buff=1.0).scale_to_fit_width(7.0)
+        title = Text("Birim Kesirlerin Büyüklüğü", color=text_color, weight=BOLD)
+        title.to_edge(UP, buff=1.2)
+        title.scale_to_fit_width(8.0)
+        
         self.play(Write(title))
-        self.wait(0.5)
-
-        # MODEL 1: 1/2
-        sector_half = Sector(radius=1.5, angle=PI, color=BLUE, fill_opacity=0.8).shift(UP * 2.0 + LEFT * 2.2)
-        circle_half = Circle(radius=1.5, color=BLACK, stroke_width=5).shift(UP * 2.0 + LEFT * 2.2)
-        line_half = Line(start=LEFT*1.5, end=RIGHT*1.5, color=BLACK, stroke_width=5).shift(UP * 2.0 + LEFT * 2.2)
-        label_half = MathTex(r"\frac{1}{2}", color=BLACK).scale(1.8).next_to(circle_half, DOWN, buff=0.5)
-
-        self.play(FadeIn(sector_half))
-        self.play(Create(circle_half))
-        self.play(Create(line_half))
-        self.play(Write(label_half))
-        self.wait(0.5)
-
-        # MODEL 2: 1/4
-        sector_quarter = Sector(radius=1.5, angle=PI/2, color=RED, fill_opacity=0.8).shift(UP * 2.0 + RIGHT * 2.2)
-        circle_quarter = Circle(radius=1.5, color=BLACK, stroke_width=5).shift(UP * 2.0 + RIGHT * 2.2)
-        line_quarter_1 = Line(start=LEFT*1.5, end=RIGHT*1.5, color=BLACK, stroke_width=5).shift(UP * 2.0 + RIGHT * 2.2)
-        line_quarter_2 = Line(start=DOWN*1.5, end=UP*1.5, color=BLACK, stroke_width=5).shift(UP * 2.0 + RIGHT * 2.2)
-        label_quarter = MathTex(r"\frac{1}{4}", color=BLACK).scale(1.8).next_to(circle_quarter, DOWN, buff=0.5)
-
-        self.play(FadeIn(sector_quarter))
-        self.play(Create(circle_quarter))
-        self.play(Create(line_quarter_1), Create(line_quarter_2))
-        self.play(Write(label_quarter))
-        self.wait(0.5)
-
-        # KARSILASTIRMA ISARETI
-        greater_sign = MathTex(">", color=BLACK).scale(2.5).shift(UP * 2.0)
-        self.play(Write(greater_sign))
         self.wait(1)
 
-        # SONUC METNI
-        result = Text("Payda büyüdükçe\ndilim küçülür!", color=BLACK, weight=BOLD).to_edge(DOWN, buff=4.5).scale_to_fit_width(7.0)
-        self.play(Write(result))
+        sector1 = Sector(radius=1.1, angle=PI, color=BLUE, fill_opacity=0.6)
+        circle1 = Circle(radius=1.1, color=BLUE, stroke_width=4)
+        line1 = Line(circle1.get_top(), circle1.get_bottom(), color=BLUE, stroke_width=4)
+        group1 = VGroup(sector1, circle1, line1)
+        label1 = MathTex(r"\frac{1}{2}", color=text_color, font_size=72).next_to(group1, DOWN, buff=0.5)
+        model1 = VGroup(group1, label1)
+
+        sector2 = Sector(radius=1.1, angle=PI/2, color=RED, fill_opacity=0.6)
+        circle2 = Circle(radius=1.1, color=RED, stroke_width=4)
+        lines2 = VGroup(
+            Line(circle2.get_top(), circle2.get_bottom(), color=RED, stroke_width=4),
+            Line(circle2.get_left(), circle2.get_right(), color=RED, stroke_width=4)
+        )
+        group2 = VGroup(sector2, circle2, lines2)
+        label2 = MathTex(r"\frac{1}{4}", color=text_color, font_size=72).next_to(group2, DOWN, buff=0.5)
+        model2 = VGroup(group2, label2)
+
+        models = VGroup(model1, model2).arrange(RIGHT, buff=1.5)
+        models.scale(0.85).shift(UP * 1.5)
+
+        self.play(FadeIn(models))
         self.wait(2)
+
+        result_text = Text("Payda büyüdükçe\nkesrin değeri küçülür!\n1/2 > 1/4", color=text_color, text_alignment=CENTER)
+        result_text.to_edge(DOWN, buff=4.5)
+        result_text.scale_to_fit_width(8.0)
+
+        self.play(Write(result_text))
+        self.wait(3)
