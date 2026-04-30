@@ -1,52 +1,47 @@
 from manim import *
 
-config.pixel_height = 1920
-config.pixel_width = 1080
-config.frame_height = 16.0
-config.frame_width = 9.0
-
 class UnitFractions(Scene):
     def construct(self):
-        # Arka plan
+        # Arka plan rengi beyaz (Kural 2)
         self.camera.background_color = "#FFFFFF"
-        
-        # Baslik
-        title = Text("Birim Kesirlerin Büyüklüğü", font="DejaVu Sans", weight=BOLD, color="#333333").scale(1.2)
-        title.to_edge(UP, buff=1.0)
+
+        # BAŞLIK (Kural 1: to_edge(UP, buff=1.0), scale(1.2))
+        title = Text("Birim Kesirler", font="DejaVu Sans", weight=BOLD, color=BLACK).scale(1.2).to_edge(UP, buff=1.0)
         self.play(Write(title))
-        self.wait(2.6)
+        self.wait(3.0) # 9 kelime / 3.0 = 3.0 sn
+
+        # MODELLER (Kural 1: shift(UP * 2.0) ve Kural 2: outer_radius yasak, radius kullan)
+        left_circle = Circle(radius=1.5, color=BLACK)
+        left_slice = Sector(radius=1.5, angle=PI, color=BLUE, fill_opacity=0.8)
+        left_model = VGroup(left_circle, left_slice)
+
+        right_circle = Circle(radius=1.5, color=BLACK)
+        right_slice = Sector(radius=1.5, angle=PI/2, color=RED, fill_opacity=0.8)
+        right_model = VGroup(right_circle, right_slice)
+
+        # Modelleri yan yana dizip yukarı kaydırma
+        models = VGroup(left_model, right_model).arrange(RIGHT, buff=1.5).shift(UP * 2.0)
+
+        self.play(Create(left_model))
         
-        # Modeller
-        circle_half = Circle(radius=1.5, color="#333333", stroke_width=4).shift(UP * 2.0 + LEFT * 2.2)
-        sector_half = Sector(radius=1.5, angle=PI, color="#007BFF", fill_opacity=0.8).shift(UP * 2.0 + LEFT * 2.2)
-        line_half = Line(circle_half.get_left(), circle_half.get_right(), color="#333333", stroke_width=4)
-        
-        circle_quarter = Circle(radius=1.5, color="#333333", stroke_width=4).shift(UP * 2.0 + RIGHT * 2.2)
-        sector_quarter = Sector(radius=1.5, angle=PI/2, color="#FF0000", fill_opacity=0.8).shift(UP * 2.0 + RIGHT * 2.2)
-        line_q1 = Line(circle_quarter.get_left(), circle_quarter.get_right(), color="#333333", stroke_width=4)
-        line_q2 = Line(circle_quarter.get_top(), circle_quarter.get_bottom(), color="#333333", stroke_width=4)
-        
-        self.play(Create(circle_half), Create(circle_quarter))
-        self.wait(2.0)
-        
-        # 1/2 Animasyonu
-        self.play(Create(line_half), FadeIn(sector_half))
-        frac_half = MathTex(r"\frac{1}{2}", color="#007BFF").scale(2.5).next_to(circle_half, DOWN, buff=0.8)
-        self.play(Write(frac_half))
-        self.wait(4.0)
-        
-        # 1/4 Animasyonu
-        self.play(Create(line_q1), Create(line_q2), FadeIn(sector_quarter))
-        frac_quarter = MathTex(r"\frac{1}{4}", color="#FF0000").scale(2.5).next_to(circle_quarter, DOWN, buff=0.8)
-        self.play(Write(frac_quarter))
-        self.wait(3.6)
-        
-        # Alt Metin ve Karsilastirma
-        bt1 = Text("Payda büyüdükçe,", font="DejaVu Sans", weight=BOLD, color="#333333")
-        bt2 = Text("parçalar küçülür!", font="DejaVu Sans", weight=BOLD, color="#007BFF")
-        bottom_group = VGroup(bt1, bt2).arrange(DOWN, buff=0.3).to_edge(DOWN, buff=3.5)
-        
-        comp_sign = MathTex(">", color="#333333").scale(3.0).move_to((frac_half.get_center() + frac_quarter.get_center()) / 2)
-        
-        self.play(Write(bottom_group), Write(comp_sign))
-        self.wait(5.0)
+        # KESİR SAYILARI (Kural 1: next_to(model, DOWN, buff=0.8))
+        frac_1_2 = MathTex(r"\frac{1}{2}", color=BLACK).scale(2.5).next_to(left_model, DOWN, buff=0.8)
+        self.play(Write(frac_1_2))
+        self.wait(3.0) # 9 kelime / 3.0 = 3.0 sn
+
+        self.play(Create(right_model))
+        frac_1_4 = MathTex(r"\frac{1}{4}", color=BLACK).scale(2.5).next_to(right_model, DOWN, buff=0.8)
+        self.play(Write(frac_1_4))
+        self.wait(5.0) # 15 kelime / 3.0 = 5.0 sn
+
+        # Karşılaştırma işareti
+        greater_than = MathTex(">", color=BLACK).scale(3.0).move_to((frac_1_2.get_center() + frac_1_4.get_center()) / 2)
+        self.play(Write(greater_than))
+
+        # ALT SONUÇ / CTA METNİ (Kural 1: to_edge(DOWN, buff=3.5))
+        cta = Text("Payda büyüdükçe\ndeğer küçülür!", font="DejaVu Sans", weight=BOLD, color=BLACK).to_edge(DOWN, buff=3.5)
+        self.play(Write(cta))
+        self.wait(4.0) # 12 kelime / 3.0 = 4.0 sn
+
+        # BİTİŞ (Kural 3: Ses bitmeden ekran beyaza düşmez, +2.0 sn ekle)
+        self.wait(4.6) # 8 kelime / 3.0 = 2.6 sn + 2.0 sn = 4.6 sn
