@@ -5,47 +5,51 @@ config.pixel_width = 1080
 config.frame_height = 14.22
 config.frame_width = 8.0
 
-class MaarifScene(Scene):
+class UnitFractions(Scene):
     def construct(self):
         self.camera.background_color = "#FFFFFF"
 
-        # BAŞLIK
-        title = Text("Birim Kesirler", color=BLACK, weight=BOLD).to_edge(UP, buff=1.0).scale(1.2)
-        self.play(Write(title))
-        self.wait(2.66)
-
-        # ALT SONUÇ METNİ
-        bottom_text = Text("Payda büyüdükçe değer küçülür!", color=RED, weight=BOLD).to_edge(DOWN, buff=3.5)
-        self.play(Write(bottom_text))
-        self.wait(1.66)
-
-        # MODELLER
-        circle1 = Circle(radius=1.5, color=BLACK)
-        sector1 = Sector(radius=1.5, angle=PI, color=BLUE, fill_opacity=0.8)
-        pizza1 = VGroup(circle1, sector1)
-
-        circle2 = Circle(radius=1.5, color=BLACK)
-        sector2 = Sector(radius=1.5, angle=PI/2, color=ORANGE, fill_opacity=0.8)
-        pizza2 = VGroup(circle2, sector2)
-
-        models = VGroup(pizza1, pizza2).arrange(RIGHT, buff=1.5).shift(UP * 2.0)
-
-        self.play(Create(circle1), FadeIn(sector1))
-        self.wait(4.66)
-
-        self.play(Create(circle2), FadeIn(sector2))
-        self.wait(4.66)
-
-        # KESİR SAYILARI
-        frac1 = MathTex(r"\frac{1}{2}", color=BLACK).scale(2.0).next_to(pizza1, DOWN, buff=0.8)
-        frac2 = MathTex(r"\frac{1}{4}", color=BLACK).scale(2.0).next_to(pizza2, DOWN, buff=0.8)
+        title = Text("BİRİM KESİRLER", color="#333333", weight=BOLD).scale(1.2).to_edge(UP, buff=1.0)
         
-        self.play(Write(frac1), Write(frac2))
-        self.wait(1.0)
+        left_center = UP * 1.5 + LEFT * 1.8
+        right_center = UP * 1.5 + RIGHT * 1.8
 
-        gt_sign = MathTex(">", color=BLACK).scale(2.5).move_to((frac1.get_center() + frac2.get_center()) / 2)
-        self.play(Write(gt_sign))
-        self.wait(2.33)
+        left_circle = Circle(radius=1.5, color="#333333", stroke_width=2).move_to(left_center)
+        left_line = Line(left_center + LEFT*1.5, left_center + RIGHT*1.5, color="#333333", stroke_width=2)
+        left_sector = Sector(outer_radius=1.5, angle=PI, color="#007BFF", fill_opacity=0.8, stroke_width=2).shift(left_center)
 
-        # Kapanış
-        self.wait(5.0)
+        right_circle = Circle(radius=1.5, color="#333333", stroke_width=2).move_to(right_center)
+        right_line1 = Line(right_center + LEFT*1.5, right_center + RIGHT*1.5, color="#333333", stroke_width=2)
+        right_line2 = Line(right_center + UP*1.5, right_center + DOWN*1.5, color="#333333", stroke_width=2)
+        right_sector = Sector(outer_radius=1.5, angle=PI/2, color="#FF5733", fill_opacity=0.8, stroke_width=2).shift(right_center)
+
+        frac_left = MathTex(r"\frac{1}{2}", color="#333333").scale(1.5).next_to(left_circle, DOWN, buff=0.8)
+        frac_right = MathTex(r"\frac{1}{4}", color="#333333").scale(1.5).next_to(right_circle, DOWN, buff=0.8)
+
+        comp_sign = Text(">", color="#333333", weight=BOLD).scale(2).move_to((frac_left.get_center() + frac_right.get_center()) / 2)
+
+        bottom_text = Text("Payda Büyüdükçe\nDilim Küçülür!", color="#333333", weight=BOLD, text_align="CENTER").scale(0.9).to_edge(DOWN, buff=4.5)
+
+        self.play(Write(title))
+        self.wait(2.5)
+
+        self.play(Create(left_circle), Create(right_circle))
+        self.wait(1.7)
+
+        self.play(Create(left_line))
+        self.wait(1.5)
+
+        self.play(FadeIn(left_sector), Write(frac_left))
+        self.wait(1.5)
+
+        self.play(Create(right_line1), Create(right_line2))
+        self.wait(1.7)
+
+        self.play(FadeIn(right_sector), Write(frac_right))
+        self.wait(1.7)
+
+        self.play(Write(comp_sign))
+        self.wait(3.5)
+
+        self.play(Write(bottom_text))
+        self.wait(3.5)
