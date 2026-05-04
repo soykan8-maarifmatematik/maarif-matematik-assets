@@ -8,37 +8,34 @@ config.background_color = "#FFFFFF"
 
 class MaarifScene(Scene):
     def construct(self):
-        title = Text("Birim Kesirlerin Büyüklüğü", color=BLACK).scale_to_fit_width(6.5)
-        title.to_edge(np.array([0,1,0]), buff=1.5)
+        title = Text("Birim Kesirleri Karsilastirma", color=BLACK).to_edge(np.array([0,1,0]), buff=1.5).scale_to_fit_width(6.5)
         self.play(Write(title))
         
-        c1_group = VGroup()
-        sector1 = Sector(radius=1.0, angle=PI, start_angle=0, color="#3498db", fill_opacity=0.8)
-        circle1 = Circle(radius=1.0, color=BLACK, stroke_width=4)
-        line1 = Line(np.array([-1.0, 0, 0]), np.array([1.0, 0, 0]), color=BLACK, stroke_width=4)
-        label1 = MathTex(r"\frac{1}{2}", color=BLACK).scale(1.5).next_to(circle1, np.array([0,-1,0]), buff=0.5)
-        c1_group.add(sector1, circle1, line1, label1)
+        sector_half = Sector(radius=1.0, angle=PI, color=BLUE, fill_opacity=0.8)
+        circle_half = Circle(radius=1.0, color=BLACK)
+        line_half = Line(np.array([-1,0,0]), np.array([1,0,0]), color=BLACK)
+        group_half = VGroup(sector_half, circle_half, line_half)
+        label_half = MathTex(r"\frac{1}{2}", color=BLACK).next_to(group_half, np.array([0,-1,0]), buff=0.5)
+        model_1 = VGroup(group_half, label_half)
         
-        c2_group = VGroup()
-        sector2 = Sector(radius=1.0, angle=PI/2, start_angle=0, color="#e74c3c", fill_opacity=0.8)
-        circle2 = Circle(radius=1.0, color=BLACK, stroke_width=4)
-        lines2 = VGroup(
-            Line(np.array([-1.0, 0, 0]), np.array([1.0, 0, 0]), color=BLACK, stroke_width=4),
-            Line(np.array([0, -1.0, 0]), np.array([0, 1.0, 0]), color=BLACK, stroke_width=4)
-        )
-        label2 = MathTex(r"\frac{1}{4}", color=BLACK).scale(1.5).next_to(circle2, np.array([0,-1,0]), buff=0.5)
-        c2_group.add(sector2, circle2, lines2, label2)
+        sector_quarter = Sector(radius=1.0, angle=PI/2, color=RED, fill_opacity=0.8)
+        circle_quarter = Circle(radius=1.0, color=BLACK)
+        line_q1 = Line(np.array([-1,0,0]), np.array([1,0,0]), color=BLACK)
+        line_q2 = Line(np.array([0,-1,0]), np.array([0,1,0]), color=BLACK)
+        group_quarter = VGroup(sector_quarter, circle_quarter, line_q1, line_q2)
+        label_quarter = MathTex(r"\frac{1}{4}", color=BLACK).next_to(group_quarter, np.array([0,-1,0]), buff=0.5)
+        model_2 = VGroup(group_quarter, label_quarter)
         
-        models = VGroup(c1_group, c2_group).arrange(np.array([1,0,0]), buff=1.5)
+        models = VGroup(model_1, model_2).arrange(np.array([1,0,0]), buff=1.5)
         models.scale(0.8).shift(np.array([0,1.8,0]))
         
         self.play(FadeIn(models))
+        self.wait(1)
         
-        gt_sign = MathTex(">", color=BLACK).scale(2.5).move_to(np.array([0, 1.8, 0]))
-        self.play(Write(gt_sign))
+        sign = MathTex(">", color=BLACK).scale(2).move_to(models.get_center())
+        self.play(Write(sign))
+        self.wait(1)
         
-        result = Text("Payda büyüdükçe kesir küçülür!", color=BLACK, weight=BOLD).scale_to_fit_width(6.5)
-        result.to_edge(np.array([0,-1,0]), buff=4.8)
+        result = Text("Payda buyudukce parca kuculur!", color=BLACK).to_edge(np.array([0,-1,0]), buff=4.8).scale_to_fit_width(6.5)
         self.play(Write(result))
-        
         self.wait(2)
