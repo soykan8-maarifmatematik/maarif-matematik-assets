@@ -1,63 +1,56 @@
 from manim import *
 
-class BirimKesirler(Scene):
+config.pixel_height = 1920
+config.pixel_width = 1080
+config.frame_height = 14.22
+config.frame_width = 8.0
+
+class MaarifScene(Scene):
     def construct(self):
-        # BAŞLIK STİLİ KURALI
-        title = Text("BİRİM KESİRLERİ KARŞILAŞTIRMA", weight=BOLD).scale_to_fit_width(7.0).to_edge(UP, buff=1.0)
+        # Arka plan rengi
+        self.camera.background_color = "#FFFFFF"
+
+        # Başlık (Kurallara tam uygun)
+        title = Text("BİRİM KESİRLER", weight=BOLD, color="#212121").scale_to_fit_width(7.0)
+        title.to_edge(UP, buff=1.0)
+
+        # Karşılaştırma Sembolü (DAİMA ORIGIN)
+        sign = MathTex(">", color="#212121").scale(2.5).move_to(ORIGIN)
+
+        # Sol Model ve Kesir (1/2)
+        circle_left = Circle(radius=0.9, color="#212121")
+        fill_left = Sector(radius=0.9, angle=PI, color=BLUE, fill_opacity=0.7)
+        model_left = VGroup(circle_left, fill_left)
+        # Modeli butonların altında kalmayacak şekilde yukarı kaydırma
+        model_left.move_to(ORIGIN).shift(LEFT * 2.0 + np.array([0, 1.0, 0]))
+        
+        fraction_left = MathTex(r"\frac{1}{2}", color="#212121").scale(2.5)
+        fraction_left.next_to(model_left, DOWN, buff=0.8)
+        group_left = VGroup(model_left, fraction_left)
+
+        # Sağ Model ve Kesir (1/4)
+        circle_right = Circle(radius=0.9, color="#212121")
+        fill_right = Sector(radius=0.9, angle=PI/2, color=RED, fill_opacity=0.7)
+        model_right = VGroup(circle_right, fill_right)
+        # Modeli butonların altında kalmayacak şekilde yukarı kaydırma
+        model_right.move_to(ORIGIN).shift(RIGHT * 2.0 + np.array([0, 1.0, 0]))
+        
+        fraction_right = MathTex(r"\frac{1}{4}", color="#212121").scale(2.5)
+        fraction_right.next_to(model_right, DOWN, buff=0.8)
+        group_right = VGroup(model_right, fraction_right)
+
+        # Sonuç Metni
+        result_text = Text("Payda büyüdükçe kesir küçülür!", weight=BOLD, color="#212121").scale_to_fit_width(5.5)
+        result_text.to_edge(DOWN, buff=2.5)
+
+        # Animasyon Akışı
         self.play(Write(title))
-        
-        # KESİR FORMATI KURALI (Daima 1/n)
-        frac1 = MathTex(r"\frac{1}{3}").scale(2.5)
-        frac2 = MathTex(r"\frac{1}{6}").scale(2.5)
-        
-        # Modelleri oluşturan fonksiyon
-        def create_pie(denominator, color):
-            pie = VGroup()
-            for i in range(denominator):
-                sector = Sector(
-                    outer_radius=1.2, 
-                    angle=TAU/denominator, 
-                    start_angle=i*TAU/denominator, 
-                    color=WHITE, 
-                    stroke_width=2
-                )
-                if i == 0:
-                    sector.set_fill(color, opacity=0.9)
-                else:
-                    sector.set_fill(DARK_GRAY, opacity=0.4)
-                pie.add(sector)
-            return pie
-            
-        model1 = create_pie(3, BLUE)
-        model2 = create_pie(6, RED)
-        
-        # KESİR VE MODEL GRUPLAMA KURALI
-        left_group = VGroup(frac1, model1).arrange(DOWN, buff=0.8)
-        right_group = VGroup(frac2, model2).arrange(DOWN, buff=0.8)
-        
-        # SİMETRİK YERLEŞTİRME KURALI
-        left_group.move_to(LEFT * 3.5)
-        right_group.move_to(RIGHT * 3.5)
-        
-        # İŞARET KONUMU KURALI (DAİMA ORIGIN)
-        sign = MathTex(">").scale(3.5).move_to(ORIGIN)
-        
-        # Animasyonlar
-        self.play(FadeIn(left_group, shift=RIGHT))
+        self.wait(0.5)
+        self.play(FadeIn(group_left))
+        self.wait(0.5)
+        self.play(FadeIn(group_right))
         self.wait(1)
-        self.play(FadeIn(right_group, shift=LEFT))
+        self.play(Write(sign))
         self.wait(1)
-        
-        # Dilimlerin büyüklüğünü vurgulama
-        self.play(Indicate(model1[0], color=YELLOW, scale_factor=1.1))
-        self.play(Indicate(model2[0], color=YELLOW, scale_factor=1.1))
-        self.wait(1)
-        
-        # İşaretin belirmesi
-        self.play(GrowFromCenter(sign))
-        self.wait(1)
-        
-        # Sonuç metni
-        conclusion = Text("Payda küçüldükçe, dilim BÜYÜR!", color=YELLOW).scale(0.8).to_edge(DOWN, buff=0.5)
-        self.play(Write(conclusion))
+        self.play(Write(result_text))
         self.wait(2)
