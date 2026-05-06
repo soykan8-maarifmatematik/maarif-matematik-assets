@@ -2,87 +2,73 @@ from manim import *
 
 config.pixel_height, config.pixel_width = 1920, 1080
 
-class UnitFractions(Scene):
+class BirimKesirler(Scene):
     def construct(self):
-        # 4. KAMERA VE ARKA PLAN AYARLARI
+        # ARKA PLAN & RENK
         self.camera.background_color = WHITE
-        self.camera.frame_width = 9
-        self.camera.frame_height = 16
+        text_color = "#212121"
 
-        # 2. BAŞLIK (Üst)
-        header = Text("BİRİM KESİRLERİ KARŞILAŞTIRMA", color=BLACK, font_size=48, weight=BOLD)
+        # BAŞLIK
+        header = Text("BİRİM KESİRLERİ KARŞILAŞTIRMA", color=text_color, font_size=48, weight=BOLD)
         header.to_edge(UP, buff=1.0).scale_to_fit_width(8.0)
-        
-        # 1/2 Modeli
-        half_group = VGroup()
-        for i in range(2):
-            color = ORANGE if i == 0 else WHITE
-            fill_op = 0.8 if i == 0 else 0.0
-            # 1. SECTOR KISITLARI VE ÇİZGİSEL NETLİK
-            slice_sector = Sector(
-                radius=1.5,
-                angle=TAU/2,
-                start_angle=i*TAU/2,
-                color=color,
-                fill_opacity=fill_op,
-                stroke_width=3,
-                stroke_color=BLACK
-            )
-            half_group.add(slice_sector)
-        
-        label_half = MathTex(r"\frac{1}{2}", color=BLACK, font_size=80).next_to(half_group, DOWN, buff=0.6)
-        model_half = VGroup(half_group, label_half)
-
-        # 1/4 Modeli
-        quarter_group = VGroup()
-        for i in range(4):
-            color = GREEN if i == 0 else WHITE
-            fill_op = 0.8 if i == 0 else 0.0
-            # 1. SECTOR KISITLARI VE ÇİZGİSEL NETLİK
-            slice_sector = Sector(
-                radius=1.5,
-                angle=TAU/4,
-                start_angle=i*TAU/4,
-                color=color,
-                fill_opacity=fill_op,
-                stroke_width=3,
-                stroke_color=BLACK
-            )
-            quarter_group.add(slice_sector)
-        
-        label_quarter = MathTex(r"\frac{1}{4}", color=BLACK, font_size=80).next_to(quarter_group, DOWN, buff=0.6)
-        model_quarter = VGroup(quarter_group, label_quarter)
-
-        # Karşılaştırma Sembolü
-        gt_symbol = MathTex(">", color=RED, font_size=120)
-
-        # 2. MODELLER (Orta-Üst Hiyerarşik Kilit)
-        all_models = VGroup(model_half, gt_symbol, model_quarter).arrange(RIGHT, buff=0.8)
-        all_models.move_to(UP * 2.8)
-
-        # 2. AÇIKLAMA (Alt Hiyerarşik Kilit ve Paragraph Kullanımı)
-        desc_text = Paragraph(
-            "Payda büyüdükçe,",
-            "bütün daha çok parçaya bölünür,",
-            "bu yüzden birim kesrin değeri küçülür.",
-            alignment="center",
-            color=BLACK,
-            font_size=42
-        ).move_to(DOWN * 3.5)
-
-        # Animasyon Sekansı
         self.play(Write(header))
+
+        # MODELLEME FONKSİYONU
+        def create_fraction_circle(denominator, color):
+            circle_group = VGroup()
+            angle = TAU / denominator
+            for i in range(denominator):
+                # Sadece payı temsil eden 1 birim dilim %60 opak, diğerleri şeffaf
+                fill_op = 0.6 if i == 0 else 0.0
+                slice_color = color if i == 0 else WHITE
+                
+                # SECTOR FIX: Sadece radius=1.0 kullanıldı
+                sector = Sector(
+                    radius=1.0,
+                    angle=angle,
+                    start_angle=i * angle,
+                    color=BLACK,
+                    fill_color=slice_color,
+                    fill_opacity=fill_op,
+                    stroke_width=3,
+                    stroke_color=BLACK
+                )
+                circle_group.add(sector)
+            return circle_group
+
+        # MODELLERİ OLUŞTURMA
+        circle_1_3 = create_fraction_circle(3, ORANGE)
+        circle_1_6 = create_fraction_circle(6, BLUE)
+
+        label_1_3 = MathTex(r"\frac{1}{3}", color=text_color, font_size=96).next_to(circle_1_3, DOWN, buff=0.5)
+        label_1_6 = MathTex(r"\frac{1}{6}", color=text_color, font_size=96).next_to(circle_1_6, DOWN, buff=0.5)
+
+        group_1_3 = VGroup(circle_1_3, label_1_3)
+        group_1_6 = VGroup(circle_1_6, label_1_6)
+
+        gt_symbol = MathTex(">", color=text_color, font_size=120)
+
+        # MODELLERİ YERLEŞTİRME (Orta - Üst Yarı)
+        models_group = VGroup(group_1_3, gt_symbol, group_1_6).arrange(RIGHT, buff=1.0)
+        models_group.move_to(UP * 2.8)
+
+        # AÇIKLAMA (Alt - Butonların üstü)
+        explanation = Paragraph(
+            "Payda büyüdükçe,",
+            "bütün daha fazla parçaya bölünür.",
+            "Bu yüzden dilimler KÜÇÜLÜR!",
+            alignment="center",
+            color=text_color,
+            font_size=42,
+            weight=BOLD,
+            line_spacing=1.2
+        )
+        explanation.move_to(DOWN * 3.5)
+
+        # ANİMASYON SIRALAMASI
+        self.play(FadeIn(group_1_3, shift=UP), FadeIn(group_1_6, shift=UP), run_time=1.5)
         self.wait(0.5)
-        
-        self.play(FadeIn(model_half, shift=UP))
+        self.play(Write(gt_symbol), run_time=1)
         self.wait(0.5)
-        
-        self.play(FadeIn(model_quarter, shift=UP))
-        self.wait(1)
-        
-        self.play(Write(gt_symbol))
-        self.play(Indicate(gt_symbol, color=RED, scale_factor=1.3))
-        self.wait(1)
-        
-        self.play(Write(desc_text))
+        self.play(Write(explanation), run_time=2)
         self.wait(2)
