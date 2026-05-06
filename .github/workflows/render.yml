@@ -1,4 +1,5 @@
 name: Maarif Matematik Video Render ve Youtube
+
 concurrency:
   group: maarif-render
   cancel-in-progress: true
@@ -46,7 +47,6 @@ jobs:
           AUDIO_PATH=$(find . -name "*.mp3" | head -n 1)
           
           if [ -n "$VIDEO_PATH" ] && [ -n "$AUDIO_PATH" ]; then
-            # -shortest YOK: Görüntü ne kadar sürerse video o kadar sürer, son görseller kesilmez.
             ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -fflags +genpts \
             -c:v libx264 -c:a aac -map 0:v:0 -map 1:a:0 -y media/videos/final_output.mp4
           fi
@@ -54,5 +54,17 @@ jobs:
       - name: Upload to YouTube (Dosya Adı Fix)
         env:
           TOKEN_JSON: ${{ secrets.TOKEN_JSON }}
-        # Görseldeki dosya ismine (upload_to_youtube.py) göre güncellendi
         run: python scripts/upload_to_youtube.py
+
+      - name: Commit Video to Repository (Instagram İçin)
+        run: |
+          if [ -f "media/videos/final_output.mp4" ]; then
+            cp media/videos/final_output.mp4 ./current_video.mp4
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+            git add current_video.mp4
+            git commit -m "Update current video for Instagram [skip ci]"
+            git push
+          else
+            echo "Video dosyası bulunamadı, commit atlanıyor."
+          fi
