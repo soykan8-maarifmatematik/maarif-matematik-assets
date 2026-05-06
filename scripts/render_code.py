@@ -4,69 +4,85 @@ config.pixel_height, config.pixel_width = 1920, 1080
 
 class UnitFractions(Scene):
     def construct(self):
+        # 4. KAMERA VE ARKA PLAN AYARLARI
+        self.camera.background_color = WHITE
         self.camera.frame_width = 9
         self.camera.frame_height = 16
-        self.camera.background_color = WHITE
 
-        # 1. BAŞLIK (Üst)
-        header = Text("BİRİM KESİRLERİ\nKARŞILAŞTIRMA", font_size=64, color=BLACK, weight=BOLD, text_align="center")
-        header.to_edge(UP, buff=1.0)
-        header.scale_to_fit_width(8.0)
-
-        # 2. MODELLER (Orta-Üst)
-        # 1/3 Modeli
-        slices_3 = VGroup()
-        for i in range(3):
-            color = RED if i == 0 else LIGHT_GREY
-            fill_opacity = 0.9 if i == 0 else 0.3
-            # SECTOR KURALI: Sadece radius, outer_radius YOK. Çizgisel netlik eklendi.
-            s = Sector(radius=1.8, angle=TAU/3, start_angle=i*TAU/3, color=color, fill_opacity=fill_opacity, stroke_width=3, stroke_color=BLACK)
-            slices_3.add(s)
-        label_3 = MathTex(r"\frac{1}{3}", color=BLACK, font_size=80).next_to(slices_3, DOWN, buff=0.5)
-        group_3 = VGroup(slices_3, label_3)
+        # 2. BAŞLIK (Üst)
+        header = Text("BİRİM KESİRLERİ KARŞILAŞTIRMA", color=BLACK, font_size=48, weight=BOLD)
+        header.to_edge(UP, buff=1.0).scale_to_fit_width(8.0)
+        
+        # 1/2 Modeli
+        half_group = VGroup()
+        for i in range(2):
+            color = ORANGE if i == 0 else WHITE
+            fill_op = 0.8 if i == 0 else 0.0
+            # 1. SECTOR KISITLARI VE ÇİZGİSEL NETLİK
+            slice_sector = Sector(
+                radius=1.5,
+                angle=TAU/2,
+                start_angle=i*TAU/2,
+                color=color,
+                fill_opacity=fill_op,
+                stroke_width=3,
+                stroke_color=BLACK
+            )
+            half_group.add(slice_sector)
+        
+        label_half = MathTex(r"\frac{1}{2}", color=BLACK, font_size=80).next_to(half_group, DOWN, buff=0.6)
+        model_half = VGroup(half_group, label_half)
 
         # 1/4 Modeli
-        slices_4 = VGroup()
+        quarter_group = VGroup()
         for i in range(4):
-            color = BLUE if i == 0 else LIGHT_GREY
-            fill_opacity = 0.9 if i == 0 else 0.3
-            # SECTOR KURALI: Sadece radius, outer_radius YOK. Çizgisel netlik eklendi.
-            s = Sector(radius=1.8, angle=TAU/4, start_angle=i*TAU/4, color=color, fill_opacity=fill_opacity, stroke_width=3, stroke_color=BLACK)
-            slices_4.add(s)
-        label_4 = MathTex(r"\frac{1}{4}", color=BLACK, font_size=80).next_to(slices_4, DOWN, buff=0.5)
-        group_4 = VGroup(slices_4, label_4)
+            color = GREEN if i == 0 else WHITE
+            fill_op = 0.8 if i == 0 else 0.0
+            # 1. SECTOR KISITLARI VE ÇİZGİSEL NETLİK
+            slice_sector = Sector(
+                radius=1.5,
+                angle=TAU/4,
+                start_angle=i*TAU/4,
+                color=color,
+                fill_opacity=fill_op,
+                stroke_width=3,
+                stroke_color=BLACK
+            )
+            quarter_group.add(slice_sector)
+        
+        label_quarter = MathTex(r"\frac{1}{4}", color=BLACK, font_size=80).next_to(quarter_group, DOWN, buff=0.6)
+        model_quarter = VGroup(quarter_group, label_quarter)
 
         # Karşılaştırma Sembolü
-        symbol = MathTex(">", color=BLACK, font_size=120)
+        gt_symbol = MathTex(">", color=RED, font_size=120)
 
-        # Modelleri grupla ve kilitle
-        models_group = VGroup(group_3, symbol, group_4).arrange(RIGHT, buff=0.6)
-        models_group.move_to(UP * 2.8)
+        # 2. MODELLER (Orta-Üst Hiyerarşik Kilit)
+        all_models = VGroup(model_half, gt_symbol, model_quarter).arrange(RIGHT, buff=0.8)
+        all_models.move_to(UP * 2.8)
 
-        # 3. AÇIKLAMA (Alt)
-        explanation = Paragraph(
+        # 2. AÇIKLAMA (Alt Hiyerarşik Kilit ve Paragraph Kullanımı)
+        desc_text = Paragraph(
             "Payda büyüdükçe,",
-            "dilim küçülür!",
+            "bütün daha çok parçaya bölünür,",
+            "bu yüzden birim kesrin değeri küçülür.",
             alignment="center",
             color=BLACK,
-            font_size=64,
-            weight=BOLD
-        )
-        explanation.move_to(DOWN * 3.5)
-        explanation.scale_to_fit_width(6.5)
+            font_size=42
+        ).move_to(DOWN * 3.5)
 
-        # Animasyonlar
+        # Animasyon Sekansı
         self.play(Write(header))
         self.wait(0.5)
         
-        self.play(FadeIn(group_3, shift=UP))
+        self.play(FadeIn(model_half, shift=UP))
         self.wait(0.5)
         
-        self.play(FadeIn(group_4, shift=UP))
-        self.wait(0.5)
-        
-        self.play(Write(symbol))
+        self.play(FadeIn(model_quarter, shift=UP))
         self.wait(1)
         
-        self.play(Write(explanation))
+        self.play(Write(gt_symbol))
+        self.play(Indicate(gt_symbol, color=RED, scale_factor=1.3))
+        self.wait(1)
+        
+        self.play(Write(desc_text))
         self.wait(2)
