@@ -2,58 +2,60 @@ from manim import *
 
 class MaarifScene(Scene):
     def construct(self):
-        # Arka plan rengi
+        # Arka plan ve genel metin rengi
         self.camera.background_color = "#FFFFFF"
+        text_color = "#212121"
 
-        # 1. Başlık (Kurallara uygun)
-        title = Text("BİRİM KESİRLERİ KARŞILAŞTIRMA", color="#212121", weight=BOLD)
-        title.scale_to_fit_width(7.0).to_edge(UP, buff=1.0)
+        # 1. Başlık (V7 Kuralları)
+        title = Text("BİRİM KESİRLERİ KARŞILAŞTIRMA", weight=BOLD, color=text_color)
+        title.scale_to_fit_width(7.0)
+        title.to_edge(UP, buff=1.0)
+        self.play(Write(title))
 
-        # 2. Modeller (1/3 ve 1/6)
+        # 2. Daire Modelleri (V7 Kuralları: UP * 1.5, radius=0.9, stroke_width=2)
         left_group = VGroup()
         for i in range(3):
             if i == 0:
-                slice_obj = Sector(radius=0.9, angle=TAU/3, start_angle=i*TAU/3, fill_color=BLUE, fill_opacity=0.5, stroke_color=BLACK, stroke_width=2)
+                # Sadece 1 adet birim dilim renkli ve fill_opacity=0.5
+                slice_sector = Sector(radius=0.9, angle=TAU/3, start_angle=i*TAU/3, color=BLACK, stroke_width=2, fill_color=BLUE, fill_opacity=0.5)
             else:
-                slice_obj = Sector(radius=0.9, angle=TAU/3, start_angle=i*TAU/3, fill_opacity=0, stroke_color=BLACK, stroke_width=2)
-            left_group.add(slice_obj)
-        
-        right_group = VGroup()
-        for i in range(6):
-            if i == 0:
-                slice_obj = Sector(radius=0.9, angle=TAU/6, start_angle=i*TAU/6, fill_color=RED, fill_opacity=0.5, stroke_color=BLACK, stroke_width=2)
-            else:
-                slice_obj = Sector(radius=0.9, angle=TAU/6, start_angle=i*TAU/6, fill_opacity=0, stroke_color=BLACK, stroke_width=2)
-            right_group.add(slice_obj)
-
-        # Modelleri yukarı kaydırma (UP * 1.5 kuralı)
+                # Diğer dilimler şeffaf ama ince siyah çizgili
+                slice_sector = Sector(radius=0.9, angle=TAU/3, start_angle=i*TAU/3, color=BLACK, stroke_width=2, fill_opacity=0)
+            left_group.add(slice_sector)
         left_group.move_to(LEFT * 2.5 + UP * 1.5)
+
+        right_group = VGroup()
+        for i in range(5):
+            if i == 0:
+                # Sadece 1 adet birim dilim renkli ve fill_opacity=0.5
+                slice_sector = Sector(radius=0.9, angle=TAU/5, start_angle=i*TAU/5, color=BLACK, stroke_width=2, fill_color=RED, fill_opacity=0.5)
+            else:
+                # Diğer dilimler şeffaf ama ince siyah çizgili
+                slice_sector = Sector(radius=0.9, angle=TAU/5, start_angle=i*TAU/5, color=BLACK, stroke_width=2, fill_opacity=0)
+            right_group.add(slice_sector)
         right_group.move_to(RIGHT * 2.5 + UP * 1.5)
 
-        # Kesir yazıları
-        frac_left = MathTex(r"\frac{1}{3}", color="#212121").scale(1.5).next_to(left_group, DOWN, buff=0.5)
-        frac_right = MathTex(r"\frac{1}{6}", color="#212121").scale(1.5).next_to(right_group, DOWN, buff=0.5)
+        # Dilimleri Create animasyonu ile çizerek oluşturma
+        self.play(Create(left_group), Create(right_group), run_time=2)
 
-        # 3. Karşılaştırma Sembolü (ORIGIN kuralı)
-        comp_sym = MathTex(">", color="#212121").scale(2.5).move_to(ORIGIN)
+        # 3. Kesir İfadeleri ve Karşılaştırma Sembolü (V7 Kuralları: Sembol DAİMA ORIGIN'de)
+        frac_left = MathTex(r"\frac{1}{3}", color=text_color, font_size=72).move_to(LEFT * 2.5)
+        frac_right = MathTex(r"\frac{1}{5}", color=text_color, font_size=72).move_to(RIGHT * 2.5)
+        symbol = MathTex(">", color=text_color, font_size=96).move_to(ORIGIN)
 
-        # 4. Otomatik Alt Satır (Paragraph kuralı)
+        self.play(Write(frac_left), Write(frac_right))
+        self.play(Write(symbol))
+
+        # 4. Otomatik Alt Satır (V7 Kuralları: Paragraph, line_spacing, alignment, scale_to_fit_width, to_edge)
         rule_text = Paragraph(
             "Payda büyüdükçe",
-            "dilim küçülür,",
-            "kesrin değeri azalır!",
-            color="#212121",
+            "kesrin değeri küçülür.",
             line_spacing=0.8,
-            alignment="center"
+            alignment="center",
+            color=text_color
         )
-        rule_text.scale_to_fit_width(6.5).to_edge(DOWN, buff=3.5)
-
-        # Animasyonlar
-        self.play(Write(title))
-        self.play(Create(left_group), Create(right_group), run_time=2)
-        self.play(Write(frac_left), Write(frac_right))
-        self.wait(0.5)
-        self.play(Write(comp_sym))
-        self.wait(1)
+        rule_text.scale_to_fit_width(6.5)
+        rule_text.to_edge(DOWN, buff=3.5)
+        
         self.play(Write(rule_text))
         self.wait(2)
