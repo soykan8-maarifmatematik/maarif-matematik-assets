@@ -2,52 +2,83 @@ from manim import *
 
 config.pixel_height, config.pixel_width = 1920, 1080
 
-class UnitFractions(Scene):
+class BirimKesirler(Scene):
     def construct(self):
-        self.camera.background_color = WHITE
         self.camera.frame_width = 9
         self.camera.frame_height = 16
+        self.camera.background_color = WHITE
+        Mobject.set_default(color="#212121")
 
-        header = Text("BİRİM KESİRLER", color="#212121")
+        # 1. BAŞLIK (Üst)
+        header = Text("BİRİM KESİRLERİ KARŞILAŞTIRMA", weight=BOLD)
         header.scale_to_fit_width(6.5)
         header.to_edge(UP, buff=1.0)
 
-        circle1_base = Circle(radius=1.0, color="#212121", stroke_width=2)
-        slice1 = Sector(radius=1.0, angle=PI, color=BLUE, fill_opacity=0.8)
-        label1 = MathTex(r"\frac{1}{2}", color="#212121").next_to(circle1_base, DOWN)
-        model1 = VGroup(circle1_base, slice1, label1)
+        # 2. MODELLER (Orta-Üst)
+        def create_fraction_circle(denominator, color):
+            circle_group = VGroup()
+            angle = TAU / denominator
+            for i in range(denominator):
+                fill_op = 0.6 if i == 0 else 0.0
+                fill_col = color if i == 0 else WHITE
+                
+                sector = Sector(
+                    outer_radius=1.5,
+                    angle=angle,
+                    start_angle=i * angle + (PI/2), # Üstten başlaması için
+                    stroke_width=3,
+                    stroke_color=BLACK,
+                    fill_color=fill_col,
+                    fill_opacity=fill_op
+                )
+                circle_group.add(sector)
+            return circle_group
 
-        circle2_base = Circle(radius=1.0, color="#212121", stroke_width=2)
-        slice2 = Sector(radius=1.0, angle=PI/2, color=RED, fill_opacity=0.8)
-        label2 = MathTex(r"\frac{1}{4}", color="#212121").next_to(circle2_base, DOWN)
-        model2 = VGroup(circle2_base, slice2, label2)
+        circle_1_3 = create_fraction_circle(3, BLUE)
+        circle_1_6 = create_fraction_circle(6, RED)
 
-        comp_sym = MathTex(">", color="#212121", font_size=72)
+        label_1_3 = MathTex(r"\frac{1}{3}").scale(1.5).next_to(circle_1_3, DOWN, buff=0.5)
+        label_1_6 = MathTex(r"\frac{1}{6}").scale(1.5).next_to(circle_1_6, DOWN, buff=0.5)
 
-        model1.move_to(LEFT * 2)
-        model2.move_to(RIGHT * 2)
-        comp_sym.move_to(ORIGIN)
+        group_1_3 = VGroup(circle_1_3, label_1_3)
+        group_1_6 = VGroup(circle_1_6, label_1_6)
 
-        group = VGroup(model1, comp_sym, model2)
-        group.move_to(UP * 2.5)
+        greater_than = MathTex(">").scale(2.5)
 
-        para = Paragraph("Payda büyüdükçe", "kesrin değeri küçülür.", alignment="center", color="#212121")
+        models_group = VGroup(group_1_3, greater_than, group_1_6).arrange(RIGHT, buff=0.8)
+        models_group.move_to(UP * 2.8)
+
+        # 3. AÇIKLAMA (Alt)
+        para = Paragraph(
+            "Payda büyüdükçe",
+            "dilimler küçülür!",
+            "Yani paydası küçük olan",
+            "birim kesir daha büyüktür.",
+            alignment="center"
+        )
         para.scale_to_fit_width(6.5)
-        para.move_to(DOWN * 3.0)
+        para.move_to(DOWN * 3.5)
 
+        # --- ANİMASYONLAR ---
         self.play(Write(header))
         self.wait(0.5)
-        
-        self.play(Create(circle1_base), Create(circle2_base))
-        self.play(Write(label1), Write(label2))
+
+        # 1/3 Kesrini Çizme
+        for sector in circle_1_3:
+            self.play(Create(sector), run_time=0.3)
+        self.play(Write(label_1_3))
         self.wait(0.5)
-        
-        self.play(Create(slice1))
-        self.play(Create(slice2))
+
+        # 1/6 Kesrini Çizme
+        for sector in circle_1_6:
+            self.play(Create(sector), run_time=0.2)
+        self.play(Write(label_1_6))
         self.wait(0.5)
-        
-        self.play(Write(comp_sym))
+
+        # Karşılaştırma Sembolü
+        self.play(Write(greater_than))
         self.wait(1)
-        
+
+        # Açıklama Metni
         self.play(Write(para))
         self.wait(2)
