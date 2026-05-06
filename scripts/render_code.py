@@ -1,92 +1,90 @@
 from manim import *
 
 config.pixel_height, config.pixel_width = 1920, 1080
-config.frame_width = 9
 config.frame_height = 16
+config.frame_width = 9
 
-class BirimKesirKarsilastirma(Scene):
+class Multiplication(Scene):
     def construct(self):
-        # Arka Plan
-        self.camera.background_color = "#F8F9FA"
-        
-        # 1. BAŞLIK (V18 Sabit - En Üst)
-        header = Text("BİRİM KESİRLERİ KARŞILAŞTIRMA", color=BLACK, weight=BOLD)
-        header.to_edge(UP, buff=0.8).scale_to_fit_width(8.5)
-        
-        # 2. MODELLER (V18 Sabit - Orta Üst)
-        # Daire 1 (1/3)
-        c1_slices = VGroup()
-        angle1 = TAU / 3
-        for i in range(3):
-            fill_color = "#FF5722" if i == 0 else WHITE
-            slice_obj = Sector(
-                radius=1.3,
-                angle=angle1,
-                start_angle=PI/2 + i * angle1,
-                fill_color=fill_color,
-                fill_opacity=1.0,
-                stroke_width=4,
-                stroke_color=BLACK
-            )
-            c1_slices.add(slice_obj)
-            
-        label1 = MathTex(r"\frac{1}{3}", color=BLACK).scale(2.5)
-        label1.next_to(c1_slices, DOWN, buff=0.6)
-        group1 = VGroup(c1_slices, label1)
-        
-        # Daire 2 (1/5)
-        c2_slices = VGroup()
-        angle2 = TAU / 5
-        for i in range(5):
-            fill_color = "#03A9F4" if i == 0 else WHITE
-            slice_obj = Sector(
-                radius=1.3,
-                angle=angle2,
-                start_angle=PI/2 + i * angle2,
-                fill_color=fill_color,
-                fill_opacity=1.0,
-                stroke_width=4,
-                stroke_color=BLACK
-            )
-            c2_slices.add(slice_obj)
-            
-        label2 = MathTex(r"\frac{1}{5}", color=BLACK).scale(2.5)
-        label2.next_to(c2_slices, DOWN, buff=0.6)
-        group2 = VGroup(c2_slices, label2)
-        
-        # Karşılaştırma Sembolü
-        symbol = MathTex(">", color=BLACK).scale(4)
-        
-        # Konumlandırma (VGroup ile birleştirip UP * 1.2'ye taşıma)
-        models_group = VGroup(group1, symbol, group2).arrange(RIGHT, buff=0.8)
-        models_group.move_to(UP * 1.2)
-        
-        # 3. AÇIKLAMA (V18 Sabit - En Alt)
-        desc_text = "Paydası küçük olan\nbirim kesir daha büyüktür!"
-        description = Text(desc_text, color=BLACK, weight=BOLD)
-        description.move_to(DOWN * 3.5).scale_to_fit_width(7.5)
-        
-        # --- ANİMASYON SIRALAMASI (V19 HAREKETLİ ÇİZİM YASASI) ---
-        
+        # 1. BAŞLIK (En Üst)
+        header = Text("ÇARPMA İŞLEMİ", weight=BOLD, color=YELLOW)
+        header.scale_to_fit_width(8.5)
+        header.to_edge(UP, buff=0.8)
         self.play(Write(header))
+
+        # 2. MODELLER (Orta-Üst)
+        num1_tens = Text("1", weight=BOLD).scale(3)
+        num1_ones = Text("5", weight=BOLD).scale(3)
+        num2_ones = Text("3", weight=BOLD).scale(3)
+        multiply_sign = Text("x", weight=BOLD).scale(2.5)
+        
+        # Hizalama işlemleri
+        num1_ones.move_to(ORIGIN)
+        num1_tens.next_to(num1_ones, LEFT, buff=0.8)
+        num2_ones.next_to(num1_ones, DOWN, buff=0.5)
+        multiply_sign.next_to(num1_tens, DOWN, buff=0.5)
+        
+        line = Line(LEFT * 2, RIGHT * 2).set_stroke(width=6)
+        line.next_to(num2_ones, DOWN, buff=0.4)
+        line.align_to(multiply_sign, LEFT).shift(LEFT * 0.3)
+        
+        # VGroup ile gruplayıp kurala uygun konuma taşıma
+        math_group = VGroup(num1_tens, num1_ones, num2_ones, multiply_sign, line)
+        math_group.move_to(UP * 1.2)
+        
+        self.play(Write(math_group))
+        self.wait(0.5)
+
+        # Adım 1: Birler basamağını çarpma
+        self.play(num2_ones.animate.set_color(YELLOW), num1_ones.animate.set_color(YELLOW))
         self.wait(0.5)
         
-        # Önce birinci dairenin dilimleri tek tek çizilir
-        for slice_obj in c1_slices:
-            self.play(Create(slice_obj), run_time=0.4)
-        self.play(Write(label1))
+        res_ones = Text("5", weight=BOLD).scale(3).set_color(YELLOW)
+        res_ones.next_to(line, DOWN, buff=0.5)
+        res_ones.set_x(num1_ones.get_x())
+        
+        carry_1 = Text("+1", weight=BOLD, color=RED).scale(1.5)
+        carry_1.next_to(num1_tens, UP, buff=0.3)
+        
+        self.play(Write(res_ones))
+        self.play(Write(carry_1))
         self.wait(0.5)
         
-        # Sonra ikinci dairenin dilimleri tek tek çizilir
-        for slice_obj in c2_slices:
-            self.play(Create(slice_obj), run_time=0.3)
-        self.play(Write(label2))
+        self.play(num2_ones.animate.set_color(WHITE), num1_ones.animate.set_color(WHITE))
+
+        # Adım 2: Onlar basamağını çarpma
+        self.play(num2_ones.animate.set_color(GREEN), num1_tens.animate.set_color(GREEN))
         self.wait(0.5)
         
-        # En son karşılaştırma sembolü görünür
-        self.play(Write(symbol), run_time=0.8)
+        self.play(Indicate(carry_1, color=RED, scale_factor=1.5))
+        
+        res_tens = Text("4", weight=BOLD).scale(3).set_color(GREEN)
+        res_tens.next_to(line, DOWN, buff=0.5)
+        res_tens.set_x(num1_tens.get_x())
+        
+        self.play(Write(res_tens))
+        
+        # Elde kullanıldı çizimi
+        cross_line = Line(carry_1.get_corner(DL), carry_1.get_corner(UR), color=RED, stroke_width=6)
+        self.play(Create(cross_line))
         self.wait(0.5)
         
-        # Açıklama metni ekrana gelir
-        self.play(Write(description))
+        self.play(
+            num2_ones.animate.set_color(WHITE), 
+            num1_tens.animate.set_color(WHITE),
+            res_ones.animate.set_color(WHITE),
+            res_tens.animate.set_color(WHITE)
+        )
+
+        # 3. AÇIKLAMA (En Alt)
+        exp_text = Paragraph(
+            "Adım 1: 3 x 5 = 15 (5'i yaz, elde var 1)",
+            "Adım 2: 3 x 1 = 3 (Eldeyi ekle: 3+1=4)",
+            "Sonuç: 45",
+            weight=BOLD
+        )
+        exp_text.scale_to_fit_width(7.5)
+        exp_text.move_to(DOWN * 3.5)
+        
+        self.play(Write(exp_text))
         self.wait(2)
