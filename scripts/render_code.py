@@ -1,90 +1,90 @@
 from manim import *
 
 config.pixel_height, config.pixel_width = 1920, 1080
-config.frame_height = 16
 config.frame_width = 9
+config.frame_height = 16
 
-class Multiplication(Scene):
+class MultiplicationStepByStep(Scene):
     def construct(self):
-        # 1. BAŞLIK (En Üst)
+        # 1. BAŞLIK (Sabit Kadraj ve Boyutlandırma)
         header = Text("ÇARPMA İŞLEMİ", weight=BOLD, color=YELLOW)
-        header.scale_to_fit_width(8.5)
-        header.to_edge(UP, buff=0.8)
+        header.to_edge(UP, buff=0.8).scale_to_fit_width(8.5)
         self.play(Write(header))
 
-        # 2. MODELLER (Orta-Üst)
-        num1_tens = Text("1", weight=BOLD).scale(3)
-        num1_ones = Text("5", weight=BOLD).scale(3)
-        num2_ones = Text("3", weight=BOLD).scale(3)
-        multiply_sign = Text("x", weight=BOLD).scale(2.5)
+        # 2. MODELLER (Matematiksel İşlem)
+        num1_tens = MathTex("1").scale(3)
+        num1_units = MathTex("5").scale(3)
+        num2_units = MathTex("3").scale(3)
         
-        # Hizalama işlemleri
-        num1_ones.move_to(ORIGIN)
-        num1_tens.next_to(num1_ones, LEFT, buff=0.8)
-        num2_ones.next_to(num1_ones, DOWN, buff=0.5)
-        multiply_sign.next_to(num1_tens, DOWN, buff=0.5)
+        sym = MathTex("\\times").scale(2.5)
+        line = Line(LEFT, RIGHT).scale(2).set_stroke(width=6, color=WHITE)
         
-        line = Line(LEFT * 2, RIGHT * 2).set_stroke(width=6)
-        line.next_to(num2_ones, DOWN, buff=0.4)
-        line.align_to(multiply_sign, LEFT).shift(LEFT * 0.3)
+        res_tens = MathTex("4").scale(3)
+        res_units = MathTex("5").scale(3)
         
-        # VGroup ile gruplayıp kurala uygun konuma taşıma
-        math_group = VGroup(num1_tens, num1_ones, num2_ones, multiply_sign, line)
-        math_group.move_to(UP * 1.2)
+        carry = MathTex("1").scale(1.5).set_color(YELLOW)
         
-        self.play(Write(math_group))
-        self.wait(0.5)
-
-        # Adım 1: Birler basamağını çarpma
-        self.play(num2_ones.animate.set_color(YELLOW), num1_ones.animate.set_color(YELLOW))
-        self.wait(0.5)
+        # Hizalama İşlemleri
+        num1_units.move_to(RIGHT * 0.8 + UP * 0.5)
+        num1_tens.move_to(LEFT * 0.8 + UP * 0.5)
         
-        res_ones = Text("5", weight=BOLD).scale(3).set_color(YELLOW)
-        res_ones.next_to(line, DOWN, buff=0.5)
-        res_ones.set_x(num1_ones.get_x())
+        num2_units.next_to(num1_units, DOWN, buff=0.5)
+        sym.next_to(num2_units, LEFT, buff=1)
         
-        carry_1 = Text("+1", weight=BOLD, color=RED).scale(1.5)
-        carry_1.next_to(num1_tens, UP, buff=0.3)
+        line.next_to(num2_units, DOWN, buff=0.4)
+        line.set_x(0)
         
-        self.play(Write(res_ones))
-        self.play(Write(carry_1))
-        self.wait(0.5)
+        res_units.next_to(line, DOWN, buff=0.5)
+        res_units.set_x(num1_units.get_x())
         
-        self.play(num2_ones.animate.set_color(WHITE), num1_ones.animate.set_color(WHITE))
-
-        # Adım 2: Onlar basamağını çarpma
-        self.play(num2_ones.animate.set_color(GREEN), num1_tens.animate.set_color(GREEN))
-        self.wait(0.5)
-        
-        self.play(Indicate(carry_1, color=RED, scale_factor=1.5))
-        
-        res_tens = Text("4", weight=BOLD).scale(3).set_color(GREEN)
         res_tens.next_to(line, DOWN, buff=0.5)
         res_tens.set_x(num1_tens.get_x())
         
-        self.play(Write(res_tens))
+        carry.next_to(num1_tens, UP, buff=0.3)
         
-        # Elde kullanıldı çizimi
-        cross_line = Line(carry_1.get_corner(DL), carry_1.get_corner(UR), color=RED, stroke_width=6)
-        self.play(Create(cross_line))
+        # Grubu oluştur ve kurala göre taşı
+        math_group = VGroup(num1_tens, num1_units, num2_units, sym, line, res_tens, res_units, carry)
+        math_group.move_to(UP * 1.2)
+        
+        # Animasyonlar (Aniden ekrana gelme yok, sırayla çizim)
+        self.play(Write(num1_tens), Write(num1_units))
         self.wait(0.5)
+        self.play(Write(num2_units))
+        self.wait(0.5)
+        self.play(Write(sym), Create(line))
+        self.wait(1)
         
+        # 3. AÇIKLAMA (Adım 1)
+        desc1 = Text("Adım 1: 3 x 5 = 15\n5'i yaz, elde var 1.", weight=BOLD, color=WHITE)
+        desc1.move_to(DOWN * 3.5).scale_to_fit_width(7.5)
+        
+        self.play(Write(desc1))
+        self.play(num1_units.animate.set_color(GREEN), num2_units.animate.set_color(GREEN))
+        self.wait(1)
+        
+        self.play(Write(res_units))
+        self.play(Write(carry))
+        self.wait(1)
+        
+        # 3. AÇIKLAMA (Adım 2)
+        desc2 = Text("Adım 2: 3 x 1 = 3\nEldeki 1'i ekle, sonuç 4.", weight=BOLD, color=WHITE)
+        desc2.move_to(DOWN * 3.5).scale_to_fit_width(7.5)
+        
+        self.play(Transform(desc1, desc2))
+        self.play(num1_units.animate.set_color(WHITE), num2_units.animate.set_color(GREEN))
+        self.play(num1_tens.animate.set_color(GREEN))
+        self.wait(1)
+        
+        self.play(carry.animate.scale(1.2).set_color(RED))
+        self.play(Write(res_tens))
+        self.wait(1)
+        
+        # Final Görünümü
         self.play(
-            num2_ones.animate.set_color(WHITE), 
             num1_tens.animate.set_color(WHITE),
-            res_ones.animate.set_color(WHITE),
-            res_tens.animate.set_color(WHITE)
+            num2_units.animate.set_color(WHITE),
+            carry.animate.scale(1/1.2).set_color(YELLOW),
+            res_tens.animate.set_color(YELLOW),
+            res_units.animate.set_color(YELLOW)
         )
-
-        # 3. AÇIKLAMA (En Alt)
-        exp_text = Paragraph(
-            "Adım 1: 3 x 5 = 15 (5'i yaz, elde var 1)",
-            "Adım 2: 3 x 1 = 3 (Eldeyi ekle: 3+1=4)",
-            "Sonuç: 45",
-            weight=BOLD
-        )
-        exp_text.scale_to_fit_width(7.5)
-        exp_text.move_to(DOWN * 3.5)
-        
-        self.play(Write(exp_text))
         self.wait(2)
