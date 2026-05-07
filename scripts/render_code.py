@@ -1,108 +1,125 @@
 from manim import *
-config.pixel_height, config.pixel_width = 1920, 1080
+import numpy as np
 
-class Multiplication(Scene):
+config.pixel_height, config.pixel_width = 1920, 1080
+config.frame_width = 9
+config.frame_height = 16
+
+class MultiplicationScene(Scene):
     def construct(self):
-        self.camera.frame_width = 9
-        self.camera.frame_height = 16
+        # 1. BAŞLIK (Üst - Hassas Yerleşim)
+        header = Text("İKİ BASAMAKLI SAYILARLA ÇARPMA", weight=BOLD)
+        header.to_edge(UP, buff=1.1)
+        header.scale_to_fit_width(8.5)
+        self.play(Write(header))
+
+        # 2. MODELLER/İŞLEM (Orta-Üst)
+        # Rakamları tek tek tanımlıyoruz (Renklendirme ve animasyon için)
+        n6 = MathTex("6")
+        n7 = MathTex("7")
+        n8 = MathTex("8")
+        n9 = MathTex("9")
         
-        # Başlık
-        title = Text("İki Basamaklı Sayılarla Çarpma", font_size=48, weight=BOLD, color=YELLOW)
-        title.to_edge(UP, buff=0.8)
-        self.play(Write(title))
+        # Konumlandırma (Bağıl koordinatlar)
+        n7.move_to(RIGHT * 0.5)
+        n6.move_to(LEFT * 0.5)
+        n9.move_to(RIGHT * 0.5 + DOWN * 0.8)
+        n8.move_to(LEFT * 0.5 + DOWN * 0.8)
         
-        # Koordinat ve Grid Ayarları (Orta-Üst UP * 1.2 civarına merkezlenmiş)
-        y_r1 = 3.5
-        y_r2 = 2.5
-        y_l1 = 1.9
-        y_r3 = 1.1
-        y_r4 = 0.1
-        y_l2 = -0.6
-        y_r5 = -1.4
+        times_sign = MathTex("\\times").move_to(LEFT * 1.5 + DOWN * 0.8)
+        line1 = Line(LEFT * 2.0, RIGHT * 1.0, stroke_width=4).move_to(DOWN * 1.3)
         
-        step_x = 0.8
-        x0 = 1.2  # Birler basamağı
-        x1 = x0 - step_x  # Onlar basamağı
-        x2 = x0 - 2 * step_x  # Yüzler basamağı
-        x3 = x0 - 3 * step_x  # Binler basamağı
-        x4 = x0 - 4 * step_x  # İşaret konumu
+        # 1. Çarpım (603)
+        p1_3 = MathTex("3").move_to(RIGHT * 0.5 + DOWN * 1.8)
+        p1_0 = MathTex("0").move_to(LEFT * 0.5 + DOWN * 1.8)
+        p1_6 = MathTex("6").move_to(LEFT * 1.5 + DOWN * 1.8)
         
-        # 67 ve 89 Sayıları
-        d7_top = MathTex("7", font_size=80).move_to(RIGHT * x0 + UP * y_r1)
-        d6_top = MathTex("6", font_size=80).move_to(RIGHT * x1 + UP * y_r1)
+        # 2. Çarpım (536 - Sola Kaydırılmış)
+        p2_6 = MathTex("6").move_to(LEFT * 0.5 + DOWN * 2.6)
+        p2_3 = MathTex("3").move_to(LEFT * 1.5 + DOWN * 2.6)
+        p2_5 = MathTex("5").move_to(LEFT * 2.5 + DOWN * 2.6)
         
-        d9_bot = MathTex("9", font_size=80).move_to(RIGHT * x0 + UP * y_r2)
-        d8_bot = MathTex("8", font_size=80).move_to(RIGHT * x1 + UP * y_r2)
-        mul_sign = MathTex("\\times", font_size=80).move_to(RIGHT * x2 + UP * y_r2)
+        # Toplama İşlemi
+        plus_sign = MathTex("+").move_to(LEFT * 3.0 + DOWN * 2.6)
+        line2 = Line(LEFT * 3.5, RIGHT * 1.0, stroke_width=4).move_to(DOWN * 3.1)
         
-        line1 = Line(RIGHT * (x2 - 0.5) + UP * y_l1, RIGHT * (x0 + 0.5) + UP * y_l1, stroke_width=4)
+        # Sonuç (5963)
+        r_3 = MathTex("3").move_to(RIGHT * 0.5 + DOWN * 3.7)
+        r_6 = MathTex("6").move_to(LEFT * 0.5 + DOWN * 3.7)
+        r_9 = MathTex("9").move_to(LEFT * 1.5 + DOWN * 3.7)
+        r_5 = MathTex("5").move_to(LEFT * 2.5 + DOWN * 3.7)
         
-        # Başlangıç animasyonu
-        self.play(Write(d6_top), Write(d7_top))
-        self.play(Write(d8_bot), Write(d9_bot), Write(mul_sign), Create(line1))
+        # Eldeler
+        c6 = MathTex("+6", color=YELLOW).scale(0.6).next_to(n6, UP, buff=0.2)
+        c5 = MathTex("+5", color=ORANGE).scale(0.6).next_to(n6, UP, buff=0.7)
+
+        # Tüm işlem elemanlarını bir gruba al
+        operation_group = VGroup(
+            n6, n7, n8, n9, times_sign, line1,
+            p1_3, p1_0, p1_6,
+            p2_6, p2_3, p2_5,
+            plus_sign, line2,
+            r_3, r_6, r_9, r_5,
+            c6, c5
+        )
+        
+        # Modelleri Ortala ve Yukarı Taşı (V25 Kuralı)
+        operation_group.move_to(UP * 1.2)
+        
+        # Animasyonlar Başlıyor
+        self.play(Write(n6), Write(n7))
+        self.play(Write(n8), Write(n9), Write(times_sign), Create(line1))
         self.wait(0.5)
         
         # Adım 1: 9 x 67
-        res1_3 = MathTex("3", font_size=80).move_to(RIGHT * x0 + UP * y_r3)
-        res1_0 = MathTex("0", font_size=80).move_to(RIGHT * x1 + UP * y_r3)
-        res1_6 = MathTex("6", font_size=80).move_to(RIGHT * x2 + UP * y_r3)
-        carry6 = MathTex("+6", font_size=40, color=RED).move_to(RIGHT * x1 + UP * (y_r1 + 0.8))
-        
-        # 9 x 7
-        self.play(d9_bot.animate.set_color(YELLOW), d7_top.animate.set_color(YELLOW))
-        self.play(Write(res1_3), Write(carry6))
-        self.play(d7_top.animate.set_color(WHITE))
-        
-        # 9 x 6
-        self.play(d6_top.animate.set_color(YELLOW))
-        self.play(Indicate(carry6, color=RED, scale_factor=1.3))
-        self.play(Write(res1_0), Write(res1_6))
-        self.play(d9_bot.animate.set_color(WHITE), d6_top.animate.set_color(WHITE), FadeOut(carry6))
+        self.play(n9.animate.set_color(YELLOW), n7.animate.set_color(YELLOW))
+        self.wait(0.3)
+        self.play(Write(p1_3))
+        self.play(Write(c6)) # Elde 6
         self.wait(0.5)
+        
+        self.play(n7.animate.set_color(WHITE), n6.animate.set_color(YELLOW))
+        self.wait(0.3)
+        self.play(Write(p1_0), Write(p1_6))
+        self.play(c6.animate.set_opacity(0.3)) # Elde kullanıldı
+        self.wait(0.5)
+        
+        self.play(n9.animate.set_color(WHITE), n6.animate.set_color(WHITE))
         
         # Adım 2: 8 x 67
-        res2_6 = MathTex("6", font_size=80).move_to(RIGHT * x1 + UP * y_r4)
-        res2_3 = MathTex("3", font_size=80).move_to(RIGHT * x2 + UP * y_r4)
-        res2_5 = MathTex("5", font_size=80).move_to(RIGHT * x3 + UP * y_r4)
-        carry5 = MathTex("+5", font_size=40, color=ORANGE).move_to(RIGHT * x1 + UP * (y_r1 + 0.8))
-        
-        # 8 x 7
-        self.play(d8_bot.animate.set_color(GREEN), d7_top.animate.set_color(GREEN))
-        self.play(Write(res2_6), Write(carry5))
-        self.play(d7_top.animate.set_color(WHITE))
-        
-        # 8 x 6
-        self.play(d6_top.animate.set_color(GREEN))
-        self.play(Indicate(carry5, color=ORANGE, scale_factor=1.3))
-        self.play(Write(res2_3), Write(res2_5))
-        self.play(d8_bot.animate.set_color(WHITE), d6_top.animate.set_color(WHITE), FadeOut(carry5))
+        self.play(n8.animate.set_color(ORANGE), n7.animate.set_color(ORANGE))
+        self.wait(0.3)
+        self.play(Write(p2_6))
+        self.play(Write(c5)) # Elde 5
         self.wait(0.5)
         
-        # Adım 3: Toplama İşlemi
-        plus_sign = MathTex("+", font_size=80).move_to(RIGHT * x4 + UP * y_r4)
-        line2 = Line(RIGHT * (x4 - 0.5) + UP * y_l2, RIGHT * (x0 + 0.5) + UP * y_l2, stroke_width=4)
+        self.play(n7.animate.set_color(WHITE), n6.animate.set_color(ORANGE))
+        self.wait(0.3)
+        self.play(Write(p2_3), Write(p2_5))
+        self.play(c5.animate.set_opacity(0.3)) # Elde kullanıldı
+        self.wait(0.5)
         
+        self.play(n8.animate.set_color(WHITE), n6.animate.set_color(WHITE))
+        
+        # Adım 3: Toplama
         self.play(Write(plus_sign), Create(line2))
         self.wait(0.5)
         
-        fin_3 = MathTex("3", font_size=80).move_to(RIGHT * x0 + UP * y_r5)
-        fin_6 = MathTex("6", font_size=80).move_to(RIGHT * x1 + UP * y_r5)
-        fin_9 = MathTex("9", font_size=80).move_to(RIGHT * x2 + UP * y_r5)
-        fin_5 = MathTex("5", font_size=80).move_to(RIGHT * x3 + UP * y_r5)
-        
-        self.play(Write(fin_3))
-        self.play(Write(fin_6))
-        self.play(Write(fin_9))
-        self.play(Write(fin_5))
-        self.wait(0.5)
-        
-        # Sonucu Vurgulama
-        final_box = SurroundingRectangle(VGroup(fin_5, fin_9, fin_6, fin_3), color=YELLOW, buff=0.2)
-        self.play(Create(final_box))
+        self.play(Write(r_3))
+        self.play(Write(r_6))
+        self.play(Write(r_9))
+        self.play(Write(r_5))
         self.wait(1)
-        
-        # Alt Açıklama Metni (DOWN * 3.5)
-        desc = Text("Çarpma işleminde eldeleri unutma!\nİkinci satıra geçerken bir basamak\nsola kaydırmayı hatırla.", font_size=36, text_alignment=CENTER)
+
+        # 3. AÇIKLAMA (Alt - Hassas Yerleşim)
+        desc = Paragraph(
+            "1. Adım: Birler basamağı ile üstteki sayıyı çarp.",
+            "2. Adım: Onlar basamağı ile çarp, sola kaydırarak yaz.",
+            "3. Adım: Elde edilen sonuçları topla.",
+            alignment="center",
+            weight=BOLD
+        )
         desc.move_to(DOWN * 3.5)
+        desc.scale_to_fit_width(7.5)
         self.play(Write(desc))
         self.wait(2)
