@@ -3,110 +3,100 @@ from manim import *
 config.pixel_height, config.pixel_width = 1920, 1080
 config.frame_height, config.frame_width = 16.0, 9.0
 
-class MultiplicationShort(Scene):
+class MaarifScene(Scene):
     def construct(self):
-        # 3. DİKEY EKOSİSTEM: Arka plan siyah
         self.camera.background_color = "#000000"
+        
+        # Başlık
+        header = VGroup(
+            Text("İKİ BASAMAKLI SAYILARLA", weight=BOLD, color="#FFFFFF"),
+            Text("ÇARPMA İŞLEMİ", weight=BOLD, color="#FFFFFF")
+        ).arrange(DOWN, buff=0.2).scale_to_fit_width(7.5).to_edge(UP, buff=1.2)
 
-        # 1. AKILLI BAŞLIK YASASI
-        title = Paragraph(
-            "İki Basamaklı Sayılarla",
-            "Çarpma İşlemi",
-            alignment="center"
-        ).scale_to_fit_width(7.5).to_edge(UP, buff=1.1)
-        self.play(Write(title))
-
-        # Izgara Ayarları
-        step_x = 1.0
-        step_y = 1.2
+        # Çarpanlar ve İşaretler
+        n67 = MathTex("6", "7", color="#FFFFFF").scale(1.5)
+        n89 = MathTex("8", "9", color="#FFFFFF").scale(1.5)
+        sign = MathTex("\\times", color="#FFFFFF").scale(1.2)
         
-        # Satır 1: 67
-        num1_7 = MathTex("7").scale(1.8).move_to(RIGHT * step_x * 0.5 + UP * step_y * 2)
-        num1_6 = MathTex("6").scale(1.8).move_to(LEFT * step_x * 0.5 + UP * step_y * 2)
+        n67.move_to(UP * 1.5 + RIGHT * 0.5)
+        n89.next_to(n67, DOWN, aligned_edge=RIGHT, buff=0.5)
+        sign.next_to(n89, LEFT, buff=0.8)
         
-        # Satır 2: x 89
-        num2_9 = MathTex("9").scale(1.8).move_to(RIGHT * step_x * 0.5 + UP * step_y * 1)
-        num2_8 = MathTex("8").scale(1.8).move_to(LEFT * step_x * 0.5 + UP * step_y * 1)
-        sym_mul = MathTex("\\times").scale(1.8).move_to(LEFT * step_x * 1.5 + UP * step_y * 1)
-        
-        line1 = Line(LEFT * step_x * 2.2, RIGHT * step_x * 1.2).move_to(UP * step_y * 0.4)
-        
-        # Satır 3: 603
-        res1_3 = MathTex("3").scale(1.8).move_to(RIGHT * step_x * 0.5 + UP * step_y * 0)
-        res1_0 = MathTex("0").scale(1.8).move_to(LEFT * step_x * 0.5 + UP * step_y * 0)
-        res1_6 = MathTex("6").scale(1.8).move_to(LEFT * step_x * 1.5 + UP * step_y * 0)
-        
-        # Satır 4: + 536
-        res2_6 = MathTex("6").scale(1.8).move_to(LEFT * step_x * 0.5 + UP * step_y * -1)
-        res2_3 = MathTex("3").scale(1.8).move_to(LEFT * step_x * 1.5 + UP * step_y * -1)
-        res2_5 = MathTex("5").scale(1.8).move_to(LEFT * step_x * 2.5 + UP * step_y * -1)
-        sym_add = MathTex("+").scale(1.8).move_to(LEFT * step_x * 3.5 + UP * step_y * -1)
-        
-        line2 = Line(LEFT * step_x * 4.2, RIGHT * step_x * 1.2).move_to(UP * step_y * -1.6)
-        
-        # Satır 5: 5963
-        fin_3 = MathTex("3").scale(1.8).move_to(RIGHT * step_x * 0.5 + UP * step_y * -2)
-        fin_6 = MathTex("6").scale(1.8).move_to(LEFT * step_x * 0.5 + UP * step_y * -2)
-        fin_9 = MathTex("9").scale(1.8).move_to(LEFT * step_x * 1.5 + UP * step_y * -2)
-        fin_5 = MathTex("5").scale(1.8).move_to(LEFT * step_x * 2.5 + UP * step_y * -2)
+        line1 = Line(sign.get_left(), n89.get_right(), color="#FFFFFF").scale(1.1)
+        line1.next_to(n89, DOWN, buff=0.2)
         
         # Eldeler
-        carry1 = MathTex("+6").scale(0.9).set_color(YELLOW).next_to(num1_6, UP, buff=0.2).shift(RIGHT * 0.2)
-        carry2 = MathTex("+5").scale(0.9).set_color(ORANGE).next_to(num1_6, UP, buff=0.8).shift(RIGHT * 0.2)
-        
-        # 3. DİKEY EKOSİSTEM: İşlem Grubunu Sabitleme
-        math_group = VGroup(
-            num1_7, num1_6, num2_9, num2_8, sym_mul, line1,
-            res1_3, res1_0, res1_6,
-            res2_6, res2_3, res2_5, sym_add, line2,
-            fin_3, fin_6, fin_9, fin_5,
-            carry1, carry2
-        )
-        math_group.move_to(UP * 1.5)
-        
-        # Animasyonlar Başlıyor
-        self.play(
-            Write(num1_6), Write(num1_7),
-            Write(num2_8), Write(num2_9),
-            Write(sym_mul), Create(line1)
-        )
-        self.wait(0.5)
+        carry_6 = MathTex("+6", color="#FFFF00").scale(0.8).next_to(n67[0], UP, buff=0.3)
+        carry_5 = MathTex("+5", color="#00FFFF").scale(0.8).next_to(n67[0], UP, buff=0.3)
 
-        # Adım 1: 9 x 67
-        self.play(num2_9.animate.set_color(YELLOW), num1_7.animate.set_color(YELLOW))
-        self.play(Write(res1_3))
-        self.play(Write(carry1))
-        self.play(num1_7.animate.set_color(WHITE))
-        
-        self.play(num1_6.animate.set_color(YELLOW))
-        self.play(Write(res1_0), Write(res1_6))
-        self.play(carry1.animate.set_opacity(0.3), num2_9.animate.set_color(WHITE), num1_6.animate.set_color(WHITE))
-        self.wait(0.5)
+        # 1. Çarpım Sonucu (603)
+        res1 = MathTex("6", "0", "3", color="#FFFFFF").scale(1.5)
+        res1.next_to(line1, DOWN, buff=0.3)
+        res1.align_to(n89, RIGHT)
 
-        # Adım 2: 8 x 67
-        self.play(num2_8.animate.set_color(ORANGE), num1_7.animate.set_color(ORANGE))
-        self.play(Write(res2_6))
-        self.play(Write(carry2))
-        self.play(num1_7.animate.set_color(WHITE))
+        # 2. Çarpım Sonucu (536) - Sola kaydırılmış
+        res2 = MathTex("5", "3", "6", color="#FFFFFF").scale(1.5)
+        res2.next_to(res1, DOWN, buff=0.3)
+        res2.align_to(res1[1], RIGHT)
         
-        self.play(num1_6.animate.set_color(ORANGE))
-        self.play(Write(res2_3), Write(res2_5))
-        self.play(carry2.animate.set_opacity(0.3), num2_8.animate.set_color(WHITE), num1_6.animate.set_color(WHITE))
-        self.wait(0.5)
+        # Toplama İşareti ve Çizgisi
+        plus_sign = MathTex("+", color="#FFFFFF").scale(1.2)
+        plus_sign.next_to(res2, LEFT, buff=0.5)
 
-        # Adım 3: Toplama İşlemi
-        self.play(Write(sym_add), Create(line2))
-        self.play(Write(fin_3))
-        self.play(Write(fin_6))
-        self.play(Write(fin_9))
-        self.play(Write(fin_5))
-        
+        line2 = Line(plus_sign.get_left(), res1.get_right(), color="#FFFFFF").scale(1.1)
+        line2.next_to(res2, DOWN, buff=0.2)
+
+        # Final Sonucu (5963)
+        final_res = MathTex("5", "9", "6", "3", color="#FFFF00").scale(1.7)
+        final_res.next_to(line2, DOWN, buff=0.3)
+        final_res.align_to(res1, RIGHT)
+
+        # Açıklama Metni
+        desc = VGroup(
+            Text("Eldeleri eklemeyi ve ikinci satırı", color="#FFFFFF"),
+            Text("sola kaydırmayı unutma!", color="#FFFFFF")
+        ).arrange(DOWN, buff=0.2).scale_to_fit_width(7.5).move_to(DOWN * 4.5)
+
+        # ANİMASYON AKIŞI
+        self.play(Write(header))
         self.wait(0.5)
+        self.play(Write(n67), Write(n89), Write(sign))
+        self.play(Create(line1))
+        self.wait(1)
+
+        # Adım 1: 9 * 7 = 63
+        self.play(n89[1].animate.set_color("#FFFF00"), n67[1].animate.set_color("#FFFF00"))
+        self.play(Write(res1[2]))
+        self.play(Write(carry_6))
+        self.wait(0.5)
+        self.play(n67[1].animate.set_color("#FFFFFF"))
+
+        # Adım 2: 9 * 6 = 54 + 6 = 60
+        self.play(n67[0].animate.set_color("#FFFF00"))
+        self.play(Write(res1[0:2]))
+        self.play(FadeOut(carry_6))
+        self.wait(0.5)
+        self.play(n67[0].animate.set_color("#FFFFFF"), n89[1].animate.set_color("#FFFFFF"))
+
+        # Adım 3: 8 * 7 = 56
+        self.play(n89[0].animate.set_color("#00FFFF"), n67[1].animate.set_color("#00FFFF"))
+        self.play(Write(res2[2]))
+        self.play(Write(carry_5))
+        self.wait(0.5)
+        self.play(n67[1].animate.set_color("#FFFFFF"))
+
+        # Adım 4: 8 * 6 = 48 + 5 = 53
+        self.play(n67[0].animate.set_color("#00FFFF"))
+        self.play(Write(res2[0:2]))
+        self.play(FadeOut(carry_5))
+        self.wait(0.5)
+        self.play(n67[0].animate.set_color("#FFFFFF"), n89[0].animate.set_color("#FFFFFF"))
+
+        # Adım 5: Toplama İşlemi
+        self.play(Write(plus_sign), Create(line2))
+        self.wait(0.5)
+        self.play(Write(final_res))
+        self.wait(0.5)
+        self.play(Write(desc))
         
-        # Sonucu Vurgulama
-        final_result = VGroup(fin_5, fin_9, fin_6, fin_3)
-        box = SurroundingRectangle(final_result, color=GREEN, buff=0.2)
-        self.play(Create(box))
-        self.play(final_result.animate.set_color(GREEN))
-        
-        self.wait(2)
+        self.wait(3)
