@@ -3,116 +3,130 @@ import numpy as np
 
 class MultiplicationShorts(Scene):
     def construct(self):
-        # 1. ARKA PLAN (SİYAH TEMA ZORUNLULUĞU)
-        self.camera.background_color = BLACK
-
-        # 2. BAŞLIK (MİLİMETRİK YERLEŞİM)
-        header = Text("İKİ BASAMAKLI ÇARPMA İŞLEMİ", weight=BOLD, color=WHITE)
+        # ARKA PLAN KİLİDİ
+        self.camera.background_color = "#000000"
+        
+        # BAŞLIK
+        header = Text("İKİ BASAMAKLI ÇARPMA", color="#FFFF00", weight=BOLD)
         header.to_edge(UP, buff=1.1).scale_to_fit_width(8.5)
         self.play(Write(header))
-
-        # 3. İÇERİK (İŞLEM GRUBU VE MATEMATİKSEL NESNELER)
-        # Sayılar ve işaretler
-        n67_6 = MathTex("6", color=WHITE)
-        n67_7 = MathTex("7", color=WHITE)
-        n89_8 = MathTex("8", color=WHITE)
-        n89_9 = MathTex("9", color=WHITE)
-        times = MathTex("\\times", color=WHITE)
-        line1 = Line(LEFT, RIGHT, color=WHITE).set_length(2.5)
-
-        # İlk Çarpan (67) ve İkinci Çarpan (89) Pozisyonları
-        n67_7.move_to(ORIGIN)
-        n67_6.next_to(n67_7, LEFT, buff=0.5)
-        n89_9.next_to(n67_7, DOWN, buff=0.5)
-        n89_8.next_to(n67_6, DOWN, buff=0.5)
-        times.next_to(n89_8, LEFT, buff=0.5)
-        line1.next_to(n89_9, DOWN, buff=0.3).align_to(n67_7, RIGHT).shift(RIGHT * 0.2)
-
-        # Eldeler (Vurgu Renkleri)
-        carry_1 = MathTex("+6", color=YELLOW).scale(0.6).next_to(n67_6, UP, buff=0.3)
-        carry_2 = MathTex("+5", color=CYAN).scale(0.6).next_to(n67_6, UP, buff=0.3)
-
-        # 1. Adım Sonucu (603)
-        r3_3 = MathTex("3", color=WHITE).next_to(line1, DOWN, buff=0.3).align_to(n67_7, RIGHT)
-        r3_0 = MathTex("0", color=WHITE).next_to(r3_3, LEFT, buff=0.5)
-        r3_6 = MathTex("6", color=WHITE).next_to(r3_0, LEFT, buff=0.5)
-
-        # 2. Adım Sonucu (536 - Sola Kaydırılmış)
-        r4_6 = MathTex("6", color=WHITE).next_to(r3_0, DOWN, buff=0.5)
-        r4_3 = MathTex("3", color=WHITE).next_to(r4_6, LEFT, buff=0.5)
-        r4_5 = MathTex("5", color=WHITE).next_to(r4_3, LEFT, buff=0.5)
-
-        # Toplama İşlemi ve Çizgisi
-        plus = MathTex("+", color=WHITE).next_to(r4_5, LEFT, buff=0.5)
-        line2 = Line(LEFT, RIGHT, color=WHITE).set_length(3.5).next_to(r4_6, DOWN, buff=0.3).align_to(r3_3, RIGHT).shift(RIGHT * 0.2)
-
-        # Final Sonucu (5963 - Vurgulu Renk)
-        r5_3 = MathTex("3", color=YELLOW).next_to(line2, DOWN, buff=0.3).align_to(r3_3, RIGHT)
-        r5_6 = MathTex("6", color=YELLOW).next_to(r5_3, LEFT, buff=0.5)
-        r5_9 = MathTex("9", color=YELLOW).next_to(r5_6, LEFT, buff=0.5)
-        r5_5 = MathTex("5", color=YELLOW).next_to(r5_9, LEFT, buff=0.5)
-
-        # Tüm matematiksel nesneleri VGroup içine alıp boyutlandır/konumlandır
-        math_group = VGroup(
-            n67_6, n67_7, n89_8, n89_9, times, line1,
-            carry_1, carry_2,
-            r3_3, r3_0, r3_6,
-            r4_6, r4_3, r4_5,
-            plus, line2,
-            r5_3, r5_6, r5_9, r5_5
-        )
-        math_group.scale(1.5).move_to(UP * 1.2)
-
-        # 4. AÇIKLAMA (ALT KISIM - PARAGRAPH KULLANIMI)
-        desc_text = Paragraph(
-            "1) 9 ile 67'yi çarp. (Eldelere dikkat!)",
-            "2) 8 ile 67'yi çarp, bir basamak sola kaydır.",
-            "3) Çıkan sonuçları topla.",
-            color=WHITE
-        ).move_to(DOWN * 3.5).scale_to_fit_width(7.5)
-
-        # 5. ANİMASYONLAR (AKICI VE KESİNTİSİZ)
-        # Başlangıç kurulumu
-        self.play(
-            Write(n67_6), Write(n67_7), 
-            Write(n89_8), Write(n89_9), 
-            Write(times), Create(line1)
-        )
-        self.play(Write(desc_text))
         self.wait(0.5)
-
-        # Adım 1: 9 x 7 = 63
-        self.play(Indicate(n89_9, color=YELLOW), Indicate(n67_7, color=YELLOW))
-        self.play(Write(r3_3), Write(carry_1))
-        self.wait(0.5)
-
-        # Adım 1: 9 x 6 = 54, +6 = 60
-        self.play(Indicate(n89_9, color=YELLOW), Indicate(n67_6, color=YELLOW))
-        self.play(Indicate(carry_1, color=WHITE))
-        self.play(Write(r3_0), Write(r3_6))
-        self.play(FadeOut(carry_1))
-        self.wait(0.5)
-
-        # Adım 2: 8 x 7 = 56
-        self.play(Indicate(n89_8, color=CYAN), Indicate(n67_7, color=CYAN))
-        self.play(Write(r4_6), Write(carry_2))
-        self.wait(0.5)
-
-        # Adım 2: 8 x 6 = 48, +5 = 53
-        self.play(Indicate(n89_8, color=CYAN), Indicate(n67_6, color=CYAN))
-        self.play(Indicate(carry_2, color=WHITE))
-        self.play(Write(r4_3), Write(r4_5))
-        self.play(FadeOut(carry_2))
-        self.wait(0.5)
-
-        # Adım 3: Toplama
-        self.play(Write(plus), Create(line2))
-        self.wait(0.5)
-
-        self.play(Write(r5_3))
-        self.play(Write(r5_6))
-        self.play(Write(r5_9))
-        self.play(Write(r5_5))
         
-        # FİNAL BEKLEME (ZORUNLU)
+        # MATEMATİKSEL İZLEK (GRID) KURULUMU
+        dx = 0.7
+        dy = 0.9
+        
+        def get_digit(char, col, row, color="#FFFFFF"):
+            d = Text(char, color=color, weight=BOLD).scale(1.3)
+            d.move_to(RIGHT * col * dx + DOWN * row * dy)
+            return d
+            
+        # Üst Sayı (67)
+        t_6 = get_digit("6", 1, 0)
+        t_7 = get_digit("7", 2, 0)
+        
+        # Alt Sayı (89)
+        b_8 = get_digit("8", 1, 1)
+        b_9 = get_digit("9", 2, 1)
+        sym_mul = get_digit("\u00d7", 0, 1)
+        
+        # Çizgi 1
+        line1 = Line(LEFT * 0.5, RIGHT * 2.5 * dx, color="#FFFFFF")
+        line1.move_to(DOWN * 1.5 * dy + RIGHT * dx)
+        
+        # Sonuç 1 (603)
+        r1_6 = get_digit("6", 0, 2)
+        r1_0 = get_digit("0", 1, 2)
+        r1_3 = get_digit("3", 2, 2)
+        
+        # Sonuç 2 (536)
+        r2_5 = get_digit("5", -1, 3)
+        r2_3 = get_digit("3", 0, 3)
+        r2_6 = get_digit("6", 1, 3)
+        sym_add = get_digit("+", -2, 3)
+        
+        # Çizgi 2
+        line2 = Line(LEFT * 1.5, RIGHT * 2.5 * dx, color="#FFFFFF")
+        line2.move_to(DOWN * 3.5 * dy + RIGHT * dx * 0.5)
+        
+        # Final (5963)
+        f_5 = get_digit("5", -1, 4)
+        f_9 = get_digit("9", 0, 4)
+        f_6 = get_digit("6", 1, 4)
+        f_3 = get_digit("3", 2, 4)
+        
+        # Eldeler
+        c9_6 = Text("+6", color="#FFFF00", weight=BOLD).scale(0.6)
+        c9_6.move_to(t_6.get_center() + UP * 0.6 + RIGHT * 0.3)
+        
+        c8_5 = Text("+5", color="#00FFFF", weight=BOLD).scale(0.6)
+        c8_5.move_to(t_6.get_center() + UP * 1.0 + LEFT * 0.3)
+        
+        # GRUPLAMA VE MERKEZİ HİZALAMA
+        math_group = VGroup(
+            t_6, t_7, b_8, b_9, sym_mul, line1,
+            r1_6, r1_0, r1_3,
+            r2_5, r2_3, r2_6, sym_add, line2,
+            f_5, f_9, f_6, f_3,
+            c9_6, c8_5
+        )
+        math_group.move_to(UP * 1.2)
+        
+        # ANİMASYON SÜRECİ
+        self.play(Write(VGroup(t_6, t_7)))
+        self.wait(0.5)
+        self.play(Write(VGroup(sym_mul, b_8, b_9)))
+        self.wait(0.5)
+        self.play(Create(line1))
+        self.wait(0.5)
+        
+        # Adım 1: 9 x 67
+        self.play(b_9.animate.set_color("#FFFF00"), t_7.animate.set_color("#FFFF00"))
+        self.wait(0.5)
+        self.play(Write(r1_3), Write(c9_6))
+        self.wait(0.5)
+        
+        self.play(t_7.animate.set_color("#FFFFFF"), t_6.animate.set_color("#FFFF00"))
+        self.wait(0.5)
+        self.play(Indicate(c9_6, color="#FFFF00"))
+        self.play(Write(r1_0), Write(r1_6))
+        self.wait(0.5)
+        
+        self.play(b_9.animate.set_color("#FFFFFF"), t_6.animate.set_color("#FFFFFF"))
+        self.wait(0.5)
+        
+        # Adım 2: 8 x 67
+        self.play(b_8.animate.set_color("#00FFFF"), t_7.animate.set_color("#00FFFF"))
+        self.wait(0.5)
+        self.play(Write(r2_6), Write(c8_5))
+        self.wait(0.5)
+        
+        self.play(t_7.animate.set_color("#FFFFFF"), t_6.animate.set_color("#00FFFF"))
+        self.wait(0.5)
+        self.play(Indicate(c8_5, color="#00FFFF"))
+        self.play(Write(r2_3), Write(r2_5))
+        self.wait(0.5)
+        
+        self.play(b_8.animate.set_color("#FFFFFF"), t_6.animate.set_color("#FFFFFF"))
+        self.wait(0.5)
+        
+        # Adım 3: Toplama
+        self.play(Write(sym_add), Create(line2))
+        self.wait(0.5)
+        
+        self.play(Write(f_3))
+        self.wait(0.5)
+        self.play(Write(f_6))
+        self.wait(0.5)
+        self.play(Write(f_9))
+        self.wait(0.5)
+        self.play(Write(f_5))
+        self.wait(0.5)
+        
+        # AÇIKLAMA METNİ
+        desc = Paragraph("Adım Adım Çarpma", "Eldelere Dikkat!", alignment="center", color="#FFFFFF", weight=BOLD)
+        desc.move_to(DOWN * 3.5)
+        self.play(Write(desc))
+        
+        # VİDEO SONU BEKLEMESİ
         self.wait(3)
