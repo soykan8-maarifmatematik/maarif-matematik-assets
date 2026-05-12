@@ -4,135 +4,137 @@ import numpy as np
 config.pixel_height, config.pixel_width = 1920, 1080
 config.frame_height, config.frame_width = 16.0, 9.0
 
-class MaarifScene(Scene):
+class CarpmaIslemiScene(Scene):
     def construct(self):
         self.camera.background_color = '#000000'
         
-        # Başlık Standartı (V44 Mühürlü)
+        # 1. GÖRSEL HİYERARŞİ VE MİLMETRİK YERLEŞİM
         header = Paragraph(
-            'ÇARPMA İŞLEMİ\nİKİ BASAMAKLI SAYILAR',
+            'ÇARPMA İŞLEMİ',
             alignment='center',
-            line_spacing=0.8,
             color='#FFFFFF',
             weight=BOLD
         ).scale_to_fit_width(7.0).to_edge(UP, buff=1.1)
 
-        # Ana Sayılar (Her rakam ayrı nesne - Zincirleme Yasak)
-        num1_3 = MathTex('3', color='#FFFFFF').scale(1.7)
+        # Dikey İşlem Kuralı: Sola Çekik (LEFT * 0.5)
         num1_4 = MathTex('4', color='#FFFFFF').scale(1.7)
-        
+        num1_5 = MathTex('5', color='#FFFFFF').scale(1.7)
+        num1_group = VGroup(num1_4, num1_5).arrange(RIGHT, buff=0.1).move_to(LEFT * 0.5 + UP * 2.0)
+
         num2_2 = MathTex('2', color='#FFFFFF').scale(1.7)
-        num2_5 = MathTex('5', color='#FFFFFF').scale(1.7)
+        num2_3 = MathTex('3', color='#FFFFFF').scale(1.7)
+        num2_group = VGroup(num2_2, num2_3).arrange(RIGHT, buff=0.1).next_to(num1_group, DOWN, buff=0.5).align_to(num1_group, RIGHT)
 
-        # Dikey İşlem Kuralı ve Milmetrik Hizalama
-        num1_4.move_to(LEFT * 0.5 + UP * 2.0)
-        num1_3.next_to(num1_4, LEFT, buff=0.5)
+        times = MathTex('\\times', color='#FFFFFF').scale(1.7).next_to(num2_group, LEFT, buff=0.5)
+        line1 = Line(times.get_left(), num2_group.get_right(), color='#FFFFFF').next_to(num2_group, DOWN, buff=0.2)
 
-        num2_5.next_to(num1_4, DOWN, buff=0.5)
-        num2_2.next_to(num2_5, LEFT, buff=0.5)
-        num2_2.align_to(num1_3, RIGHT)
+        # 1. Satır (135) - Milmetrik Hizalama
+        r1_5 = MathTex('5', color='#FFFFFF').scale(1.7).next_to(line1, DOWN, buff=0.5).align_to(num2_3, RIGHT)
+        r1_3 = MathTex('3', color='#FFFFFF').scale(1.7).next_to(r1_5, LEFT, buff=0.2)
+        r1_1 = MathTex('1', color='#FFFFFF').scale(1.7).next_to(r1_3, LEFT, buff=0.2)
 
-        times_sign = MathTex('\\times', color='#FFFFFF').scale(1.7).next_to(num2_2, LEFT, buff=0.5)
-        line1 = Line(times_sign.get_left(), num1_4.get_right() + RIGHT*0.2, color='#FFFFFF').next_to(num2_5, DOWN, buff=0.3)
+        # Eldeler (Ölçek: 0.8)
+        carry1 = MathTex('1', color='#FFFF00').scale(0.8).next_to(num1_4, UP, buff=0.3)
+        carry2 = MathTex('1', color='#00FFFF').scale(0.8).next_to(carry1, UP, buff=0.1)
 
-        # 1. Satır (170)
-        r1_0 = MathTex('0', color='#FFFFFF').scale(1.7).next_to(line1, DOWN, buff=0.5).align_to(num2_5, RIGHT)
-        r1_7 = MathTex('7', color='#FFFFFF').scale(1.7).next_to(r1_0, LEFT, buff=0.5).align_to(num2_2, RIGHT)
-        r1_1 = MathTex('1', color='#FFFFFF').scale(1.7).next_to(r1_7, LEFT, buff=0.5)
+        # 2. Satır (90) - Milmetrik Hizalama (Onlar basamağının altı)
+        r2_0 = MathTex('0', color='#FFFFFF').scale(1.7).next_to(r1_5, DOWN, buff=0.5).align_to(num2_2, RIGHT)
+        r2_9 = MathTex('9', color='#FFFFFF').scale(1.7).next_to(r2_0, LEFT, buff=0.2)
 
-        elde_2 = MathTex('2', color='#FFFF00').scale(0.8).next_to(num1_3, UP, buff=0.3)
+        # Toplama Çizgisi ve İşareti (+ işareti kuralı)
+        line2 = Line(r2_9.get_left() + LEFT * 0.5, r1_5.get_right(), color='#FFFFFF').next_to(r2_0, DOWN, buff=0.2)
+        plus = MathTex('+', color='#FFFFFF').scale(1.7).next_to(line2, LEFT, buff=0.2).shift(UP * 0.4)
 
-        # 2. Satır (68)
-        r2_8 = MathTex('8', color='#FFFFFF').scale(1.7).next_to(r1_7, DOWN, buff=0.5).align_to(r1_7, RIGHT)
-        r2_6 = MathTex('6', color='#FFFFFF').scale(1.7).next_to(r2_8, LEFT, buff=0.5).align_to(r1_1, RIGHT)
+        # Final Sonuç (1035) - Ölçek: 1.8
+        res_5 = MathTex('5', color='#FFFF00').scale(1.8).next_to(line2, DOWN, buff=0.5).align_to(r1_5, RIGHT)
+        res_3 = MathTex('3', color='#FFFF00').scale(1.8).next_to(res_5, LEFT, buff=0.2)
+        res_0 = MathTex('0', color='#FFFF00').scale(1.8).next_to(res_3, LEFT, buff=0.2)
+        res_1 = MathTex('1', color='#FFFF00').scale(1.8).next_to(res_0, LEFT, buff=0.2)
 
-        # Toplama Çizgisi ve İşareti
-        line2 = Line(r1_1.get_left() + LEFT*0.5, r1_0.get_right() + RIGHT*0.2, color='#FFFFFF').next_to(r2_8, DOWN, buff=0.3)
-        plus_sign = MathTex('+', color='#FFFFFF').scale(1.7).move_to(line2.get_left() + UP * 0.4 + RIGHT * 0.2)
-
-        # Sonuç (850)
-        res_0 = MathTex('0', color='#FFFF00').scale(1.8).next_to(line2, DOWN, buff=0.5).align_to(r1_0, RIGHT)
-        res_5 = MathTex('5', color='#FFFF00').scale(1.8).next_to(res_0, LEFT, buff=0.5).align_to(r2_8, RIGHT)
-        res_8 = MathTex('8', color='#FFFF00').scale(1.8).next_to(res_5, LEFT, buff=0.5).align_to(r2_6, RIGHT)
-
-        elde_1 = MathTex('1', color='#00FFFF').scale(0.8).next_to(r1_1, LEFT, buff=0.3).shift(UP*0.2)
-
-        # --- ANİMASYON AKIŞI ---
+        # --- 2. KESİN SENKRON VE BLOK-KİLİT SİSTEMİ ---
+        
         self.play(Write(header))
-        self.wait(3.0)
-
-        self.play(Write(num1_3))
         self.wait(1.0)
+
+        # Zincirleme Yasak: Her rakam tek başına
         self.play(Write(num1_4))
+        self.wait(1.0)
+        self.play(Write(num1_5))
         self.wait(1.0)
 
         self.play(Write(num2_2))
         self.wait(1.0)
-        self.play(Write(num2_5))
+        self.play(Write(num2_3))
         self.wait(1.0)
 
-        self.play(Write(times_sign))
+        self.play(Write(times))
         self.wait(1.0)
         self.play(Write(line1))
-        self.wait(4.0)
+        self.wait(4.0) # Blok Sonu Bekleme
 
-        # 5x4 = 20 İşlemi
-        self.play(num2_5.animate.set_color('#FFFF00'), num1_4.animate.set_color('#FFFF00'))
+        # 3 x 5 İşlemi
+        self.play(num2_3.animate.set_color('#FFFF00'))
         self.wait(1.0)
-        self.play(Write(r1_0))
+        self.play(num1_5.animate.set_color('#FFFF00'))
         self.wait(1.0)
-        self.play(Write(elde_2))
+        self.play(Write(r1_5))
         self.wait(1.0)
-        self.play(num2_5.animate.set_color('#FFFFFF'), num1_4.animate.set_color('#FFFFFF'))
+        self.play(Write(carry1))
+        self.wait(1.0)
+        self.play(num1_5.animate.set_color('#FFFFFF'))
         self.wait(1.0)
 
-        # 5x3 = 15 + 2 = 17 İşlemi
-        self.play(num2_5.animate.set_color('#FFFF00'), num1_3.animate.set_color('#FFFF00'))
+        # 3 x 4 İşlemi
+        self.play(num1_4.animate.set_color('#FFFF00'))
         self.wait(1.0)
-        self.play(elde_2.animate.set_color('#FFFFFF'))
-        self.wait(1.0)
-        self.play(Write(r1_7))
+        self.play(Write(r1_3))
         self.wait(1.0)
         self.play(Write(r1_1))
-        self.wait(4.0)
-        self.play(num2_5.animate.set_color('#FFFFFF'), num1_3.animate.set_color('#FFFFFF'))
         self.wait(1.0)
+        self.play(num1_4.animate.set_color('#FFFFFF'))
+        self.wait(1.0)
+        self.play(num2_3.animate.set_color('#FFFFFF'))
+        self.wait(4.0) # Blok Sonu Bekleme
 
-        # Geçiş Sinyali Beklemesi
+        # Geçiş Sinyali
         self.wait(3.0)
 
-        # 2x4 = 8 İşlemi
-        self.play(num2_2.animate.set_color('#00FFFF'), num1_4.animate.set_color('#00FFFF'))
+        # 2 x 5 İşlemi
+        self.play(num2_2.animate.set_color('#00FFFF'))
         self.wait(1.0)
-        self.play(Write(r2_8))
+        self.play(num1_5.animate.set_color('#00FFFF'))
         self.wait(1.0)
-        self.play(num2_2.animate.set_color('#FFFFFF'), num1_4.animate.set_color('#FFFFFF'))
+        self.play(Write(r2_0))
         self.wait(1.0)
-
-        # 2x3 = 6 İşlemi
-        self.play(num2_2.animate.set_color('#00FFFF'), num1_3.animate.set_color('#00FFFF'))
+        self.play(Write(carry2))
         self.wait(1.0)
-        self.play(Write(r2_6))
-        self.wait(4.0)
-        self.play(num2_2.animate.set_color('#FFFFFF'), num1_3.animate.set_color('#FFFFFF'))
+        self.play(num1_5.animate.set_color('#FFFFFF'))
         self.wait(1.0)
 
-        # Toplama Aşaması
+        # 2 x 4 İşlemi
+        self.play(num1_4.animate.set_color('#00FFFF'))
+        self.wait(1.0)
+        self.play(Write(r2_9))
+        self.wait(1.0)
+        self.play(num1_4.animate.set_color('#FFFFFF'))
+        self.wait(1.0)
+        self.play(num2_2.animate.set_color('#FFFFFF'))
+        self.wait(4.0) # Blok Sonu Bekleme
+
+        # Toplama İşlemi
+        self.play(Write(plus))
+        self.wait(1.0)
         self.play(Write(line2))
-        self.wait(1.0)
-        self.play(Write(plus_sign))
-        self.wait(4.0)
-
-        self.play(Write(res_0))
         self.wait(1.0)
 
         self.play(Write(res_5))
         self.wait(1.0)
-        self.play(Write(elde_1))
+        self.play(Write(res_3))
         self.wait(1.0)
+        self.play(Write(res_0))
+        self.wait(1.0)
+        self.play(Write(res_1))
+        self.wait(4.0) # Blok Sonu Bekleme
 
-        self.play(Write(res_8))
-        self.wait(4.0)
-
-        # Kapanış Beklemesi (Shorts Fix)
+        # Instagram/Shorts Fix
         self.wait(8.0)
