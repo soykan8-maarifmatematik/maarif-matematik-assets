@@ -1,95 +1,124 @@
 from manim import *
 
-config.pixel_height, config.pixel_width = 1920, 1080
-config.frame_height, config.frame_width = 16.0, 9.0
-
-class EldeliToplamaMaarif(Scene):
+class CarpmaIslemi(Scene):
     def construct(self):
         self.camera.background_color = '#000000'
-        
-        # 1. GÖRSEL HİYERARŞİ VE BAŞLIK STANDARTI
-        header = Paragraph(
-            'ELDELİ TOPLAMA İŞLEMİ',
-            alignment='center',
-            color='#FFFFFF',
-            weight=BOLD
-        ).scale_to_fit_width(7.0).to_edge(UP, buff=1.1)
-        
-        # 2. DİKEY İŞLEM KURALI VE MİLMETRİK YERLEŞİM (LEFT * 0.5)
-        # Ana Sayılar Ölçeği: 1.7
-        n1_2 = MathTex('8', color='#FFFFFF').scale(1.7).move_to(LEFT * 0.5 + UP * 1.5)
-        n1_1 = MathTex('6', color='#FFFFFF').scale(1.7).next_to(n1_2, LEFT, buff=0.5)
-        
-        n2_2 = MathTex('5', color='#FFFFFF').scale(1.7).next_to(n1_2, DOWN, buff=0.5)
-        n2_1 = MathTex('2', color='#FFFFFF').scale(1.7).next_to(n1_1, DOWN, buff=0.5)
-        
-        # Toplama Çizgisi
-        cizgi = Line(n2_1.get_left() + LEFT * 0.5, n2_2.get_right() + RIGHT * 0.5, color='#FFFFFF').next_to(n2_2, DOWN, buff=0.3)
-        
-        # Toplama İşareti (shift(UP * 0.4) kuralı)
-        arti = MathTex('+', color='#FFFFFF').scale(1.7).next_to(cizgi, LEFT, buff=0.3).shift(UP * 0.4)
-        
-        # Elde Ölçeği: 0.8
-        elde = MathTex('1', color='#FFFF00').scale(0.8).next_to(n1_1, UP, buff=0.4)
-        
-        # Final Sonuç Ölçeği: 1.8
-        r_2 = MathTex('3', color='#FFFFFF').scale(1.8).next_to(cizgi, DOWN, buff=0.5).align_to(n2_2, RIGHT)
-        r_1 = MathTex('9', color='#FFFFFF').scale(1.8).next_to(cizgi, DOWN, buff=0.5).align_to(n2_1, RIGHT)
-        
-        # --- KESİN SENKRON VE BLOK-KİLİT SİSTEMİ ---
-        
-        self.play(Write(header))
+
+        # 1. GÖRSEL HİYERARŞİ: BAŞLIK STANDARTI
+        baslik = Paragraph('ÇARPMA İŞLEMİ', alignment='center', color='#FFFFFF', weight=BOLD)
+        baslik.to_edge(UP, buff=1.1)
+        baslik.scale_to_fit_width(7.0)
+        self.play(Write(baslik))
+        self.wait(2.0)
+
+        # DİKEY İŞLEM KURALI: Sola çek (LEFT * 0.5)
+        num1_4 = MathTex('4', color='#FFFFFF').scale(1.7)
+        num1_3 = MathTex('3', color='#FFFFFF').scale(1.7)
+        num1 = VGroup(num1_4, num1_3).arrange(RIGHT, buff=0.15).shift(LEFT * 0.5 + UP * 1.0)
+
+        num2_2 = MathTex('2', color='#FFFFFF').scale(1.7)
+        num2_5 = MathTex('5', color='#FFFFFF').scale(1.7)
+        num2 = VGroup(num2_2, num2_5).arrange(RIGHT, buff=0.15).next_to(num1, DOWN, buff=0.4).align_to(num1, RIGHT)
+
+        cizgi1 = Line(num2.get_left() + LEFT*0.8, num2.get_right() + RIGHT*0.2, color='#FFFFFF').next_to(num2, DOWN, buff=0.3)
+        carpi = MathTex('\\times', color='#FFFFFF').scale(1.7).next_to(cizgi1, LEFT, buff=0.2).shift(UP * 0.4)
+
+        # ZİNCİRLEME YASAK & HER RAKAM SONRASI ES (1.0 sn)
+        self.play(Write(num1_4))
         self.wait(1.0)
-        
-        # Her rakam tek başına ve sonrası 1.0 sn es
-        self.play(Write(n1_1))
+        self.play(Write(num1_3))
         self.wait(1.0)
-        self.play(Write(n1_2))
+        self.play(Write(num2_2))
         self.wait(1.0)
-        
-        self.play(Write(n2_1))
+        self.play(Write(num2_5))
         self.wait(1.0)
-        self.play(Write(n2_2))
+        self.play(Write(cizgi1))
         self.wait(1.0)
-        
-        self.play(Write(cizgi))
+        self.play(Write(carpi))
+        self.wait(4.0) # BLOK SONU BEKLEME
+
+        # 1. SATIR İŞLEMİ (5 ile çarpma - Vurgu 1: #FFFF00)
+        self.play(num2_5.animate.set_color('#FFFF00'))
         self.wait(1.0)
-        
+        self.play(num1_3.animate.set_color('#FFFF00'))
+        self.wait(1.0)
+
+        # 5x3 = 15
+        satir1_5 = MathTex('5', color='#FFFFFF').scale(1.7).next_to(cizgi1, DOWN, buff=0.4).align_to(num1_3, RIGHT)
+        elde1 = MathTex('1', color='#FFFF00').scale(0.8).next_to(num1_4, UP, buff=0.3)
+
+        self.play(Write(satir1_5))
+        self.wait(1.0)
+        self.play(Write(elde1))
+        self.wait(1.0)
+
+        # 5x4 = 20 (+1 = 21)
+        self.play(num1_4.animate.set_color('#FFFF00'))
+        self.wait(1.0)
+
+        satir1_1 = MathTex('1', color='#FFFFFF').scale(1.7).next_to(satir1_5, LEFT, buff=0.15)
+        satir1_2 = MathTex('2', color='#FFFFFF').scale(1.7).next_to(satir1_1, LEFT, buff=0.15)
+
+        self.play(Write(satir1_1))
+        self.wait(1.0)
+        self.play(Write(satir1_2))
+        self.wait(4.0) # BLOK SONU BEKLEME
+
+        # Renkleri sıfırla
+        self.play(num2_5.animate.set_color('#FFFFFF'), num1_3.animate.set_color('#FFFFFF'), num1_4.animate.set_color('#FFFFFF'))
+        self.wait(1.0)
+
+        # GEÇİŞ SİNYALİ (Onlar basamağına geçiş)
+        self.wait(3.0)
+
+        # 2. SATIR İŞLEMİ (2 ile çarpma - Vurgu 2: #00FFFF)
+        self.play(num2_2.animate.set_color('#00FFFF'))
+        self.wait(1.0)
+        self.play(num1_3.animate.set_color('#00FFFF'))
+        self.wait(1.0)
+
+        # 2x3 = 6 (MİLMETRİK HİZALAMA: Onlar basamağı hizası)
+        satir2_6 = MathTex('6', color='#FFFFFF').scale(1.7).next_to(satir1_5, DOWN, buff=0.4).align_to(satir1_1, RIGHT)
+        self.play(Write(satir2_6))
+        self.wait(1.0)
+
+        # 2x4 = 8
+        self.play(num1_4.animate.set_color('#00FFFF'))
+        self.wait(1.0)
+
+        satir2_8 = MathTex('8', color='#FFFFFF').scale(1.7).next_to(satir2_6, LEFT, buff=0.15)
+        self.play(Write(satir2_8))
+        self.wait(4.0) # BLOK SONU BEKLEME
+
+        # TOPLAMA İŞLEMİ
+        cizgi2 = Line(satir2_8.get_left() + LEFT*0.8, satir1_5.get_right() + RIGHT*0.2, color='#FFFFFF').next_to(satir2_6, DOWN, buff=0.3)
+        # TOPLAMA İŞARETİ KURALI: shift(UP * 0.4)
+        arti = MathTex('+', color='#FFFFFF').scale(1.7).next_to(cizgi2, LEFT, buff=0.2).shift(UP * 0.4)
+
+        self.play(Write(cizgi2))
+        self.wait(1.0)
         self.play(Write(arti))
-        self.wait(4.0) # Blok Sonu Bekleme (İşlem tanıtımı)
-        
-        # Birler Basamağı İşlemi (1. Vurgu Rengi: #FFFF00)
-        self.play(n1_2.animate.set_color('#FFFF00'))
         self.wait(1.0)
-        self.play(n2_2.animate.set_color('#FFFF00'))
-        self.wait(4.0) # "Sekiz, beş daha, on üç eder."
-        
-        self.play(Write(r_2))
+
+        # FİNAL SONUÇ (ÖLÇEK KURALI: scale 1.8)
+        sonuc_5 = MathTex('5', color='#FFFF00').scale(1.8).next_to(cizgi2, DOWN, buff=0.4).align_to(satir1_5, RIGHT)
+        self.play(Write(sonuc_5))
         self.wait(1.0)
-        
-        self.play(Write(elde))
-        self.wait(4.0) # "Eldemiz var bir..."
-        
-        # GEÇİŞ SİNYALİ
-        self.wait(3.0) # "Şimdi onlar basamağına geçiyoruz."
-        
-        # Onlar Basamağı İşlemi (2. Vurgu Rengi: #00FFFF)
-        self.play(n1_1.animate.set_color('#00FFFF'))
+
+        sonuc_7 = MathTex('7', color='#FFFF00').scale(1.8).next_to(sonuc_5, LEFT, buff=0.15)
+        self.play(Write(sonuc_7))
         self.wait(1.0)
-        self.play(n2_1.animate.set_color('#00FFFF'))
-        self.wait(4.0) # "Altı, iki daha, sekiz yapar."
-        
-        self.play(elde.animate.set_color('#00FFFF'))
-        self.wait(4.0) # "Bir de eldemiz vardı..."
-        
-        self.play(Write(r_1))
-        self.wait(4.0) # "Dokuzu onlar basamağının altına yazıyoruz."
-        
-        # Final Sonuç Vurgusu
-        self.play(r_1.animate.set_color('#FFFF00'))
+
+        sonuc_0 = MathTex('0', color='#FFFF00').scale(1.8).next_to(sonuc_7, LEFT, buff=0.15)
+        elde2 = MathTex('1', color='#00FFFF').scale(0.8).next_to(satir1_2, UP, buff=0.1)
+        self.play(Write(sonuc_0))
         self.wait(1.0)
-        self.play(r_2.animate.set_color('#FFFF00'))
-        self.wait(4.0) # "İşlemimizin sonucu: doksan üç."
-        
+        self.play(Write(elde2))
+        self.wait(1.0)
+
+        sonuc_1 = MathTex('1', color='#FFFF00').scale(1.8).next_to(sonuc_0, LEFT, buff=0.15)
+        self.play(Write(sonuc_1))
+        self.wait(4.0) # BLOK SONU BEKLEME
+
         # INSTAGRAM/SHORTS FIX
         self.wait(8.0)
