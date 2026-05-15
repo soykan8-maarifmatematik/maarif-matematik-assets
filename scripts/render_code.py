@@ -4,11 +4,11 @@ import numpy as np
 config.pixel_height, config.pixel_width = 1920, 1080
 config.frame_height, config.frame_width = 16.0, 9.0
 
-class CarpmaIslemiScene(Scene):
+class MaarifCarpmaIslemi(Scene):
     def construct(self):
         self.camera.background_color = '#000000'
-
-        # 1. GÖRSEL HİYERARŞİ VE BAŞLIK STANDARTI
+        
+        # 1. BAŞLIK STANDARTI (V44 AYARLARIYLA KİLİTLİ)
         header = Paragraph(
             'ÇARPMA İŞLEMİ\nİKİ BASAMAKLI SAYILAR',
             alignment='center',
@@ -17,112 +17,105 @@ class CarpmaIslemiScene(Scene):
             weight=BOLD
         ).scale_to_fit_width(7.0).to_edge(UP, buff=1.1)
 
-        # 2. DİKEY İŞLEM KURALI VE MİLMETRİK YERLEŞİM
-        # X ekseninde LEFT * 0.5 merkez alınarak hizalama yapılıyor.
-        center_x = -0.5
-        spacing_x = 0.8
+        # 2. NESNE TANIMLARI VE MİLMETRİK YERLEŞİM (DİKEY İŞLEM KURALI)
+        num1 = MathTex('3', '2', color='#FFFFFF').scale(1.7).move_to(LEFT * 0.5 + UP * 1.5)
+        num2 = MathTex('1', '4', color='#FFFFFF').scale(1.7).next_to(num1, DOWN, buff=0.3)
         
-        # 34
-        num1_3 = MathTex('3', color='#FFFFFF').scale(1.7).move_to(RIGHT * (center_x - spacing_x/2) + UP * 1.5)
-        num1_4 = MathTex('4', color='#FFFFFF').scale(1.7).move_to(RIGHT * (center_x + spacing_x/2) + UP * 1.5)
-        
-        # 12
-        num2_1 = MathTex('1', color='#FFFFFF').scale(1.7).move_to(RIGHT * (center_x - spacing_x/2) + UP * 0.3)
-        num2_2 = MathTex('2', color='#FFFFFF').scale(1.7).move_to(RIGHT * (center_x + spacing_x/2) + UP * 0.3)
-        
-        times_sign = MathTex('\\times', color='#FFFFFF').scale(1.7).next_to(num2_1, LEFT, buff=0.6)
-        line1 = Line(times_sign.get_left(), num2_2.get_right() + RIGHT*0.2, color='#FFFFFF').next_to(num2_1, DOWN, buff=0.3)
-        
-        # 68 (34 x 2)
-        prod1_8 = MathTex('8', color='#FFFFFF').scale(1.7).move_to(RIGHT * (center_x + spacing_x/2) + DOWN * 0.9)
-        prod1_6 = MathTex('6', color='#FFFFFF').scale(1.7).move_to(RIGHT * (center_x - spacing_x/2) + DOWN * 0.9)
-        
-        # 34 (34 x 1) - Kaydırma Kuralı (Onlar basamağının altına)
-        prod2_4 = MathTex('4', color='#FFFFFF').scale(1.7).move_to(RIGHT * (center_x - spacing_x/2) + DOWN * 2.1)
-        prod2_3 = MathTex('3', color='#FFFFFF').scale(1.7).move_to(RIGHT * (center_x - spacing_x*1.5) + DOWN * 2.1)
-        
-        # Toplama Çizgisi ve İşareti
-        line2 = Line(prod2_3.get_left() + LEFT*0.5, prod1_8.get_right() + RIGHT*0.2, color='#FFFFFF').next_to(prod2_4, DOWN, buff=0.3)
-        plus_sign = MathTex('+', color='#FFFFFF').scale(1.7).next_to(line2, LEFT, buff=0.2).shift(UP * 0.4)
-        
-        # Final Sonuç: 408
-        res_8 = MathTex('8', color='#FFFF00').scale(1.8).move_to(RIGHT * (center_x + spacing_x/2) + DOWN * 3.7)
-        res_0 = MathTex('0', color='#FFFF00').scale(1.8).move_to(RIGHT * (center_x - spacing_x/2) + DOWN * 3.7)
-        res_4 = MathTex('4', color='#FFFF00').scale(1.8).move_to(RIGHT * (center_x - spacing_x*1.5) + DOWN * 3.7)
-        
-        # Elde
-        carry_1 = MathTex('1', color='#FFFF00').scale(0.8).next_to(prod2_3, UP, buff=0.15).shift(LEFT * 0.2)
+        # İndex bazlı milimetrik kilitleme
+        num2[1].align_to(num1[1], RIGHT)
+        num2[0].align_to(num1[0], RIGHT)
 
-        # --- ANİMASYON (KİLİTLİ VE SABIRLI) ---
+        times_sign = MathTex('\\times', color='#FFFFFF').scale(1.7).next_to(num2, LEFT, buff=0.5)
+        line1 = Line(LEFT, RIGHT, color='#FFFFFF').scale(1.5).next_to(num2, DOWN, buff=0.2).align_to(num2, RIGHT).shift(RIGHT * 0.5)
+
+        # 1. Satır Sonucu (32 x 4 = 128)
+        res1 = MathTex('1', '2', '8', color='#FFFF00').scale(1.7).next_to(line1, DOWN, buff=0.3)
+        res1[2].align_to(num2[1], RIGHT)
+        res1[1].align_to(num2[0], RIGHT)
+        res1[0].next_to(res1[1], LEFT, buff=0.15)
+
+        # 2. Satır Sonucu (32 x 1 = 32) - Sola kaydırma kilitli
+        res2 = MathTex('3', '2', color='#00FFFF').scale(1.7).next_to(res1, DOWN, buff=0.3)
+        res2[1].align_to(num2[0], RIGHT) # Onlar basamağının altına kilitli
+        res2[0].align_to(res1[0], RIGHT)
+
+        # Toplama İşareti ve Çizgisi (Kurala uygun shift)
+        line2 = Line(LEFT, RIGHT, color='#FFFFFF').scale(1.5).next_to(res2, DOWN, buff=0.2).align_to(res2, RIGHT).shift(RIGHT * 0.5)
+        plus_sign = MathTex('+', color='#FFFFFF').scale(1.7).next_to(line2, LEFT, buff=0.2).shift(UP * 0.4)
+
+        # Final Sonuç (448) - Ölçek 1.8
+        final_res = MathTex('4', '4', '8', color='#FFFFFF').scale(1.8).next_to(line2, DOWN, buff=0.3)
+        final_res[2].align_to(res1[2], RIGHT)
+        final_res[1].align_to(res2[1], RIGHT)
+        final_res[0].align_to(res2[0], RIGHT)
+
+        # --- ANİMASYON AKIŞI (BLOK-KİLİT VE SABIRLI SENKRON) ---
         self.play(Write(header))
-        self.wait(3.0)
-        
-        self.play(Write(num1_3))
         self.wait(1.0)
-        self.play(Write(num1_4))
+
+        # Üst sayının yazımı (Zincirleme yasak)
+        self.play(Write(num1[0]))
         self.wait(1.0)
-        
-        self.play(Write(num2_1))
+        self.play(Write(num1[1]))
         self.wait(1.0)
-        self.play(Write(num2_2))
+
+        # Alt sayının yazımı
+        self.play(Write(num2[0]))
         self.wait(1.0)
-        
+        self.play(Write(num2[1]))
+        self.wait(1.0)
+
+        # Çizgi ve işaret
         self.play(Write(times_sign))
         self.wait(1.0)
         self.play(Write(line1))
-        self.wait(4.0)
-        
-        # 2 x 4 İşlemi
-        self.play(num2_2.animate.set_color('#FFFF00'), num1_4.animate.set_color('#FFFF00'))
-        self.wait(1.0)
-        self.play(Write(prod1_8))
-        self.wait(1.0)
-        self.play(num1_4.animate.set_color('#FFFFFF'))
-        self.wait(1.0)
-        
-        # 2 x 3 İşlemi
-        self.play(num1_3.animate.set_color('#FFFF00'))
-        self.wait(1.0)
-        self.play(Write(prod1_6))
-        self.wait(1.0)
-        self.play(num2_2.animate.set_color('#FFFFFF'), num1_3.animate.set_color('#FFFFFF'))
-        self.wait(4.0)
-        
-        # Geçiş Sinyali (Onlar Basamağı)
+        self.wait(4.0) # Blok sonu bekleme
+
+        # Geçiş Sinyali (Birler basamağına geçiş)
         self.wait(3.0)
-        
-        # 1 x 4 İşlemi
-        self.play(num2_1.animate.set_color('#00FFFF'), num1_4.animate.set_color('#00FFFF'))
+
+        # 1. Çarpım Aşaması
+        self.play(num2[1].animate.set_color('#FFFF00'))
         self.wait(1.0)
-        self.play(Write(prod2_4))
+        self.play(Write(res1[2]))
         self.wait(1.0)
-        self.play(num1_4.animate.set_color('#FFFFFF'))
+        self.play(Write(res1[1]))
         self.wait(1.0)
-        
-        # 1 x 3 İşlemi
-        self.play(num1_3.animate.set_color('#00FFFF'))
+        self.play(Write(res1[0]))
+        self.wait(4.0) # Blok sonu bekleme
+
+        # Geçiş Sinyali (Onlar basamağına geçiş)
+        self.wait(3.0)
+
+        # 2. Çarpım Aşaması
+        self.play(num2[1].animate.set_color('#FFFFFF'))
         self.wait(1.0)
-        self.play(Write(prod2_3))
+        self.play(num2[0].animate.set_color('#00FFFF'))
         self.wait(1.0)
-        self.play(num2_1.animate.set_color('#FFFFFF'), num1_3.animate.set_color('#FFFFFF'))
-        self.wait(4.0)
-        
+        self.play(Write(res2[1]))
+        self.wait(1.0)
+        self.play(Write(res2[0]))
+        self.wait(4.0) # Blok sonu bekleme
+
+        # Geçiş Sinyali (Toplama işlemine geçiş)
+        self.wait(3.0)
+
         # Toplama Aşaması
         self.play(Write(plus_sign))
         self.wait(1.0)
         self.play(Write(line2))
-        self.wait(4.0)
-        
-        self.play(Write(res_8))
         self.wait(1.0)
-        
-        self.play(Write(res_0))
+
+        # Final Sonucunun Yazımı
+        self.play(Write(final_res[2]))
         self.wait(1.0)
-        self.play(Write(carry_1))
+        self.play(Write(final_res[1]))
         self.wait(1.0)
+        self.play(Write(final_res[0]))
+        self.wait(4.0) # Blok sonu bekleme
+
+        # Final Vurgusu
+        self.play(final_res.animate.set_color('#FFFF00'))
         
-        self.play(Write(res_4))
-        self.wait(4.0)
-        
-        # Statik Kapanış
+        # INSTAGRAM/SHORTS FIX (Statik Bekleme)
         self.wait(8.0)
