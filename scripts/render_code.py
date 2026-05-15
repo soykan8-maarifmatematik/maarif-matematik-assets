@@ -7,113 +7,110 @@ config.pixel_width = 1080
 config.frame_height = 16.0
 config.frame_width = 9.0
 
-class DenklemCozumuDikeyV52(Scene):
+class KesirlerdeToplamaEvrensel(Scene):
     def construct(self):
         self.camera.background_color = '#000000'
         
-        # Başlık Standartı (V52 Agnostik)
+        # 1. BAŞLIK STANDARTI (V52)
         header = Paragraph(
-            'BİRİNCİ DERECEDEN\nDENKLEM ÇÖZÜMÜ',
+            'FARKLI PAYDALI KESİRLERDE\nTOPLAMA İŞLEMİ',
             alignment='center',
             line_spacing=0.8,
             color='#FFFFFF',
             weight=BOLD
         ).scale_to_fit_width(7.0).to_edge(UP, buff=1.1)
 
+        # 2. ANA DENKLEM (1/2 + 1/3) - YATAY İŞLEM MERKEZ ODAĞI
+        arti = MathTex('+', color='#FFFFFF').scale(2.0).move_to(UP * 3.0)
+        
+        cizgi1 = Line(LEFT, RIGHT, color='#FFFFFF').scale(0.8).next_to(arti, LEFT, buff=1.0)
+        pay1 = MathTex('1', color='#FFFFFF').scale(2.0).next_to(cizgi1, UP, buff=0.3)
+        payda1 = MathTex('2', color='#FFFFFF').scale(2.0).next_to(cizgi1, DOWN, buff=0.3)
+        
+        cizgi2 = Line(LEFT, RIGHT, color='#FFFFFF').scale(0.8).next_to(arti, RIGHT, buff=1.0)
+        pay2 = MathTex('1', color='#FFFFFF').scale(2.0).next_to(cizgi2, UP, buff=0.3)
+        payda2 = MathTex('3', color='#FFFFFF').scale(2.0).next_to(cizgi2, DOWN, buff=0.3)
+
+        # 3. GENİŞLETME SAYILARI (Yardımcı Vurgular - Sarı ve Turkuaz)
+        gen1 = MathTex('(3)', color='#FFFF00').scale(1.0).next_to(payda1, DOWN, buff=0.5)
+        gen2 = MathTex('(2)', color='#00FFFF').scale(1.0).next_to(payda2, DOWN, buff=0.5)
+
+        # 4. GENİŞLETİLMİŞ DENKLEM (3/6 + 2/6)
+        y_arti = MathTex('+', color='#FFFFFF').scale(2.0).move_to(ORIGIN)
+        
+        y_cizgi1 = Line(LEFT, RIGHT, color='#FFFFFF').scale(0.8).next_to(y_arti, LEFT, buff=1.0)
+        y_pay1 = MathTex('3', color='#FFFF00').scale(2.0).next_to(y_cizgi1, UP, buff=0.3)
+        y_payda1 = MathTex('6', color='#FFFF00').scale(2.0).next_to(y_cizgi1, DOWN, buff=0.3)
+        
+        y_cizgi2 = Line(LEFT, RIGHT, color='#FFFFFF').scale(0.8).next_to(y_arti, RIGHT, buff=1.0)
+        y_pay2 = MathTex('2', color='#00FFFF').scale(2.0).next_to(y_cizgi2, UP, buff=0.3)
+        y_payda2 = MathTex('6', color='#00FFFF').scale(2.0).next_to(y_cizgi2, DOWN, buff=0.3)
+
+        # 5. FİNAL SONUCU (= 5/6) - EN BÜYÜK ÖLÇEK
+        esittir = MathTex('=', color='#FFFFFF').scale(2.5).move_to(DOWN * 3.0 + LEFT * 1.5)
+        
+        f_cizgi = Line(LEFT, RIGHT, color='#FFFFFF').scale(1.2).next_to(esittir, RIGHT, buff=0.8)
+        f_pay = MathTex('5', color='#FFFFFF').scale(2.5).next_to(f_cizgi, UP, buff=0.3)
+        f_payda = MathTex('6', color='#FFFFFF').scale(2.5).next_to(f_cizgi, DOWN, buff=0.3)
+
+        # --- ANİMASYON AKIŞI (V52 BLOK-KİLİT SENKRON) ---
         self.play(Write(header))
-        self.wait(4.5)
-
-        # 1. Aşama: Denklem Kurulumu
-        two_1 = MathTex('2', color='#FFFFFF').scale(2.0)
-        x_1 = MathTex('x', color='#FFFFFF').scale(2.0)
-        term1 = VGroup(two_1, x_1).arrange(RIGHT, buff=0.1)
-        plus = MathTex('+', color='#FFFFFF').scale(2.0)
-        four = MathTex('4', color='#FFFFFF').scale(2.0)
-        eq1 = MathTex('=', color='#FFFFFF').scale(2.0)
-        ten = MathTex('10', color='#FFFFFF').scale(2.0)
+        self.wait(4.5) # Giriş cümlesini bekle
         
-        eq_group1 = VGroup(term1, plus, four, eq1, ten).arrange(RIGHT, buff=0.4).move_to(UP * 3.0)
-
-        # Zincirleme Yasak - Tek Tek Yazım
-        self.play(Write(two_1))
-        self.wait(1.0)
-        self.play(Write(x_1))
-        self.wait(1.0)
-        self.play(Write(plus))
-        self.wait(1.0)
-        self.play(Write(four))
-        self.wait(1.0)
-        self.play(Write(eq1))
-        self.wait(1.0)
-        self.play(Write(ten))
-        self.wait(4.5)
-
-        # 2. Aşama: +4'ü Karşıya Atma (Sarı Vurgu)
-        self.play(plus.animate.set_color('#FFFF00'))
-        self.wait(1.0)
-        self.play(four.animate.set_color('#FFFF00'))
-        self.wait(4.5)
-
-        cross = Cross(VGroup(plus, four), stroke_color='#FF0000')
-        self.play(Create(cross))
-        self.wait(1.0)
-
-        minus_four = MathTex('-4', color='#FFFF00').scale(2.0).next_to(ten, RIGHT, buff=0.4)
-        self.play(Write(minus_four))
-        self.wait(4.5)
-
-        # Geçiş Sinyali
-        self.wait(3.0)
-
-        # 3. Aşama: Yeni Denklem (2x = 6)
-        two_2 = MathTex('2', color='#FFFFFF').scale(2.0)
-        x_2 = MathTex('x', color='#FFFFFF').scale(2.0)
-        term2 = VGroup(two_2, x_2).arrange(RIGHT, buff=0.1)
-        eq2 = MathTex('=', color='#FFFFFF').scale(2.0)
-        six = MathTex('6', color='#FFFF00').scale(2.0)
+        # ZİNCİRLEME YASAK: Her parça tek başına
+        self.play(Write(pay1))
+        self.play(Create(cizgi1))
+        self.play(Write(payda1))
+        self.wait(1.0) # Görsel parça sonrası es
         
-        eq_group2 = VGroup(term2, eq2, six).arrange(RIGHT, buff=0.4).next_to(eq_group1, DOWN, buff=2.0)
-
-        self.play(Write(two_2))
+        self.play(Write(arti))
         self.wait(1.0)
-        self.play(Write(x_2))
-        self.wait(1.0)
-        self.play(Write(eq2))
-        self.wait(1.0)
-        self.play(Write(six))
-        self.wait(4.5)
-
-        # Geçiş Sinyali
-        self.wait(3.0)
-
-        # 4. Aşama: 2'ye Bölme (Turkuaz Vurgu)
-        self.play(two_2.animate.set_color('#00FFFF'))
-        self.wait(4.5)
-
-        div_line = Line(LEFT, RIGHT, color='#FFFFFF').scale(0.8).next_to(six, DOWN, buff=0.2)
-        div_two = MathTex('2', color='#00FFFF').scale(1.5).next_to(div_line, DOWN, buff=0.2)
-
-        self.play(Write(div_line))
-        self.wait(1.0)
-        self.play(Write(div_two))
-        self.wait(4.5)
-
-        # Geçiş Sinyali
-        self.wait(3.0)
-
-        # 5. Aşama: Final Sonucu (En Büyük Ölçek)
-        x_3 = MathTex('x', color='#FFFFFF').scale(2.5)
-        eq3 = MathTex('=', color='#FFFFFF').scale(2.5)
-        three = MathTex('3', color='#00FFFF').scale(2.5)
         
-        eq_group3 = VGroup(x_3, eq3, three).arrange(RIGHT, buff=0.5).next_to(eq_group2, DOWN, buff=2.5)
+        self.play(Write(pay2))
+        self.play(Create(cizgi2))
+        self.play(Write(payda2))
+        self.wait(5.0) # Örneği tanıtmasını bekle
 
-        self.play(Write(x_3))
-        self.wait(1.0)
-        self.play(Write(eq3))
-        self.wait(1.0)
-        self.play(Write(three))
-        self.wait(4.5)
+        # Payda eşitleme açıklaması
+        self.wait(4.5) # "Kesirlerde toplama yapabilmek için..."
+        self.wait(5.0) # "Bu yüzden paydaları eşitliyoruz..."
 
-        # Shorts/Instagram Fix - Kapanış Beklemesi
+        # Genişletme (Sarı ve Turkuaz)
+        self.play(Write(gen1))
+        self.wait(1.0)
+        self.play(Write(gen2))
+        self.wait(5.0) # Genişletme açıklamasını bekle
+
+        # Birinci kesrin genişletilmesi (Sarı Vurgu)
+        self.play(Write(y_pay1))
+        self.play(Create(y_cizgi1))
+        self.play(Write(y_payda1))
+        self.wait(5.0) # "Üç kere bir üç..."
+        
+        self.wait(3.0) # "Birinci kesrimiz üç bölü altı oldu."
+        self.wait(3.0) # GEÇİŞ SİNYALİ: "Şimdi ikinci kesre bakalım."
+
+        # İkinci kesrin genişletilmesi (Turkuaz Vurgu)
+        self.play(Write(y_arti))
+        self.wait(1.0)
+        self.play(Write(y_pay2))
+        self.play(Create(y_cizgi2))
+        self.play(Write(y_payda2))
+        self.wait(5.0) # "İki kere bir iki..."
+        
+        self.wait(4.5) # "Artık paydalarımız eşit."
+
+        # Final Sonucu
+        self.play(Write(esittir))
+        self.wait(1.0)
+        self.play(Write(f_pay))
+        self.play(Create(f_cizgi))
+        self.wait(5.0) # Payların toplanması açıklaması
+        
+        self.play(Write(f_payda))
+        self.wait(4.5) # Paydanın sabit kalması açıklaması
+
+        self.wait(5.0) # Kapanış cümlesi
+        
+        # INSTAGRAM/SHORTS FIX: Kapanış Beklemesi
         self.wait(8.0)
