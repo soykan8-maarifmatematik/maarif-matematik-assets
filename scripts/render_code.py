@@ -1,151 +1,104 @@
 from manim import *
 import numpy as np
 
-# DIKEY FORMAT KESIN KILIT (9:16)
 config.pixel_height = 1920
 config.pixel_width = 1080
 config.frame_height = 16.0
 config.frame_width = 9.0
 
-class KesirlerdeToplama(Scene):
+class DinamikKesirDonusum(Scene):
     def construct(self):
         self.camera.background_color = '#000000'
-
-        # Başlık (V52 Agnostik Standart)
+        
+        # BASLIK (Kilitli standartlara uygun)
         header = Paragraph(
-            'KESİRLERDE\nTOPLAMA İŞLEMİ',
+            'TAM SAYILI KESRİ\nBİLEŞİK KESRE ÇEVİRME',
             alignment='center',
             line_spacing=0.8,
             color='#FFFFFF',
             weight=BOLD
         ).scale_to_fit_width(7.0).to_edge(UP, buff=1.1)
-
-        # --- İLK DENKLEM (Üst Kısım) ---
-        # 1/2
-        cizgi1 = Line(LEFT, RIGHT, color='#FFFFFF').scale(0.8).move_to(UP * 2.0 + LEFT * 2.0)
-        pay1 = MathTex('1', color='#FFFFFF').scale(2.0).next_to(cizgi1, UP, buff=0.3)
-        payda1 = MathTex('2', color='#FFFFFF').scale(2.0).next_to(cizgi1, DOWN, buff=0.3)
-
-        # +
-        arti = MathTex('+', color='#FFFFFF').scale(2.0).next_to(cizgi1, RIGHT, buff=0.8)
-
-        # 1/4
-        cizgi2 = Line(LEFT, RIGHT, color='#FFFFFF').scale(0.8).next_to(arti, RIGHT, buff=0.8)
-        pay2 = MathTex('1', color='#FFFFFF').scale(2.0).next_to(cizgi2, UP, buff=0.3)
-        payda2 = MathTex('4', color='#FFFFFF').scale(2.0).next_to(cizgi2, DOWN, buff=0.3)
-
-        # Genişletme (2)
-        genisletme_parantez_sol = MathTex('(', color='#FFFF00').scale(1.2).next_to(payda1, DOWN, buff=0.5).shift(LEFT*0.3)
-        genisletme_sayi = MathTex('2', color='#FFFF00').scale(1.2).next_to(genisletme_parantez_sol, RIGHT, buff=0.1)
-        genisletme_parantez_sag = MathTex(')', color='#FFFF00').scale(1.2).next_to(genisletme_sayi, RIGHT, buff=0.1)
-
-        # Oklar
-        ok_pay = CurvedArrow(genisletme_sayi.get_left() + LEFT*0.1, pay1.get_left() + LEFT*0.1, angle=PI/2, color='#FFFF00')
-        ok_payda = CurvedArrow(genisletme_sayi.get_right() + RIGHT*0.1, payda1.get_right() + RIGHT*0.1, angle=-PI/2, color='#FFFF00')
-
-        # --- İKİNCİ DENKLEM (Alt Kısım) ---
-        # 2/4
-        yeni_cizgi1 = Line(LEFT, RIGHT, color='#FFFFFF').scale(0.8).move_to(DOWN * 2.5 + LEFT * 3.0)
-        yeni_pay1 = MathTex('2', color='#FFFFFF').scale(2.0).next_to(yeni_cizgi1, UP, buff=0.3)
-        yeni_payda1 = MathTex('4', color='#FFFFFF').scale(2.0).next_to(yeni_cizgi1, DOWN, buff=0.3)
-
-        # +
-        yeni_arti = MathTex('+', color='#FFFFFF').scale(2.0).next_to(yeni_cizgi1, RIGHT, buff=0.8)
-
-        # 1/4
-        yeni_cizgi2 = Line(LEFT, RIGHT, color='#FFFFFF').scale(0.8).next_to(yeni_arti, RIGHT, buff=0.8)
-        yeni_pay2 = MathTex('1', color='#FFFFFF').scale(2.0).next_to(yeni_cizgi2, UP, buff=0.3)
-        yeni_payda2 = MathTex('4', color='#FFFFFF').scale(2.0).next_to(yeni_cizgi2, DOWN, buff=0.3)
-
-        # =
-        esittir = MathTex('=', color='#FFFFFF').scale(2.0).next_to(yeni_cizgi2, RIGHT, buff=0.8)
-
-        # 3/4 (Sonuç - En büyük ölçek)
-        sonuc_cizgi = Line(LEFT, RIGHT, color='#FFFFFF').scale(1.0).next_to(esittir, RIGHT, buff=0.8)
-        sonuc_pay = MathTex('3', color='#00FFFF').scale(2.5).next_to(sonuc_cizgi, UP, buff=0.3)
-        sonuc_payda = MathTex('4', color='#FFFFFF').scale(2.5).next_to(sonuc_cizgi, DOWN, buff=0.3)
-
-        # --- ANİMASYON AKIŞI (SENKRON KİLİTLİ VE ZİNCİRLEMESİZ) ---
+        
         self.play(Write(header))
         self.wait(1.0)
-        self.wait(4.5) # 'Merhaba, bugün Maarif Matematik ile...' girişini bekle
+        self.wait(4.5) # Ses senkronu: Giris cumlesi
 
-        self.play(Write(pay1))
+        # KESIR ELEMANLARI (Zincirleme yasak, her adim sonrasi 1.0s bekleme)
+        tam = MathTex('2', color='#FFFFFF').scale(2.2).move_to(LEFT * 1.5)
+        self.play(Write(tam))
         self.wait(1.0)
-        self.play(Write(cizgi1))
+        
+        cizgi = Line(LEFT, RIGHT, color='#FFFFFF').scale(0.8).next_to(tam, RIGHT, buff=0.3)
+        self.play(Create(cizgi))
         self.wait(1.0)
-        self.play(Write(payda1))
+        
+        pay = MathTex('3', color='#FFFFFF').scale(1.8).next_to(cizgi, UP, buff=0.3)
+        self.play(Write(pay))
         self.wait(1.0)
+        
+        payda = MathTex('4', color='#FFFFFF').scale(1.8).next_to(cizgi, DOWN, buff=0.3)
+        self.play(Write(payda))
+        self.wait(1.0)
+        self.wait(4.5) # Ses senkronu: Ornegimiz iki tam uc bolu dort...
 
-        self.play(Write(arti))
-        self.wait(1.0)
+        # GECIS SINYALI
+        self.wait(3.0)
 
-        self.play(Write(pay2))
+        # 1. ADIM: CARPMA ISLEMI (Vurgu 1: Sari #FFFF00)
+        ok_alt = CurvedArrow(payda.get_bottom() + DOWN*0.1 + LEFT*0.2, tam.get_bottom() + DOWN*0.1 + RIGHT*0.2, angle=PI/2, color='#FFFF00')
+        self.play(GrowArrow(ok_alt))
         self.wait(1.0)
-        self.play(Write(cizgi2))
+        
+        carp_is = MathTex('\\times', color='#FFFF00').scale(1.2).next_to(ok_alt, DOWN, buff=0.2)
+        self.play(Write(carp_is))
         self.wait(1.0)
-        self.play(Write(payda2))
+        
+        self.play(payda.animate.set_color('#FFFF00'))
         self.wait(1.0)
+        
+        self.play(tam.animate.set_color('#FFFF00'))
+        self.wait(1.0)
+        self.wait(4.5) # Ses senkronu: Dort kere iki sekiz...
 
-        self.wait(4.5) # 'Örneğimiz: bir bölü iki artı bir bölü dört. Dikkatle izle.' bekle
-        self.wait(3.0) # Geçiş
+        # GECIS SINYALI
+        self.wait(3.0)
 
-        self.play(Write(genisletme_parantez_sol))
+        # 2. ADIM: TOPLAMA ISLEMI (Vurgu 2: Turkuaz #00FFFF)
+        ok_ust = CurvedArrow(tam.get_top() + UP*0.1 + RIGHT*0.2, pay.get_top() + UP*0.1 + LEFT*0.2, angle=-PI/2, color='#00FFFF')
+        self.play(GrowArrow(ok_ust))
         self.wait(1.0)
-        self.play(Write(genisletme_sayi))
+        
+        topla_is = MathTex('+', color='#00FFFF').scale(1.2).next_to(ok_ust, UP, buff=0.2)
+        self.play(Write(topla_is))
         self.wait(1.0)
-        self.play(Write(genisletme_parantez_sag))
+        
+        self.play(pay.animate.set_color('#00FFFF'))
         self.wait(1.0)
+        self.wait(4.5) # Ses senkronu: Sekiz uc daha on bir yapar...
 
-        self.wait(4.5) # 'Toplama yapabilmek için paydaların aynı olması gerekir...' bekle
+        # GECIS SINYALI
+        self.wait(3.0)
 
-        self.play(Create(ok_pay))
+        # 3. ADIM: SONUC KESRI (En buyuk olcek: 2.5)
+        esit = MathTex('=', color='#FFFFFF').scale(2.0).next_to(cizgi, RIGHT, buff=1.0)
+        self.play(Write(esit))
         self.wait(1.0)
-        self.wait(4.5) # 'İki kere bir, iki yapar. Yeni payımız iki oldu.' bekle
+        
+        f_cizgi = Line(LEFT, RIGHT, color='#FFFFFF').scale(1.2).next_to(esit, RIGHT, buff=1.0)
+        self.play(Create(f_cizgi))
+        self.wait(1.0)
+        
+        f_pay = MathTex('11', color='#FFFF00').scale(2.5).next_to(f_cizgi, UP, buff=0.3)
+        self.play(Write(f_pay))
+        self.wait(1.0)
+        self.wait(4.5) # Ses senkronu: Iste bu on bir sayisi yeni payimiz...
+        
+        f_payda = MathTex('4', color='#FFFFFF').scale(2.5).next_to(f_cizgi, DOWN, buff=0.3)
+        self.play(Write(f_payda))
+        self.wait(1.0)
+        self.wait(4.5) # Ses senkronu: Payda ise hic degismiyor...
 
-        self.play(Create(ok_payda))
-        self.wait(1.0)
-        self.wait(4.5) # 'İki kere iki, dört yapar. Yeni paydamız dört oldu.' bekle
+        self.wait(4.5) # Ses senkronu: Kapanis cumleleri...
 
-        self.wait(3.0) # Geçiş
-
-        self.play(Write(yeni_pay1))
-        self.wait(1.0)
-        self.play(Write(yeni_cizgi1))
-        self.wait(1.0)
-        self.play(Write(yeni_payda1))
-        self.wait(1.0)
-
-        self.play(Write(yeni_arti))
-        self.wait(1.0)
-
-        self.play(Write(yeni_pay2))
-        self.wait(1.0)
-        self.play(Write(yeni_cizgi2))
-        self.wait(1.0)
-        self.play(Write(yeni_payda2))
-        self.wait(1.0)
-
-        self.wait(4.5) # 'Şimdi işlemimiz iki bölü dört artı bir bölü dört haline geldi.' bekle
-        self.wait(3.0) # Geçiş
-
-        self.play(Write(esittir))
-        self.wait(1.0)
-
-        self.play(yeni_pay1.animate.set_color('#00FFFF'))
-        self.wait(1.0)
-        self.play(yeni_pay2.animate.set_color('#00FFFF'))
-        self.wait(1.0)
-
-        self.wait(4.5) # 'Paydalar eşitlendiğine göre payları topluyoruz...' bekle
-
-        self.play(Write(sonuc_pay))
-        self.wait(1.0)
-        self.play(Write(sonuc_cizgi))
-        self.wait(1.0)
-        self.play(Write(sonuc_payda))
-        self.wait(1.0)
-
-        self.wait(4.5) # 'Payda ise aynen kalır. Sonucumuz: üç bölü dört...' bekle
-
-        self.wait(8.0) # Instagram/Shorts Fix statik bekleme
+        # SHORTS FIX: Kapanis statik bekleme
+        self.wait(8.0)
