@@ -1,101 +1,173 @@
 from manim import *
-import numpy as np
 
-# DIKEY FORMAT KESIN KILIT (9:16)
-config.pixel_height = 1920
-config.pixel_width = 1080
-config.frame_height = 16.0
-config.frame_width = 9.0
-
-class KesirlerdeToplama(Scene):
+class MaarifScene(Scene):
     def construct(self):
-        self.camera.background_color = '#000000'
+        self.camera.background_color = "#FFFFFF"
         
-        # BAŞLIK
-        header = Paragraph(
-            'KESİRLERDE\nTOPLAMA İŞLEMİ',
-            alignment='center',
-            line_spacing=0.8,
-            color='#FFFFFF',
-            weight=BOLD
-        ).scale_to_fit_width(7.0).to_edge(UP, buff=1.1)
-        
-        # --- BLOK 1: BAŞLIK YAZILIYOR VE SES BEKLENİYOR ---
-        self.play(Write(header), run_time=1.0)
-        self.wait(6.0) # Merhaba, Maarif Matematik ekranlarına hoş geldin. Bugün farklı paydalara sahip kesirleri nasıl toplayacağımızı öğreneceğiz.
-        
-        # DENKLEM 1
-        arti1 = MathTex('+', color='#FFFFFF').scale(1.8).move_to(UP * 2.0)
-        cizgi1 = Line(LEFT, RIGHT, color='#FFFFFF').scale(0.8).next_to(arti1, LEFT, buff=0.8)
-        pay1 = MathTex('1', color='#FFFFFF').scale(1.8).next_to(cizgi1, UP, buff=0.3)
-        payda1 = MathTex('2', color='#FFFFFF').scale(1.8).next_to(cizgi1, DOWN, buff=0.3)
-        
-        cizgi2 = Line(LEFT, RIGHT, color='#FFFFFF').scale(0.8).next_to(arti1, RIGHT, buff=0.8)
-        pay2 = MathTex('1', color='#FFFFFF').scale(1.8).next_to(cizgi2, UP, buff=0.3)
-        payda2 = MathTex('3', color='#FFFFFF').scale(1.8).next_to(cizgi2, DOWN, buff=0.3)
-        
-        # --- BLOK 2: İLK DENKLEM GELİYOR ---
-        self.play(Write(pay1), Create(cizgi1), Write(payda1), run_time=1.0)
-        self.wait(1.0)
-        self.play(Write(arti1), run_time=0.5)
-        self.wait(1.0)
-        self.play(Write(pay2), Create(cizgi2), Write(payda2), run_time=1.0)
-        self.wait(5.0) # Örneğimiz: bir bölü iki artı, bir bölü üç.
-        
-        self.wait(3.0) # GEÇİŞ SİNYALİ
-        
-        # GENİŞLETME
-        gen1 = MathTex('(3)', color='#FFFF00').scale(1.2).next_to(payda1, DOWN, buff=0.4)
-        gen2 = MathTex('(2)', color='#00FFFF').scale(1.2).next_to(payda2, DOWN, buff=0.4)
-        
-        # --- BLOK 3: GENİŞLETME SAYILARI GELİYOR ---
-        self.play(Write(gen1), run_time=0.8)
-        self.wait(1.0)
-        self.play(Write(gen2), run_time=0.8)
-        self.wait(7.0) # Toplama yapabilmek için paydaların aynı olması gerekir. İlk kesrimizi üç ile, ikinci kesrimizi iki ile genişletelim.
-        
-        # DENKLEM 2 (Genişletilmiş)
-        ok_asagi = MathTex('\\downarrow', color='#FFFFFF').scale(2.0).move_to(UP * 0.3)
-        self.play(Write(ok_asagi), run_time=0.8)
-        self.wait(1.0)
-        
-        arti2 = MathTex('+', color='#FFFFFF').scale(1.8).move_to(DOWN * 1.5)
-        cizgi3 = Line(LEFT, RIGHT, color='#FFFFFF').scale(0.8).next_to(arti2, LEFT, buff=0.8)
-        pay3 = MathTex('3', color='#FFFF00').scale(1.8).next_to(cizgi3, UP, buff=0.3)
-        payda3 = MathTex('6', color='#FFFF00').scale(1.8).next_to(cizgi3, DOWN, buff=0.3)
-        
-        # --- BLOK 4: BİRİNCİ KESİR GENİŞLİYOR ---
-        self.play(Write(pay3), Create(cizgi3), Write(payda3), run_time=1.0)
-        self.wait(6.0) # Birinci kesri üç ile genişlettiğimizde, yeni kesrimiz üç bölü altı olur.
-        
-        self.play(Write(arti2), run_time=0.5)
-        self.wait(1.0)
-        
-        cizgi4 = Line(LEFT, RIGHT, color='#FFFFFF').scale(0.8).next_to(arti2, RIGHT, buff=0.8)
-        pay4 = MathTex('2', color='#00FFFF').scale(1.8).next_to(cizgi4, UP, buff=0.3)
-        payda4 = MathTex('6', color='#00FFFF').scale(1.8).next_to(cizgi4, DOWN, buff=0.3)
-        
-        # --- BLOK 5: İKİNCİ KESİR GENİŞLİYOR ---
-        self.play(Write(pay4), Create(cizgi4), Write(payda4), run_time=1.0)
-        self.wait(6.0) # İkinci kesri iki ile genişlettiğimizde, yeni kesrimiz iki bölü altı olur.
-        
-        self.wait(3.0) # GEÇİŞ SİNYALİ
-        
-        # SONUÇ
-        esit = MathTex('=', color='#FFFFFF').scale(2.2).move_to(LEFT * 1.5 + DOWN * 4.5)
-        cizgi5 = Line(LEFT, RIGHT, color='#FFFFFF').scale(1.0).next_to(esit, RIGHT, buff=0.6)
-        pay5 = MathTex('5', color='#FFFFFF').scale(2.5).next_to(cizgi5, UP, buff=0.3)
-        payda5 = MathTex('6', color='#FFFFFF').scale(2.5).next_to(cizgi5, DOWN, buff=0.3)
-        
-        # --- BLOK 6: EŞİTTİR VE YENİ PAY GELİYOR ---
-        self.play(Write(esit), run_time=0.5)
-        self.wait(1.0)
-        self.play(Create(cizgi5), Write(pay5), run_time=1.0)
-        self.wait(6.0) # Şimdi paydalarımız eşit. Payları topluyoruz: üç, iki daha beş yapar.
-        
-        # --- BLOK 7: PAYDA VE KAPANIŞ ---
-        self.play(Write(payda5), run_time=1.0)
-        self.wait(7.0) # Payda ise değişmez, altı olarak kalır. Sonucumuz: beş bölü altı. Maarif Matematik ile öğrenmek işte bu kadar kolay!
-        
-        # SHORTS FIX
-        self.wait(8.0)
+        # BLOCK 1: Intro (46 seconds)
+        self.wait(2)
+        title = Text("Kesirler: Basit, Bileşik ve Tam Sayılı", color="#002B4D").scale(0.8).to_edge(UP)
+        self.play(Write(title), run_time=2)
+        self.wait(5)
+
+        basit_kesir = MathTex(r"\frac{2}{3}", color="#333333").scale(1.5).move_to(LEFT*3)
+        self.play(Write(basit_kesir), run_time=1)
+        self.wait(4)
+
+        basit_text = Text("Basit Kesir", color="#007BFF").scale(0.6).next_to(basit_kesir, DOWN)
+        self.play(Write(basit_text), run_time=1)
+        self.wait(4)
+
+        cross = Cross(basit_kesir, stroke_color=RED)
+        no_tam = Text("Tam Sayılı Olamaz", color=RED).scale(0.6).next_to(basit_text, DOWN)
+        self.play(Create(cross), Write(no_tam), run_time=2)
+        self.wait(4)
+
+        self.play(FadeOut(basit_kesir), FadeOut(basit_text), FadeOut(cross), FadeOut(no_tam), run_time=1)
+
+        bilesik_kesir = MathTex(r"\frac{7}{3}", color="#333333").scale(1.5).move_to(RIGHT*3)
+        self.play(Write(bilesik_kesir), run_time=1)
+        self.wait(4)
+
+        bilesik_text = Text("Bileşik Kesir", color="#007BFF").scale(0.6).next_to(bilesik_kesir, DOWN)
+        self.play(Write(bilesik_text), run_time=1)
+        self.wait(4)
+
+        check = Text("✓", color=GREEN).scale(1.5).next_to(bilesik_kesir, UP)
+        yes_tam = Text("Tam Sayılı Olabilir", color=GREEN).scale(0.6).next_to(bilesik_text, DOWN)
+        self.play(Write(check), Write(yes_tam), run_time=2)
+        self.wait(8)
+
+        # BLOCK 2: Visuals (64 seconds)
+        self.play(FadeOut(Group(*self.mobjects)), run_time=1)
+        self.wait(2)
+
+        kesir_7_3 = MathTex(r"\frac{7}{3}", color="#002B4D").scale(2).to_edge(UP)
+        self.play(Write(kesir_7_3), run_time=1)
+        self.wait(4)
+
+        pizzas = VGroup()
+        for i in range(3):
+            pizza = VGroup()
+            for j in range(3):
+                sector = Sector(radius=1.2, angle=TAU/3, start_angle=j*TAU/3, color="#333333", fill_opacity=0, stroke_width=2)
+                pizza.add(sector)
+            pizzas.add(pizza)
+        pizzas.arrange(RIGHT, buff=1).move_to(DOWN*0.5)
+
+        self.play(Create(pizzas), run_time=3)
+        self.wait(6)
+
+        self.play(pizzas[0].animate.set_style(fill_color="#007BFF", fill_opacity=0.8), run_time=3)
+        self.wait(4)
+        self.play(pizzas[1].animate.set_style(fill_color="#007BFF", fill_opacity=0.8), run_time=3)
+        self.wait(4)
+        self.play(pizzas[2][0].animate.set_style(fill_color="#007BFF", fill_opacity=0.8), run_time=2)
+        self.wait(5)
+
+        label_1 = Text("1 Tam", color="#333333").scale(0.6).next_to(pizzas[0], DOWN)
+        self.play(Write(label_1), run_time=2)
+        self.wait(4)
+
+        label_2 = Text("1 Tam", color="#333333").scale(0.6).next_to(pizzas[1], DOWN)
+        self.play(Write(label_2), run_time=2)
+        self.wait(4)
+
+        label_3 = MathTex(r"\frac{1}{3}", color="#333333").scale(0.8).next_to(pizzas[2], DOWN)
+        self.play(Write(label_3), run_time=2)
+        self.wait(4)
+
+        tam_sayili = MathTex(r"= 2 \frac{1}{3}", color="#002B4D").scale(2).next_to(kesir_7_3, RIGHT)
+        self.play(Write(tam_sayili), run_time=2)
+        self.wait(6)
+
+        # BLOCK 3: Bölme Evi (62 seconds)
+        self.play(FadeOut(Group(*self.mobjects)), run_time=1)
+        self.wait(2)
+
+        bolme_title = Text("Bölme Evi", color="#002B4D").scale(0.8).to_edge(UP)
+        self.play(Write(bolme_title), run_time=2)
+        self.wait(3)
+
+        dividend = MathTex("7", color="#333333").scale(1.5).move_to(LEFT*0.5 + UP*0.5)
+        self.play(Write(dividend), run_time=1)
+        self.wait(2)
+
+        v_line = Line(UP*1.2, DOWN*1.2, color="#333333").next_to(dividend, RIGHT, buff=0.3)
+        self.play(Create(v_line), run_time=1)
+        self.wait(2)
+
+        divisor = MathTex("3", color="#333333").scale(1.5).next_to(v_line, RIGHT, buff=0.3).align_to(dividend, UP)
+        self.play(Write(divisor), run_time=1)
+        self.wait(2)
+
+        h_line = Line(LEFT*0.5, RIGHT*0.5, color="#333333").next_to(divisor, DOWN, buff=0.1)
+        self.play(Create(h_line), run_time=1)
+        self.wait(3)
+
+        quotient = MathTex("2", color="#007BFF").scale(1.5).next_to(h_line, DOWN, buff=0.2)
+        self.play(Write(quotient), run_time=1)
+        self.wait(4)
+
+        product = MathTex("6", color="#333333").scale(1.5).next_to(dividend, DOWN, buff=0.5)
+        self.play(Write(product), run_time=1)
+        self.wait(3)
+
+        sub_line = Line(LEFT*0.5, RIGHT*0.5, color="#333333").next_to(product, DOWN, buff=0.1)
+        minus = MathTex("-", color="#333333").next_to(product, LEFT, buff=0.1)
+        remainder = MathTex("1", color="#007BFF").scale(1.5).next_to(sub_line, DOWN, buff=0.2)
+        self.play(Create(sub_line), Write(minus), Write(remainder), run_time=2)
+        self.wait(4)
+
+        rect_q = SurroundingRectangle(quotient, color="#007BFF")
+        text_q = Text("Tam Kısım", color="#007BFF").scale(0.5).next_to(rect_q, RIGHT)
+        self.play(Create(rect_q), run_time=1)
+        self.play(Write(text_q), run_time=1)
+        self.wait(6)
+
+        rect_r = SurroundingRectangle(remainder, color="#007BFF")
+        text_r = Text("Pay", color="#007BFF").scale(0.5).next_to(rect_r, RIGHT)
+        self.play(Create(rect_r), run_time=1)
+        self.play(Write(text_r), run_time=1)
+        self.wait(6)
+
+        rect_d = SurroundingRectangle(divisor, color="#002B4D")
+        text_d = Text("Payda", color="#002B4D").scale(0.5).next_to(rect_d, RIGHT)
+        self.play(Create(rect_d), run_time=1)
+        self.play(Write(text_d), run_time=1)
+        self.wait(6)
+
+        # BLOCK 4: Conclusion (75 seconds)
+        self.play(FadeOut(Group(*self.mobjects)), run_time=1)
+        self.wait(2)
+
+        final_eq = MathTex(r"\frac{7}{3}", "=", "2", r"\frac{1}{3}", color="#002B4D").scale(2).move_to(UP*1.5)
+        self.play(Write(final_eq), run_time=2)
+        self.wait(5)
+
+        div_house = VGroup(dividend, v_line, divisor, h_line, quotient, product, sub_line, minus, remainder).copy().scale(0.6).move_to(DOWN*1.5)
+        self.play(FadeIn(div_house), run_time=2)
+        self.wait(5)
+
+        self.play(Indicate(div_house[4], color=RED), Indicate(final_eq[2], color=RED), run_time=2)
+        self.wait(5)
+
+        self.play(Indicate(div_house[8], color=GREEN), Indicate(final_eq[3][0], color=GREEN), run_time=2)
+        self.wait(5)
+
+        self.play(Indicate(div_house[2], color=BLUE), Indicate(final_eq[3][2], color=BLUE), run_time=2)
+        self.wait(6)
+
+        self.play(FadeOut(Group(*self.mobjects)), run_time=2)
+        self.wait(2)
+
+        final_text1 = Text("Matematik Ezber Değildir!", color="#002B4D").scale(1.2)
+        self.play(Write(final_text1), run_time=2)
+        self.wait(13)
+
+        self.play(FadeOut(final_text1), run_time=1)
+        final_text2 = Text("Maarif Matematik", color="#007BFF").scale(1.5)
+        self.play(Write(final_text2), run_time=1)
+        self.wait(14)
+
+        self.wait(1)
