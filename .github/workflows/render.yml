@@ -17,21 +17,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 1. ÖNBELLEK (CACHE) SİSTEMİ: Python kütüphanelerini hatırlar
-      - name: Cache Python Dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      # 2. SİSTEM GEREKSİNİMLERİ: (texlive-fonts-extra SİLİNDİ, HIZLANDIRILDI)
       - name: Install System Dependencies
         run: |
           sudo apt-get update
@@ -43,22 +33,35 @@ jobs:
       - name: Install Python Libraries
         run: |
           python -m pip install --upgrade pip
-          python -m pip install manim numpy google-api-python-client google-auth-oauthlib google-auth-httplib2 requests
+          python -m pip install manim numpy google-api-python-client google-auth-oauthlib google-auth-httplib2 requests pydub
 
-      - name: Render ve Merge (Görsel Odaklı Senkron)
+      - name: Sesleri Birleştir ve Render Al
         run: |
-          mkdir -p media/videos
+          # 1. Sesleri birleştir (pydub kullanarak)
+          python3 -c "
+from pydub import AudioSegment
+import os
+files = ['audio/ses-soru.mp3', 'audio/ses-cevap.mp3', 'audio/ses-fact.mp3']
+if all(os.path.exists(f) for f in files):
+    (AudioSegment.from_mp3(files[0]) + AudioSegment.from_mp3(files[1]) + AudioSegment.from_mp3(files[2])).export('audio/final_ses.mp3', format='mp3')
+    print('Sesler başarıyla birleştirildi.')
+else:
+    print('Ses dosyaları eksik, birleştirme yapılamadı.')
+"
           
-          # Manim kodunu çalıştırır
+          # 2. Manim ile videoyu render al
+          mkdir -p media/videos
           manim -qm --media_dir ./media scripts/render_code.py MaarifScene || \
           manim -qm --media_dir ./media scripts/render_code.py
           
+          # 3. Final: Videoyu ve BİRLEŞTİRİLMİŞ sesi birleştir
           VIDEO_PATH=$(find media -name "*.mp4" | grep -v "final_output" | head -n 1)
-          AUDIO_PATH=$(find . -name "*.mp3" | head -n 1)
           
-          if [ -n "$VIDEO_PATH" ] && [ -n "$AUDIO_PATH" ]; then
-            ffmpeg -i "$VIDEO_PATH" -i "$AUDIO_PATH" -fflags +genpts \
+          if [ -f "audio/final_ses.mp3" ]; then
+            ffmpeg -i "$VIDEO_PATH" -i "audio/final_ses.mp3" -fflags +genpts \
             -c:v libx264 -c:a aac -map 0:v:0 -map 1:a:0 -y media/videos/final_output.mp4
+          else
+            echo 'Final ses dosyası bulunamadı, birleştirme atlanıyor.'
           fi
 
       - name: Upload to YouTube (Liste Dışı Aktif)
@@ -67,15 +70,13 @@ jobs:
           YOUTUBE_PRIVACY: "unlisted"
         run: python scripts/upload_to_youtube.py
 
-      - name: Commit Video to Repository (Instagram İçin)
+      - name: Commit Video to Repository
         run: |
           if [ -f "media/videos/final_output.mp4" ]; then
             cp media/videos/final_output.mp4 ./current_video.mp4
             git config --local user.email "action@github.com"
             git config --local user.name "GitHub Action"
             git add current_video.mp4
-            git commit -m "Update current video for Instagram [skip ci]"
+            git commit -m "Update current video [skip ci]"
             git push
-          else
-            echo "Video dosyası bulunamadı, commit atlanıyor."
           fi
