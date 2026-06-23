@@ -1,7 +1,7 @@
 {
-  "kazanim_kodu": "MAT.5.3.1.c",
-  "youtube_title": "Adım Adım Geometrik Çizim | 5. Sınıf Konu Anlatımı",
-  "description": "Çizimde hata genellikle aracı değil, sırayı karıştırmaktan gelir. Her şekil için numaralı adımlar, animasyonlu gösterim.\n\nAraçları tanıdık, seçmeyi öğrendik. Şimdi kullanma zamanı. Bu derste dört farklı geometrik şekli sıfırdan çiziyoruz: cetvel ile doğru parçası, iletki ile açı, pergel ile çember ve gönye ile dikme. Her çizim için net adımlar, her adım için dikkat noktaları sunuluyor.\n\nMatematiksel çizimde hata genellikle aracı yanlış tutmaktan ya da sırayı karıştırmaktan kaynaklanır. Bu yüzden her çizimi adım numarasıyla takip ediyoruz ve animasyonla her pozisyonu görünür hale getiriyoruz.\n\nBir çizimi kalem ve araçla yapmak, onu dijitalde yapmaktan farklı bir düşünce biçimi gerektirir. Bu beceri sınav ortamında doğrudan sonucu etkiler; öğrencinin adımları doğru sırayla uygulayıp uygulayamadığı ölçülmektedir.\n\n📌 Video İçeriği\n0:00 Giriş — Çizim becerisinin sınavdaki yeri\n0:25 Çizim 1 — Cetvel ile doğru parçası (3 adım)\n1:20 Çizim 2 — İletki ile 60° açı (5 adım)\n2:30 Çizim 3 — Pergel ile çember (4 adım)\n3:30 Çizim 4 — Gönye ile dikme (3 adım)\n4:30 Özet — Dört çizim, dört araç\n4:55 Kapanış\n\nBu konuya ait test soruları ve alıştırmalar için: https://www.shopier.com/MaarifMatematik\n\nBir sonraki derste görüşmek üzere, hoşça kalın.\n\n#MaarifMatematik #5SınıfMatematik #KonuAnlatımı #GeometriDersi #OrtaOkulMatematik #MatematikDersi #TYMM",
+  "kazanim_kodu": "MAT.5.3.1",
+  "youtube_title": "Geometrik Araçlar Pekiştirme | 5. Sınıf",
+  "description": "Ne kadar öğrendiniz? Her soruyu önce kendiniz çözün, sonra animasyonlu çözümü izleyin. Hangi aracı ne zaman kullanırsınız?\n\nMAT.5.3.1 kazanım setinin pekiştirme videosundayız. Geometrik araçları tanıdık, hangi şekil için hangi aracın kullanıldığını öğrendik ve adım adım çizimler yaptık. Şimdi bu bilgileri sorularla test etme zamanı.\n\nBu videoda yeni nesil soru formatlarıyla geometrik araç seçimini, çizim adımlarını ve doğru araç kullanımını pekiştiriyoruz. Her soruyu önce kendiniz çözmeyi deneyin, ardından çözüm adımlarını animasyonla takip edin.\n\nGeometride araç bilgisi soyut kalmamalıdır. Hangi durumda cetvel, hangi durumda iletki kullanılır sorusuna refleks gibi cevap verebilmek, ilerleyen yıllarda trigonometri ve analitik geometriye geçişi kolaylaştırır. Bu videodaki sorular tam da o refleksi geliştirmek için tasarlanmıştır.\n\n📌 Video İçeriği\n0:00 Giriş — Pekiştirme nasıl çalışır?\n0:20 Hatırlama Turu — Cetvel, İletki, Pergel, Gönye, GeoGebra\n1:10 Soru 1 — Araç eşleştirme\n1:55 Soru 2 — Hangi şekli hangi araçla çizersin?\n2:45 Soru 3 — Çizim adımı sıralaması\n3:30 Soru 4 — Dijital araç sorusu\n4:15 Özet ve Kapanış\n\nBu konuya ait kazanım testleri ve sınav sorularına ulaşmak için: https://www.shopier.com/MaarifMatematik\n\nBir sonraki derste görüşmek üzere, hoşça kalın.\n\n#MaarifMatematik #5SınıfMatematik #KonuAnlatımı #GeometriDersi #OrtaOkulMatematik #MatematikDersi #TYMM",
   "tags": [
     "matematik",
     "geometri",
@@ -9,14 +9,13 @@
     "5. sınıf konu anlatımı",
     "konu anlatımı",
     "ortaokul matematik",
-    "geometrik çizim",
-    "adım adım çizim",
-    "cetvel ile çizim",
-    "iletki ile açı çizimi",
-    "pergel ile çember",
-    "gönye ile dikme",
-    "çizim adımları",
-    "doğru parçası çizimi",
+    "pekiştirme",
+    "soru çözümü",
+    "test soruları",
+    "geometrik araçlar",
+    "araç seçimi soruları",
+    "yeni nesil soru",
+    "geometri alıştırma",
     "5. sınıf geometri",
     "maarif matematik",
     "maarif modeli",
@@ -24,7 +23,7 @@
     "animasyonlu matematik",
     "MAT.5.3.1"
   ],
-  "ilk_yorum": "Bu derste çizdiğimiz şekiller:\n📏 Doğru parçası → Cetvel (3 adım)\n📐 60° açı → İletki (5 adım)\n🔵 Çember → Pergel (4 adım)\n📐 Dikme → Gönye (3 adım)\n\nHangi çizim en kolaydı? Hangisi zor geldi? 👇",
-  "publish_at": "2026-09-21T13:00:00Z",
+  "ilk_yorum": "Pekiştirme Özeti:\n📏 Çizgisel → Cetvel\n📐 Açı → İletki\n🔵 Çember → Pergel\n📐 Dikme → Gönye\n💻 Dijitalde → GeoGebra\n\nKaç soruyu doğru yaptınız? Yorumda yazın! 👇",
+  "publish_at": "2026-09-07T13:00:00Z",
   "playlist_id": "PLBC68wtjIKHazBT4TZ6exYxoemsxaXj7h"
 }
