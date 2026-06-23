@@ -48,8 +48,9 @@ def yukle():
     tags        = m.get("tags", [])
     if isinstance(tags, str):
         tags = [t.strip() for t in tags.split(",")]
-    comment    = m.get("ilk_yorum") or m.get("first_comment", "")
-    publish_at = m.get("publish_at", "")   # "2026-09-07T13:00:00Z"
+    comment     = m.get("ilk_yorum") or m.get("first_comment", "")
+    publish_at  = m.get("publish_at", "")   # "2026-09-07T13:00:00Z"
+    playlist_id = m.get("playlist_id", "")  # YouTube oynatma listesi ID
 
     print(f"Yukleniyor : {title}")
     print(f"Video boyut: {os.path.getsize(VIDEO_PATH) / 1e6:.1f} MB")
@@ -95,6 +96,25 @@ def yukle():
             print("Kapak fotografi eklendi.")
         except Exception as e:
             print(f"Kapak yuklenemedi: {e}")
+
+    # Oynatma listesine ekle
+    if playlist_id and video_id:
+        try:
+            youtube.playlistItems().insert(
+                part="snippet",
+                body={
+                    "snippet": {
+                        "playlistId": playlist_id,
+                        "resourceId": {
+                            "kind":    "youtube#video",
+                            "videoId": video_id,
+                        },
+                    }
+                },
+            ).execute()
+            print(f"Oynatma listesine eklendi: {playlist_id}")
+        except Exception as e:
+            print(f"Oynatma listesine eklenemedi: {e}")
 
     # Ilk yorum
     if comment and video_id:
