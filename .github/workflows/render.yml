@@ -1,82 +1,38 @@
-name: Maarif Matematik Video Render ve Youtube
+name: Maarif Matematik — YouTube Yükleme
 
-concurrency:
-  group: maarif-render
-  cancel-in-progress: true
-
+# metadata.json degistiginde veya manuel tetikleme
 on:
   push:
     paths:
       - 'metadata.json'
+      - 'current_video.mp4'
   workflow_dispatch:
 
+concurrency:
+  group: maarif-yukle
+  cancel-in-progress: true
+
 jobs:
-  render:
+  yukle:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Python kur
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install System Dependencies
+      - name: Bagimliliklar
         run: |
-          sudo apt-get update
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-            ffmpeg libcairo2-dev libpango1.0-dev freeglut3-dev \
-            texlive-latex-base texlive-latex-recommended texlive-latex-extra \
-            texlive-fonts-recommended dvisvgm ghostscript
+          pip install \
+            google-api-python-client \
+            google-auth-oauthlib \
+            google-auth-httplib2
 
-      - name: Install Python Libraries
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install manim numpy google-api-python-client google-auth-oauthlib google-auth-httplib2 requests pydub
-
-      - name: Sesleri Birleştir ve Render Al
-        run: |
-          # 1. Sesleri birleştir (pydub kullanarak)
-          python3 -c "
-from pydub import AudioSegment
-import os
-files = ['audio/ses-soru.mp3', 'audio/ses-cevap.mp3', 'audio/ses-fact.mp3']
-if all(os.path.exists(f) for f in files):
-    (AudioSegment.from_mp3(files[0]) + AudioSegment.from_mp3(files[1]) + AudioSegment.from_mp3(files[2])).export('audio/final_ses.mp3', format='mp3')
-    print('Sesler başarıyla birleştirildi.')
-else:
-    print('Ses dosyaları eksik, birleştirme yapılamadı.')
-"
-          
-          # 2. Manim ile videoyu render al
-          mkdir -p media/videos
-          manim -qm --media_dir ./media scripts/render_code.py MaarifScene || \
-          manim -qm --media_dir ./media scripts/render_code.py
-          
-          # 3. Final: Videoyu ve BİRLEŞTİRİLMİŞ sesi birleştir
-          VIDEO_PATH=$(find media -name "*.mp4" | grep -v "final_output" | head -n 1)
-          
-          if [ -f "audio/final_ses.mp3" ]; then
-            ffmpeg -i "$VIDEO_PATH" -i "audio/final_ses.mp3" -fflags +genpts \
-            -c:v libx264 -c:a aac -map 0:v:0 -map 1:a:0 -y media/videos/final_output.mp4
-          else
-            echo 'Final ses dosyası bulunamadı, birleştirme atlanıyor.'
-          fi
-
-      - name: Upload to YouTube (Liste Dışı Aktif)
+      - name: YouTube'a Yukle
         env:
           TOKEN_JSON: ${{ secrets.TOKEN_JSON }}
-          YOUTUBE_PRIVACY: "unlisted"
         run: python scripts/upload_to_youtube.py
-
-      - name: Commit Video to Repository
-        run: |
-          if [ -f "media/videos/final_output.mp4" ]; then
-            cp media/videos/final_output.mp4 ./current_video.mp4
-            git config --local user.email "action@github.com"
-            git config --local user.name "GitHub Action"
-            git add current_video.mp4
-            git commit -m "Update current video [skip ci]"
-            git push
-          fi

@@ -1,111 +1,122 @@
+"""
+upload_to_youtube.py
+GitHub Actions tarafindan calistirilir.
+
+Gerekli secret: TOKEN_JSON
+Gerekli dosyalar (repo kokunde):
+  current_video.mp4   — yuklenecek video
+  metadata.json       — baslik, aciklama, etiketler, publish_at
+  s.png               — kapak fotografi (opsiyonel)
+"""
 import os
 import json
 import time
-import requests
-import subprocess
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from google.auth.transport.requests import Request
 
-# --- AYARLAR ---
-SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl']
-IG_ACCOUNT_ID = os.environ.get('INSTAGRAM_ACCOUNT_ID')
-IG_ACCESS_TOKEN = os.environ.get('INSTAGRAM_ACCESS_TOKEN')
-# YAML'dan gelen gizlilik ayarını oku, gelmezse 'public' yap
-YOUTUBE_PRIVACY = os.environ.get('YOUTUBE_PRIVACY', 'public')
+SCOPES     = ["https://www.googleapis.com/auth/youtube.force-ssl"]
+VIDEO_PATH = "current_video.mp4"
+THUMB_PATH = "s.png"
+META_PATH  = "metadata.json"
 
-def upload_to_youtube(video_path, title, description, tags, first_comment):
-    try:
-        t_json = os.environ.get('TOKEN_JSON')
-        if not t_json: 
-            print("❌ HATA: TOKEN_JSON bulunamadı!")
-            return None
-        
-        token_data = json.loads(t_json)
-        creds = Credentials.from_authorized_user_info(token_data, SCOPES)
-        
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-            
-        youtube = build('youtube', 'v3', credentials=creds)
-        
-        body = {
-            'snippet': {
-                'title': title,
-                'description': description,
-                'tags': tags,
-                'categoryId': '27'
-            },
-            'status': {
-                'privacyStatus': YOUTUBE_PRIVACY, # BURASI GÜNCELLENDİ
-                'selfDeclaredMadeForKids': False
-            }
-        }
 
-        media = MediaFileUpload(video_path, chunksize=-1, resumable=True)
-        response = youtube.videos().insert(part='snippet,status', body=body, media_body=media).execute()
-        video_id = response.get('id')
-        print(f"✅ YouTube Yüklemesi Başarılı ({YOUTUBE_PRIVACY})! ID: {video_id}")
-        
-        # --- KAPAK FOTOĞRAFI ---
-        if os.path.exists("s.png"):
-            print("🖼️ Kapak fotoğrafı (s.png) ekleniyor...")
-            time.sleep(5) 
-            try:
-                youtube.thumbnails().set(
-                    videoId=video_id,
-                    media_body=MediaFileUpload("s.png")
-                ).execute()
-                print("✅ Kapak fotoğrafı eklendi.")
-            except Exception as thumb_err:
-                print(f"⚠️ Kapak yüklenemedi: {thumb_err}")
+def youtube_baglan():
+    t_json = os.environ.get("TOKEN_JSON")
+    if not t_json:
+        raise ValueError("TOKEN_JSON secret tanimli degil!")
+    creds = Credentials.from_authorized_user_info(json.loads(t_json), SCOPES)
+    if creds.expired and creds.refresh_token:
+        creds.refresh(Request())
+    return build("youtube", "v3", credentials=creds)
 
-        # --- İLK YORUM ---
-        if first_comment:
-            try:
-                youtube.commentThreads().insert(
-                    part="snippet",
-                    body={
-                        "snippet": {
-                            "videoId": video_id,
-                            "topLevelComment": {
-                                "snippet": {"textOriginal": first_comment}
-                            }
-                        }
+
+def yukle():
+    # Dosya kontrolleri
+    if not os.path.exists(VIDEO_PATH):
+        raise FileNotFoundError(f"Video bulunamadi: {VIDEO_PATH}")
+    if not os.path.exists(META_PATH):
+        raise FileNotFoundError(f"Metadata bulunamadi: {META_PATH}")
+
+    with open(META_PATH, encoding="utf-8") as f:
+        m = json.load(f)
+
+    # Eski ve yeni format destegi
+    title       = m.get("youtube_title") or m.get("title", "Maarif Matematik")
+    description = m.get("description", "")
+    tags        = m.get("tags", [])
+    if isinstance(tags, str):
+        tags = [t.strip() for t in tags.split(",")]
+    comment    = m.get("ilk_yorum") or m.get("first_comment", "")
+    publish_at = m.get("publish_at", "")   # "2026-09-07T13:00:00Z"
+
+    print(f"Yukleniyor : {title}")
+    print(f"Video boyut: {os.path.getsize(VIDEO_PATH) / 1e6:.1f} MB")
+    if publish_at:
+        print(f"Yayin tarihi: {publish_at}")
+
+    youtube = youtube_baglan()
+
+    # Video metadata
+    body = {
+        "snippet": {
+            "title":       title,
+            "description": description,
+            "tags":        tags,
+            "categoryId":  "27",   # Education
+        },
+        "status": {
+            "privacyStatus":           "private",
+            "selfDeclaredMadeForKids": False,
+        },
+    }
+    # publishAt varsa YouTube zamaninda otomatik public yapar
+    if publish_at:
+        body["status"]["publishAt"] = publish_at
+
+    # Video yukle
+    media    = MediaFileUpload(VIDEO_PATH, chunksize=-1, resumable=True)
+    response = youtube.videos().insert(
+        part="snippet,status", body=body, media_body=media
+    ).execute()
+    video_id = response.get("id")
+    print(f"Yuklendi! Video ID: {video_id}")
+    print(f"Link: https://youtu.be/{video_id}")
+
+    # Kapak fotografi
+    if os.path.exists(THUMB_PATH) and video_id:
+        time.sleep(5)
+        try:
+            youtube.thumbnails().set(
+                videoId=video_id,
+                media_body=MediaFileUpload(THUMB_PATH)
+            ).execute()
+            print("Kapak fotografi eklendi.")
+        except Exception as e:
+            print(f"Kapak yuklenemedi: {e}")
+
+    # Ilk yorum
+    if comment and video_id:
+        try:
+            youtube.commentThreads().insert(
+                part="snippet",
+                body={
+                    "snippet": {
+                        "videoId": video_id,
+                        "topLevelComment": {
+                            "snippet": {"textOriginal": comment}
+                        },
                     }
-                ).execute()
-                print("✅ İlk yorum eklendi.")
-            except: pass
-            
-        return video_id
-    except Exception as e:
-        print(f"❌ YouTube Hatası: {e}")
-        return None
+                },
+            ).execute()
+            print("Ilk yorum eklendi.")
+        except Exception as e:
+            print(f"Yorum eklenemedi: {e}")
 
-# --- INSTAGRAM ADIMI (Make.com kullandığımız için burası opsiyoneldir) ---
-# ... (Diğer fonksiyonlar aynı kalabilir ancak Make.com kullandığınız için bu kod hata verse de sorun olmaz)
+    return video_id
+
 
 if __name__ == "__main__":
-    video_path = "media/videos/final_output.mp4"
-    
-    if not os.path.exists(video_path):
-        print(f"❌ HATA: Video dosyası bulunamadı: {video_path}")
-        exit(1)
-
-    if not os.path.exists('metadata.json'):
-        print("❌ HATA: metadata.json bulunamadı!")
-        exit(1)
-
-    with open('metadata.json', 'r', encoding='utf-8') as f:
-        m = json.load(f)
-        title = m.get('title', "Maarif Matematik")
-        desc = m.get('description', "")
-        tags = m.get('tags', [])
-        comment = m.get('first_comment', "")
-
-    # YouTube'a yükle
-    yt_id = upload_to_youtube(video_path, title, desc, tags, comment)
-    
-    # Instagram adımı Make.com üzerinden yürüdüğü için buradaki 'file.io' hatalarını görmezden gelebiliriz.
-    print("🚀 İşlem tamamlandı. Make.com Instagram paylaşımı için bekleniyor...")
+    vid = yukle()
+    print(f"\nTamamlandi. Video ID: {vid}")
