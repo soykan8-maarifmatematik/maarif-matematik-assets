@@ -48,9 +48,10 @@ def yukle():
     tags        = m.get("tags", [])
     if isinstance(tags, str):
         tags = [t.strip() for t in tags.split(",")]
-    comment     = m.get("ilk_yorum") or m.get("first_comment", "")
-    publish_at  = m.get("publish_at", "")   # "2026-09-07T13:00:00Z"
-    playlist_id = m.get("playlist_id", "")  # YouTube oynatma listesi ID
+    comment      = m.get("ilk_yorum") or m.get("first_comment", "")
+    publish_at   = m.get("publish_at", "")      # "2026-09-07T13:00:00Z"
+    playlist_id  = m.get("playlist_id", "")     # YouTube oynatma listesi ID
+    privacy      = m.get("privacy_status", "private")  # private / unlisted / public
 
     print(f"Yukleniyor : {title}")
     print(f"Video boyut: {os.path.getsize(VIDEO_PATH) / 1e6:.1f} MB")
@@ -68,12 +69,12 @@ def yukle():
             "categoryId":  "27",   # Education
         },
         "status": {
-            "privacyStatus":           "private",
+            "privacyStatus":           privacy,
             "selfDeclaredMadeForKids": False,
         },
     }
-    # publishAt varsa YouTube zamaninda otomatik public yapar
-    if publish_at:
+    # publishAt yalnizca "private" ile calisir (unlisted ile calishmaz)
+    if publish_at and privacy == "private":
         body["status"]["publishAt"] = publish_at
 
     # Video yukle
