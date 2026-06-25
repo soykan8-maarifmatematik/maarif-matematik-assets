@@ -1,24 +1,22 @@
 {
-  "kazanim_kodu": "M.8.T1.1",
-  "youtube_title": "Asal Çarpanlara Ayırma | Çarpan Ağacı + Ardışık Bölme | 8. Sınıf",
-  "description": "Herhangi bir sayıyı asal çarpanlarına nasıl ayırırsın? Bu videoda iki yöntemi birlikte öğreniyoruz: görsel çarpan ağacı ve sistematik ardışık bölme algoritması. Her ikisi de aynı sonucu verir — hangisi sana daha kolay gelirse onu kullan.\n\nAsal çarpanlara ayırma, 8. sınıf boyunca karşına çıkacak EBOB, EKOK ve karekök konularının temelini oluşturuyor. Bu videoyu kavradıktan sonra o konular çok daha kolay gelecek.\n\n✏️ Konuyu öğrendin mi? Şimdi test et!\n📄 8. Sınıf testleri ve çözüm videoları:\n→ maarifmatematik.vercel.app/sinif/8\n\n🎬 Bu konunun test çözüm videosu 15 dakika sonra yayınlandı — kanalımıza göz at!\n\n📦 Tüm 8. Sınıf test setini almak için:\n→ shopier.com/MaarifMatematik\n\n─────────────────────────────────\n📌 Video İçeriği\n0:00 Giriş\n0:20 Asal sayı nedir? Tanım ve örnekler\n1:10 Öneri: 100'e kadar asal sayıları odana as!\n1:25 Yöntem 1 — Çarpan ağacı (60 örneği)\n2:30 Yöntem 2 — Ardışık bölme algoritması (60 örneği)\n3:30 Büyük örnek: 180\n5:00 Neden önemli? EBOB, EKOK, Karekök\n5:45 Özet\n─────────────────────────────────\n\n#MaarifMatematik #8SınıfMatematik #KonuAnlatımı #AsalÇarpanlar #ArdışıkBölme #ÇarpanAğacı #OrtaOkulMatematik #TYMM #MaarifModeli",
+  "kazanim_kodu": "M.8.T1-C01",
+  "youtube_title": "M.8.T1 Test 01 Çözümü | Asal Çarpanlara Ayırma | 8. Sınıf",
+  "description": "Bu videoda Asal Çarpanlara Ayırma konusunun Test 01'ini birlikte çözüyoruz. Asal sayı tespiti, ardışık bölme, üslü gösterim — her soru adım adım. 8. Sınıf | M.8.T1\n\n✏️ Testi henüz çözmediysen dur! Önce şuradan indir:\n→ maarifmatematik.vercel.app/sinif/8\n\n📘 Konu anlatım videosu 15 dakika önce yayınlandı — aynı kanalda!\n\n📦 Tüm 8. Sınıf test setini almak için:\n→ shopier.com/MaarifMatematik\n\n─────────────────────────────────\n📌 Soru Sıraları\n0:00 Giriş\n0:20 Soru 1 — 12 = 2² × 3\n0:50 Soru 2 — 30 = 2 × 3 × 5\n1:20 Soru 3 — 2³ × 3 = ?\n1:50 Soru 4 — Asal sayı hangisi?\n2:30 Soru 5 — 72 = 2³ × 3²\n3:10 Soru 6 — 2² × 3 × 5 = ?\n3:40 Soru 7 — 100 = 2² × 5²\n4:15 Soru 8 — Hangi ifade yanlış?\n4:50 Cevap anahtarı\n─────────────────────────────────\n\n#MaarifMatematik #8SınıfMatematik #TestÇözümü #AsalÇarpanlar #OrtaOkulMatematik #TYMM #MaarifModeli",
   "tags": [
     "matematik",
     "8. sınıf matematik",
+    "test çözümü",
     "asal çarpanlar",
     "asal çarpanlara ayırma",
-    "çarpan ağacı",
     "ardışık bölme",
-    "konu anlatımı",
-    "asal sayılar",
+    "üslü ifadeler",
     "maarif matematik",
     "TYMM",
     "maarif modeli",
-    "8. sınıf",
-    "animasyonlu matematik"
+    "8. sınıf"
   ],
-  "ilk_yorum": "Bu videoda öğrendiklerim:\n🔴 Asal çarpan = yalnızca 1'e ve kendisine tam bölünen, 1'den büyük sayı\n🌳 Çarpan ağacı → görsel, dallanarak\n📊 Ardışık bölme → hızlı, sistematik\n✅ İkisi de aynı sonucu verir!",
-  "publish_at": "2026-09-07T13:00:00Z",
+  "ilk_yorum": "Cevap Anahtarı:\n1.B  2.C  3.B  4.C  5.B  6.C  7.C  8.C\n\nHangi soruda takıldıysan yorum yaz! 👇",
+  "publish_at": "2026-09-07T13:15:00Z",
   "privacy_status": "private",
   "playlist_id": "PLBC68wtjIKHZOqfxtX7wo7E5e0j51V6A1"
 }
