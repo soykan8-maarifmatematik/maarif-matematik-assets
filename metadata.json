@@ -1,24 +1,22 @@
 {
-  "kazanim_kodu": "M.7.T1.1",
-  "youtube_title": "Tam Sayılarla İşlemler | Anlam ve Modelleme | 7. Sınıf",
-  "description": "Tam sayıları pul gösterimiyle modelliyoruz. Sıfır çifti, toplama ve çıkarma kuralları adım adım animasyonla. 7. Sınıf | Tema 1\n\n─────────────────────────────────\n📌 Video İçeriği\n0:00 Giriş — Banka hesabı problemi\n0:30 Sayı doğrusu — referans noktası\n1:15 Pul gösterimi — sıfır çifti\n2:00 Toplama — aynı işaretliler\n3:30 Toplama — zıt işaretliler\n5:30 Çıkarma → toplamaya dönüşüm\n7:30 Özet\n─────────────────────────────────\n\n#MaarifMatematik #7SınıfMatematik #TamSayılar #PulGösterimi #KonuAnlatımı #TYMM",
+  "kazanim_kodu": "M.7.T1-C01",
+  "youtube_title": "M.7.T1 Test 01 Çözümü | Tam Sayılarla İşlemler | 7. Sınıf",
+  "description": "Bu videoda Tam Sayılarla İşlemler konusunun Test 01'ini birlikte çözüyoruz. Toplama, çıkarma ve gerçek hayat uygulamaları — her soru adım adım. 7. Sınıf | M.7.T1\n\n✏️ Testi henüz çözmediysen dur! Önce şuradan indir:\n→ maarifmatematik.vercel.app/sinif/7\n\n📘 Konu anlatım videosu 15 dakika önce yayınlandı — aynı kanalda!\n\n📦 Tüm 7. Sınıf test setini almak için:\n→ shopier.com/MaarifMatematik\n\n─────────────────────────────────\n📌 Soru Sıraları\n0:00 Giriş\n0:20 Soru 1 — (+4) + (+7)\n0:45 Soru 2 — (−8) + (+5), pul modeli\n1:30 Soru 3 — 6 − (−4), çıkarma dönüşümü\n2:00 Soru 4 — (−3) − (+5), çıkarma dönüşümü\n2:35 Soru 5 — Sıfır çifti hangisi?\n3:05 Soru 6 — Denizaltı problemi\n3:40 Soru 7 — Hangi ifade yanlış?\n4:15 Soru 8 — Bilinmeyen tam sayı\n4:50 Cevap anahtarı\n─────────────────────────────────\n\n#MaarifMatematik #7SınıfMatematik #TestÇözümü #TamSayılar #OrtaOkulMatematik #TYMM #MaarifModeli",
   "tags": [
     "matematik",
     "7. sınıf matematik",
+    "test çözümü",
     "tam sayılar",
     "tam sayılarla işlemler",
-    "pul gösterimi",
     "sıfır çifti",
-    "toplama çıkarma",
-    "konu anlatımı",
+    "pul gösterimi",
     "maarif matematik",
     "TYMM",
     "maarif modeli",
-    "7. sınıf",
-    "animasyonlu matematik"
+    "7. sınıf"
   ],
-  "ilk_yorum": "Bu videoda öğrendiklerim:\n🟢 Aynı işaret → topla, işaret kalır\n🔵 Zıt işaret → fark al, büyüğün işareti\n🟡 Çıkarma → artıya çevir + işareti tersle",
-  "publish_at": "2026-09-07T13:00:00Z",
+  "ilk_yorum": "Cevap Anahtarı:\n1.B  2.C  3.C  4.D  5.B  6.C  7.D  8.A\n\nHangi soruda takıldıysan yorum yaz! 👇",
+  "publish_at": "2026-09-07T13:15:00Z",
   "privacy_status": "private",
   "playlist_id": "PLBC68wtjIKHZ7vS4VI-I4nECG2WRL06oJ"
 }
