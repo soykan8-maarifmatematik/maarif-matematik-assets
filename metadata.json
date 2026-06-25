@@ -1,25 +1,24 @@
 {
-  "kazanim_kodu": "MAT.5.3.1-C04",
-  "youtube_title": "MAT.5.3.1 Test 04 Çözümü | Pekiştirme Testi | 5. Sınıf",
-  "description": "Bu videoda Pekiştirme Testini birlikte çözüyoruz. Nokta, doğru, ışın, geometrik araçlar ve açılar — hepsi bir arada! 5. Sınıf | MAT.5.3.1\n\n✏️ Testi henüz çözmediysen dur! Önce şuradan indir:\n→ maarifmatematik.vercel.app/sinif/5/mat-5-3-geometrik-sekiller\n\n─────────────────────────────────\n📌 Soru Sıraları\n0:00 Giriş\n0:30 Soru 1 — Yanlış notasyon eşleştirmesi\n1:05 Soru 2 — Hangi işlemi yapamaz?\n1:45 Soru 3 — 5 noktadan kaç doğru parçası?\n2:20 Soru 4 — Doğrunun açıklaması\n2:55 Soru 5 — m(AOB) = m(BOA) mı?\n3:35 Soru 6 — Dik açıyı ikiye bölen ışın\n4:15 Soru 7 — Hangi araç takımı yeterli?\n4:50 Soru 8 — Işın özellikleri\n5:30 Cevap anahtarı\n─────────────────────────────────\n\n#MaarifMatematik #5SınıfMatematik #TestÇözümü #PekiştirmeTesti #GeometrikŞekiller #TYMM",
+  "kazanim_kodu": "M.7.T1.1",
+  "youtube_title": "Tam Sayılarla İşlemler | Anlam ve Modelleme | 7. Sınıf",
+  "description": "Tam sayıları pul gösterimiyle modelliyoruz. Sıfır çifti, toplama ve çıkarma kuralları adım adım animasyonla. 7. Sınıf | Tema 1\n\n─────────────────────────────────\n📌 Video İçeriği\n0:00 Giriş — Banka hesabı problemi\n0:30 Sayı doğrusu — referans noktası\n1:15 Pul gösterimi — sıfır çifti\n2:00 Toplama — aynı işaretliler\n3:30 Toplama — zıt işaretliler\n5:30 Çıkarma → toplamaya dönüşüm\n7:30 Özet\n─────────────────────────────────\n\n#MaarifMatematik #7SınıfMatematik #TamSayılar #PulGösterimi #KonuAnlatımı #TYMM",
   "tags": [
     "matematik",
-    "5. sınıf matematik",
-    "test çözümü",
-    "pekiştirme testi",
-    "nokta doğru ışın",
-    "geometrik araçlar",
-    "açılar",
-    "karma sorular",
+    "7. sınıf matematik",
+    "tam sayılar",
+    "tam sayılarla işlemler",
+    "pul gösterimi",
+    "sıfır çifti",
+    "toplama çıkarma",
+    "konu anlatımı",
     "maarif matematik",
     "TYMM",
-    "ortaokul matematik",
-    "MAT.5.3.1",
-    "5. sınıf geometri",
-    "maarif modeli"
+    "maarif modeli",
+    "7. sınıf",
+    "animasyonlu matematik"
   ],
-  "ilk_yorum": "Cevap Anahtarı:\n1.D  2.D  3.C  4.C  5.B  6.B  7.B  8.C\n\nAnaliz tablonu doldurarak hangi konuda hata yaptığını takip et! 📊",
-  "publish_at": "2026-09-10T13:15:00Z",
+  "ilk_yorum": "Bu videoda öğrendiklerim:\n🟢 Aynı işaret → topla, işaret kalır\n🔵 Zıt işaret → fark al, büyüğün işareti\n🟡 Çıkarma → artıya çevir + işareti tersle",
+  "publish_at": "2026-09-07T13:00:00Z",
   "privacy_status": "private",
-  "playlist_id": "PLBC68wtjIKHazBT4TZ6exYxoemsxaXj7h"
+  "playlist_id": "PLBC68wtjIKHZ7vS4VI-I4nECG2WRL06oJ"
 }
