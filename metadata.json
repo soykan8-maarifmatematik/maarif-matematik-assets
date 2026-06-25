@@ -1,22 +1,24 @@
 {
-  "kazanim_kodu": "M.7.T1-C01",
-  "youtube_title": "M.7.T1 Test 01 Çözümü | Tam Sayılarla İşlemler | 7. Sınıf",
-  "description": "Bu videoda Tam Sayılarla İşlemler konusunun Test 01'ini birlikte çözüyoruz. Toplama, çıkarma ve gerçek hayat uygulamaları — her soru adım adım. 7. Sınıf | M.7.T1\n\n✏️ Testi henüz çözmediysen dur! Önce şuradan indir:\n→ maarifmatematik.vercel.app/sinif/7\n\n📘 Konu anlatım videosu 15 dakika önce yayınlandı — aynı kanalda!\n\n📦 Tüm 7. Sınıf test setini almak için:\n→ shopier.com/MaarifMatematik\n\n─────────────────────────────────\n📌 Soru Sıraları\n0:00 Giriş\n0:20 Soru 1 — (+4) + (+7)\n0:45 Soru 2 — (−8) + (+5), pul modeli\n1:30 Soru 3 — 6 − (−4), çıkarma dönüşümü\n2:00 Soru 4 — (−3) − (+5), çıkarma dönüşümü\n2:35 Soru 5 — Sıfır çifti hangisi?\n3:05 Soru 6 — Denizaltı problemi\n3:40 Soru 7 — Hangi ifade yanlış?\n4:15 Soru 8 — Bilinmeyen tam sayı\n4:50 Cevap anahtarı\n─────────────────────────────────\n\n#MaarifMatematik #7SınıfMatematik #TestÇözümü #TamSayılar #OrtaOkulMatematik #TYMM #MaarifModeli",
+  "kazanim_kodu": "M.8.T1.1",
+  "youtube_title": "Asal Çarpanlara Ayırma | Çarpan Ağacı + Ardışık Bölme | 8. Sınıf",
+  "description": "Herhangi bir sayıyı asal çarpanlarına nasıl ayırırsın? Bu videoda iki yöntemi birlikte öğreniyoruz: görsel çarpan ağacı ve sistematik ardışık bölme algoritması. Her ikisi de aynı sonucu verir — hangisi sana daha kolay gelirse onu kullan.\n\nAsal çarpanlara ayırma, 8. sınıf boyunca karşına çıkacak EBOB, EKOK ve karekök konularının temelini oluşturuyor. Bu videoyu kavradıktan sonra o konular çok daha kolay gelecek.\n\n✏️ Konuyu öğrendin mi? Şimdi test et!\n📄 8. Sınıf testleri ve çözüm videoları:\n→ maarifmatematik.vercel.app/sinif/8\n\n🎬 Bu konunun test çözüm videosu 15 dakika sonra yayınlandı — kanalımıza göz at!\n\n📦 Tüm 8. Sınıf test setini almak için:\n→ shopier.com/MaarifMatematik\n\n─────────────────────────────────\n📌 Video İçeriği\n0:00 Giriş\n0:20 Asal sayı nedir? Tanım ve örnekler\n1:10 Öneri: 100'e kadar asal sayıları odana as!\n1:25 Yöntem 1 — Çarpan ağacı (60 örneği)\n2:30 Yöntem 2 — Ardışık bölme algoritması (60 örneği)\n3:30 Büyük örnek: 180\n5:00 Neden önemli? EBOB, EKOK, Karekök\n5:45 Özet\n─────────────────────────────────\n\n#MaarifMatematik #8SınıfMatematik #KonuAnlatımı #AsalÇarpanlar #ArdışıkBölme #ÇarpanAğacı #OrtaOkulMatematik #TYMM #MaarifModeli",
   "tags": [
     "matematik",
-    "7. sınıf matematik",
-    "test çözümü",
-    "tam sayılar",
-    "tam sayılarla işlemler",
-    "sıfır çifti",
-    "pul gösterimi",
+    "8. sınıf matematik",
+    "asal çarpanlar",
+    "asal çarpanlara ayırma",
+    "çarpan ağacı",
+    "ardışık bölme",
+    "konu anlatımı",
+    "asal sayılar",
     "maarif matematik",
     "TYMM",
     "maarif modeli",
-    "7. sınıf"
+    "8. sınıf",
+    "animasyonlu matematik"
   ],
-  "ilk_yorum": "Cevap Anahtarı:\n1.B  2.C  3.C  4.D  5.B  6.C  7.D  8.A\n\nHangi soruda takıldıysan yorum yaz! 👇",
-  "publish_at": "2026-09-07T13:15:00Z",
+  "ilk_yorum": "Bu videoda öğrendiklerim:\n🔴 Asal çarpan = yalnızca 1'e ve kendisine tam bölünen, 1'den büyük sayı\n🌳 Çarpan ağacı → görsel, dallanarak\n📊 Ardışık bölme → hızlı, sistematik\n✅ İkisi de aynı sonucu verir!",
+  "publish_at": "2026-09-07T13:00:00Z",
   "privacy_status": "private",
-  "playlist_id": "PLBC68wtjIKHZ7vS4VI-I4nECG2WRL06oJ"
+  "playlist_id": "PLBC68wtjIKHZOqfxtX7wo7E5e0j51V6A1"
 }
