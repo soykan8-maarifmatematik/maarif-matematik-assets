@@ -1,0 +1,27 @@
+name: Maarif Matematik — Batch Thumbnail Güncelle
+
+on:
+  push:
+    paths:
+      - 'batch_thumbnails.json'
+  workflow_dispatch:
+
+jobs:
+  guncelle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Bagimliliklar
+        run: pip install google-api-python-client google-auth-oauthlib google-auth-httplib2
+
+      - name: Batch Thumbnail Yukle
+        env:
+          TOKEN_JSON: ${{ secrets.TOKEN_JSON }}
+        run: python scripts/batch_thumbnail.py
