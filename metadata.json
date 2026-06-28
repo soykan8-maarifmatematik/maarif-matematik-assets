@@ -1,22 +1,22 @@
 {
-  "kazanim_kodu": "MAT.6.1.2",
-  "youtube_title": "EBOB — En Büyük Ortak Bölen | 6. Sınıf Konu Anlatımı",
-  "description": "İki sayının ortak bölenlerinin en büyüğünü nasıl bulursun? Bu videoda EBOB'u adım adım öğreniyoruz: bölenler listesi yöntemi, ortak bölenler ve EBOB. Kestirme yol olarak asal çarpanlar yöntemi de gösteriliyor.\n\n✏️ Bu konunun testini çöz:\n→ maarifmatematik.vercel.app/sinif/6/mat-6-1-carpanlar-ve-katlar\n\n🎬 Test çözüm videosu 15 dakika sonra yayınlandı — kanalımıza göz at!\n\n📦 Tüm 6. Sınıf test setini almak için:\n→ shopier.com/MaarifMatematik\n\n─────────────────────────────────\n📌 Video İçeriği\n0:00 Giriş — Elma ve portakal sorusu\n0:30 Bölenler listesi yöntemi\n1:10 12 ve 18'in bölenleri, ortak bölenler\n2:00 EBOB nedir?\n2:40 Örnek: EBOB(24, 36)\n3:30 Kestirme yol — asal çarpanlar\n4:15 Sorunun cevabı — en az 5 grup\n5:00 Özet\n─────────────────────────────────\n\n#MaarifMatematik #6SınıfMatematik #KonuAnlatımı #EBOB #Ortak Bölen #OrtaOkulMatematik #TYMM #MaarifModeli",
+  "kazanim_kodu": "M.7.T1.2",
+  "youtube_title": "Rasyonel Sayıların Sayı Doğrusunda Gösterimi | 7. Sınıf Matematik",
+  "description": "Rasyonel sayıları sayı doğrusuna nasıl yerleştirirsin? Sayı kümeleri hiyerarşisi (N⊂Z⊂Q), dikey kesir gösterimi, sayı doğrusunu bölümleme, negatif rasyonel sayılar ve kesirden ondalığa dönüşüm — adım adım animasyonla. 7. Sınıf | M.7.T1.2\n\nTestler ve çözüm videoları:\n→ maarifmatematik.vercel.app/sinif/7\n\n📦 Test setleri: shopier.com/MaarifMatematik\n\n#MaarifMatematik #7SınıfMatematik #RasyonelSayılar #SayıDoğrusu #KonuAnlatımı #TYMM #MaarifModeli",
   "tags": [
     "matematik",
-    "6. sınıf matematik",
-    "EBOB",
-    "en büyük ortak bölen",
-    "ortak bölen",
+    "7. sınıf matematik",
+    "rasyonel sayılar",
+    "sayı doğrusu",
+    "kesirler",
+    "ondalık sayılar",
     "konu anlatımı",
     "maarif matematik",
     "TYMM",
     "maarif modeli",
-    "6. sınıf",
-    "animasyonlu matematik"
+    "7. sınıf"
   ],
-  "ilk_yorum": "Bu videoda öğrendiklerim:\n🔵 Ortak bölenler: her iki sayıyı tam bölen sayılar\n🟡 EBOB = ortak bölenlerin en büyüğü\n🟢 Kestirme: asal çarpanlar → küçük kuvvetleri çarp",
+  "ilk_yorum": "Bu videoda öğrendiklerim:\n🔵 N ⊂ Z ⊂ Q — sayı kümeleri hiyerarşisi\n📏 Sayı doğrusunda aralığı böl, noktayı yerleştir\n🔄 Kesir ↔ Ondalık dönüşüm (genişletme + bölme evi)",
   "publish_at": "2026-09-08T13:00:00Z",
   "privacy_status": "private",
-  "playlist_id": "PLBC68wtjIKHaL1ei4NDEQmoUwle4MCbyc"
+  "playlist_id": "PLBC68wtjIKHZ7vS4VI-I4nECG2WRL06oJ"
 }
