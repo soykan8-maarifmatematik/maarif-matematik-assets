@@ -1,22 +1,21 @@
 {
-  "kazanim_kodu": "M.7.T1.2",
-  "youtube_title": "Rasyonel Sayıların Sayı Doğrusunda Gösterimi | 7. Sınıf Matematik",
-  "description": "Rasyonel sayıları sayı doğrusuna nasıl yerleştirirsin? Sayı kümeleri hiyerarşisi (N⊂Z⊂Q), dikey kesir gösterimi, sayı doğrusunu bölümleme, negatif rasyonel sayılar ve kesirden ondalığa dönüşüm — adım adım animasyonla. 7. Sınıf | M.7.T1.2\n\nTestler ve çözüm videoları:\n→ maarifmatematik.vercel.app/sinif/7\n\n📦 Test setleri: shopier.com/MaarifMatematik\n\n#MaarifMatematik #7SınıfMatematik #RasyonelSayılar #SayıDoğrusu #KonuAnlatımı #TYMM #MaarifModeli",
+  "kazanim_kodu": "M.7.T1.1b",
+  "youtube_title": "Tam Sayılarda Çarpma ve Bölme | İşaret Kuralları ve Desen | 7. Sınıf",
+  "description": "Eksi çarpı eksi neden artı olur? Bu videoda işaret kurallarını ezberlemenize gerek yok — sayı desenini takip ederek kendiniz keşfediyorsunuz. Çarpma ve bölmede işaret kuralları, desen yaklaşımı ve örnekler. 7. Sınıf | M.7.T1\n\nTestler ve kaynaklar:\n→ maarifmatematik.vercel.app/sinif/7\n\n📦 Test setleri: shopier.com/MaarifMatematik\n\n#MaarifMatematik #7SınıfMatematik #TamSayılar #ÇarpmaBölme #İşaretKuralları #KonuAnlatımı #TYMM #MaarifModeli",
   "tags": [
     "matematik",
     "7. sınıf matematik",
-    "rasyonel sayılar",
-    "sayı doğrusu",
-    "kesirler",
-    "ondalık sayılar",
+    "tam sayılar",
+    "çarpma bölme",
+    "işaret kuralları",
     "konu anlatımı",
     "maarif matematik",
     "TYMM",
     "maarif modeli",
     "7. sınıf"
   ],
-  "ilk_yorum": "Bu videoda öğrendiklerim:\n🔵 N ⊂ Z ⊂ Q — sayı kümeleri hiyerarşisi\n📏 Sayı doğrusunda aralığı böl, noktayı yerleştir\n🔄 Kesir ↔ Ondalık dönüşüm (genişletme + bölme evi)",
-  "publish_at": "2026-09-08T13:00:00Z",
+  "ilk_yorum": "Video içi test soruları:\n⏱ 0:50 — Aynı işaretli iki sayı çarpılırsa?\n⏱ 2:35 — (−1) × (−1) = ?\n⏱ 3:40 — (−7) × (−8) = ?\n⏱ 5:10 — Farklı işaretli iki sayı bölünürse?\n⏱ 5:45 — (−20) ÷ 5 = ?",
+  "publish_at": "2026-09-07T13:00:00Z",
   "privacy_status": "private",
   "playlist_id": "PLBC68wtjIKHZ7vS4VI-I4nECG2WRL06oJ"
 }
