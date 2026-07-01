@@ -1,0 +1,21 @@
+name: Maarif Matematik — Batch Meta Güncelle
+
+on:
+  push:
+    paths:
+      - 'batch_meta.json'
+  workflow_dispatch:
+
+jobs:
+  guncelle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install google-api-python-client google-auth-oauthlib google-auth-httplib2
+      - name: Batch Meta Guncelle
+        env:
+          TOKEN_JSON: ${{ secrets.TOKEN_JSON }}
+        run: python scripts/batch_meta.py
