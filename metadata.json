@@ -1,21 +1,22 @@
 {
-  "kazanim_kodu": "MAT.6.1-C04",
-  "youtube_title": "MAT.6.1 Test 04 Çözümü | EBOB ve EKOK | 6. Sınıf",
-  "description": "Bu videoda EBOB ve EKOK konusunun Test 04'ünü birlikte çözüyoruz. Bölen listeleme yöntemi, dağıtım problemleri, aralarında asal sayılar — her soru adım adım. 6. Sınıf | MAT.6.1.4\n\n✏️ Testi henüz çözmediysen dur! Önce şuradan indir:\n→ maarifmatematik.vercel.app/sinif/6\n\n📘 Konu anlatım videosu aynı kanalda!\n\n📦 6. Sınıf test setleri:\n→ shopier.com/MaarifMatematik\n\n─────────────────────────────────\n📌 Soru Sıraları\n0:00 Giriş\n0:20 Soru 1 — EBOB(12, 18)\n0:50 Soru 2 — EBOB(24, 36)\n1:25 Soru 3 — EBOB(15, 20, 25)\n1:55 Soru 4 — Dağıtım problemi (18 kalem, 24 silgi)\n2:30 Soru 5 — Aralarında asal sayı çifti\n3:05 Soru 6 — EBOB(28, 42)\n3:40 Soru 7 — Yanlış ifade hangisi?\n4:20 Soru 8 — Ahır problemi\n5:00 Cevap anahtarı\n─────────────────────────────────\n\n#MaarifMatematik #6SınıfMatematik #TestÇözümü #EBOB #EKOK #OrtaOkulMatematik #TYMM #MaarifModeli",
+  "kazanim_kodu": "MAT.6.1.2",
+  "youtube_title": "EBOB — En Büyük Ortak Bölen | 6. Sınıf Konu Anlatımı",
+  "description": "İki sayının ortak bölenlerinin en büyüğünü nasıl bulursun? Bu videoda EBOB'u adım adım öğreniyoruz: bölenler listesi yöntemi, ortak bölenler ve EBOB. Kestirme yol olarak asal çarpanlar yöntemi de gösteriliyor.\n\n✏️ Bu konunun testini çöz:\n→ maarifmatematik.vercel.app/sinif/6/mat-6-1-carpanlar-ve-katlar\n\n🎬 Test çözüm videosu 15 dakika sonra yayınlandı — kanalımıza göz at!\n\n📦 Tüm 6. Sınıf test setini almak için:\n→ shopier.com/MaarifMatematik\n\n─────────────────────────────────\n📌 Video İçeriği\n0:00 Giriş — Elma ve portakal sorusu\n0:30 Bölenler listesi yöntemi\n1:10 12 ve 18'in bölenleri, ortak bölenler\n2:00 EBOB nedir?\n2:40 Örnek: EBOB(24, 36)\n3:30 Kestirme yol — asal çarpanlar\n4:15 Sorunun cevabı — en az 5 grup\n5:00 Özet\n─────────────────────────────────\n\n#MaarifMatematik #6SınıfMatematik #KonuAnlatımı #EBOB #Ortak Bölen #OrtaOkulMatematik #TYMM #MaarifModeli",
   "tags": [
     "matematik",
     "6. sınıf matematik",
-    "test çözümü",
     "EBOB",
-    "EKOK",
     "en büyük ortak bölen",
+    "ortak bölen",
+    "konu anlatımı",
     "maarif matematik",
     "TYMM",
     "maarif modeli",
-    "6. sınıf"
+    "6. sınıf",
+    "animasyonlu matematik"
   ],
-  "ilk_yorum": "Cevap Anahtarı:\n1.B  2.C  3.B  4.B  5.B  6.B  7.C  8.C\n\nHangi soruda takıldıysan yorum yaz! 👇",
-  "publish_at": "2026-09-10T13:15:00Z",
+  "ilk_yorum": "Bu videoda öğrendiklerim:\n🔵 Ortak bölenler: her iki sayıyı tam bölen sayılar\n🟡 EBOB = ortak bölenlerin en büyüğü\n🟢 Kestirme: asal çarpanlar → küçük kuvvetleri çarp",
+  "publish_at": "2026-09-08T13:00:00Z",
   "privacy_status": "private",
   "playlist_id": "PLBC68wtjIKHaL1ei4NDEQmoUwle4MCbyc"
 }
