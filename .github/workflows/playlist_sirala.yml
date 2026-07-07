@@ -1,0 +1,30 @@
+name: Maarif Matematik — Playlist Sırala
+
+on:
+  push:
+    paths:
+      - 'playlist_sirala.json'
+  workflow_dispatch:
+
+jobs:
+  sirala:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install google-api-python-client google-auth-oauthlib google-auth-httplib2
+      - name: Playlist Sirala
+        env:
+          TOKEN_JSON: ${{ secrets.TOKEN_JSON }}
+        run: |
+          python -c "
+          import json, sys, os
+          with open('playlist_sirala.json', encoding='utf-8') as f:
+              p = json.load(f)
+          args = [p['playlist_id'], p['video_id'], p['insert_after']]
+          sys.argv = ['playlist_sirala.py'] + args
+          exec(open('scripts/playlist_sirala.py').read())
+          main()
+          "

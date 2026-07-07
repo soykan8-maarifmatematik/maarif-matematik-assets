@@ -99,9 +99,10 @@ def yukle():
             print(f"Kapak yuklenemedi: {e}")
 
     # Oynatma listesine ekle
+    insert_after = m.get("insert_after_video_id", "")
     if playlist_id and video_id:
         try:
-            youtube.playlistItems().insert(
+            res = youtube.playlistItems().insert(
                 part="snippet",
                 body={
                     "snippet": {
@@ -113,7 +114,40 @@ def yukle():
                     }
                 },
             ).execute()
+            item_id = res["id"]
             print(f"Oynatma listesine eklendi: {playlist_id}")
+
+            # insert_after_video_id varsa hemen arkasına taşı
+            if insert_after:
+                time.sleep(3)
+                items, token = [], None
+                while True:
+                    r = youtube.playlistItems().list(
+                        part="snippet", playlistId=playlist_id,
+                        maxResults=50, pageToken=token
+                    ).execute()
+                    items.extend(r["items"])
+                    token = r.get("nextPageToken")
+                    if not token:
+                        break
+                onceki_pos = next(
+                    (it["snippet"]["position"] for it in items
+                     if it["snippet"]["resourceId"]["videoId"] == insert_after), None)
+                if onceki_pos is not None:
+                    youtube.playlistItems().update(
+                        part="snippet",
+                        body={
+                            "id": item_id,
+                            "snippet": {
+                                "playlistId": playlist_id,
+                                "position": onceki_pos + 1,
+                                "resourceId": {"kind": "youtube#video", "videoId": video_id}
+                            }
+                        }
+                    ).execute()
+                    print(f"Playlist sırası güncellendi: pozisyon {onceki_pos + 1}")
+                else:
+                    print(f"UYARI: insert_after video bulunamadı: {insert_after}")
         except Exception as e:
             print(f"Oynatma listesine eklenemedi: {e}")
 
