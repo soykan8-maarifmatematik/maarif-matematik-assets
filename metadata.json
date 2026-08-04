@@ -1,26 +1,23 @@
 {
-  "kazanim_kodu": "MAT.5.3.1-C05",
-  "youtube_title": "MAT.5.3.1 Test 05 Çözümü | Bağlam Temelli Sorular | 5. Sınıf",
-  "description": "Bu videoda Bağlam Temelli Sorular testini birlikte çözüyoruz. Yeşilova İlkokulu'nun oyun parkı projesi üzerinden nokta, doğru parçası, ışın, geometrik araçlar ve açılar — hepsi tek bir hikayede! 5. Sınıf | MAT.5.3.1\n\n✏️ Testi henüz çözmediysen dur! Önce şuradan indir:\n→ maarifmatematik.vercel.app/sinif/5/mat-5-3-geometrik-sekiller\n\n─────────────────────────────────\n📌 Soru Sıraları\n0:00 Giriş\n0:30 Soru 1 — 4 oyun alanı arası kaç kaldırım?\n1:05 Soru 2 — Işın mı, doğru parçası mı?\n1:45 Soru 3 — 15 doğru parçasından direk sayısı (ters problem)\n2:25 Soru 4 — Dik açı için hangi araç?\n3:00 Soru 5 — Daire + kaldırım için araç çifti\n3:35 Soru 6 — Sadece cetvelle olur mu?\n4:15 Soru 7 — 130° hangi açı türü?\n4:45 Soru 8 — 55° + 35° yönetmeliğe uygun mu?\n5:25 Soru 9 — Oranlı açı paylaşımı\n6:05 Cevap anahtarı\n─────────────────────────────────\n\n#MaarifMatematik #5SınıfMatematik #TestÇözümü #BağlamTemelliSorular #GeometrikŞekiller #TYMM",
+  "kazanim_kodu": "MAT.6.1.1-C01B",
+  "youtube_title": "MAT.6.1.1 Test 01-B Çözümü | Bağlam Temelli Sorular | 6. Sınıf",
+  "description": "Bu videoda Çarpanlar ve Katlar konusunun bağlam temelli testini birlikte çözüyoruz. Yeşilova Kütüphanesi projesi üzerinden çarpan sayma, aralık filtreli çarpan, kat sayma ve basamak toplamı filtreli kat — 6 soru. 6. Sınıf | MAT.6.1.1\n\n✏️ Testi henüz çözmediysen dur! Önce şuradan indir:\n→ maarifmatematik.com.tr/sinif/6/mat-6-1-1-carpanlar-ve-katlar\n\n📘 Konu anlatım videosu aynı kanalda!\n\n📦 6. Sınıf test setleri:\n→ shopier.com/MaarifMatematik\n\n─────────────────────────────────\n📌 Soru Sıraları\n0:00 Giriş + Yeşilova Kütüphanesi senaryosu\n0:40 Soru 1 — 24 kitap, kaç raf düzeni? (çarpan sayısı)\n1:30 Soru 2 — Raf başına 4-10 arası, kaç seçenek? (aralık filtreli)\n2:30 Soru 3 — Her ikisi de 1'den fazla, kaç düzen? (uç değer eleme)\n3:30 Soru 4 — Her 6 günde etkinlik, 30 günde kaç? (kat sayma)\n4:20 Soru 5 — 6'lı setler, 50-80 arası, kaç sipariş? (aralık filtreli)\n5:20 Soru 6 — 6'nın katı, 2 basamaklı, rakam toplamı 9 → fark? (çoklu filtre)\n6:20 Cevap anahtarı\n─────────────────────────────────\n\n#MaarifMatematik #6SınıfMatematik #TestÇözümü #ÇarpanlarVeKatlar #BağlamTemelli #OrtaOkulMatematik #TYMM #MaarifModeli",
   "tags": [
     "matematik",
-    "5. sınıf matematik",
+    "6. sınıf matematik",
     "test çözümü",
+    "çarpanlar ve katlar",
     "bağlam temelli sorular",
-    "nokta doğru ışın",
-    "geometrik araçlar",
-    "açılar",
-    "yeni nesil sorular",
     "maarif matematik",
     "TYMM",
-    "ortaokul matematik",
-    "MAT.5.3.1",
-    "5. sınıf geometri",
     "maarif modeli",
-    "oyun parkı problemi"
+    "6. sınıf",
+    "yeni nesil sorular",
+    "MAT.6.1.1",
+    "ortaokul matematik"
   ],
-  "ilk_yorum": "Cevap Anahtarı:\n1.C  2.C  3.B  4.B  5.B  6.C  7.C  8.B  9.B\n\nAnaliz tablonu doldurarak hangi konuda hata yaptığını takip et! 📊",
-  "publish_at": "2026-09-19T13:15:00Z",
+  "ilk_yorum": "Cevap Anahtarı:\n1.A  2.D  3.B  4.C  5.A  6.D\n\nHangi soruda takıldıysan yorum yaz! 👇",
+  "publish_at": "2026-09-07T13:15:00Z",
   "privacy_status": "private",
-  "playlist_id": "PLBC68wtjIKHazBT4TZ6exYxoemsxaXj7h"
+  "playlist_id": "PLBC68wtjIKHaL1ei4NDEQmoUwle4MCbyc"
 }
