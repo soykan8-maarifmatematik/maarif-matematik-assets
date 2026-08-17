@@ -1,11 +1,20 @@
 {
-  "kazanim_kodu": "mat8_uslu_ifadeler_test02_cozum",
-  "youtube_title": "mat8_uslu_ifadeler_test02_cozum",
-  "description": "",
+  "kazanim_kodu": "M.8.T1-C03",
+  "youtube_title": "Üslü İfadeler Test 03 Çözümü | Sıralama ve Bilinmeyen Bulma | 8. Sınıf Matematik",
+  "description": "M.8.T1 Üslü İfadeler Test 03 Çözümü — Sıralama · Bilinmeyen Bulma\n\nSorular:\n1. 8⁴, 32², 64³ küçükten büyüğe (C: 32²<8⁴<64³)\n2. 3³⁰, 5²⁰, 2⁴⁰ küçükten büyüğe — aynı üse indirgeme (A: 2⁴⁰<5²⁰<3³⁰)\n3. 27¹, 9², 3⁵ küçükten büyüğe (D: 27¹<9²<3⁵)\n4. 27⁴, 81³, 9⁶ büyüklük ilişkisi (B: hepsi eşit)\n5. 2⁸, 8³, 4⁵ küçükten büyüğe (A: 2⁸<8³<4⁵)\n6. 5³⁰, 3⁴⁰, 2⁶⁰ küçükten büyüğe — aynı üse indirgeme (C: 2⁶⁰<3⁴⁰<5³⁰)\n7. x² = 64 → x pozitif değeri (C: 8)\n8. 3ⁿ = 243 → n değeri (C: 5)\n9. x³ = 125 → x değeri (C: 5)\n10. 2ⁿ = 128 → n değeri (C: 7)\n11. 5^(n+1) = 625 → n değeri (B: 3)\n12. x² − x¹ = 6 → x pozitif tam sayı değeri (B: 3)\n\n📌 Cevap Anahtarı: C A D B A C C C C C B B\n\n🧮 Bu videoda:\n• Aynı tabana indirgeyip üsleri karşılaştırma\n• Aynı üsse indirgeyip tabanları karşılaştırma\n• Kuvvette bilinmeyen bulma: aⁿ = aᵏ → n = k\n• Tabanda bilinmeyen bulma: xⁿ = kⁿ → x = k\n\n📝 Testi kendin çöz → maarifmatematik.com.tr\n\n#MatematikSoruÇözümü #8SınıfMatematik #ÜslüİfadelerSıralama #MaarifMatematik",
   "tags": [
-    "matematik"
+    "üslü ifadeler",
+    "8. sınıf matematik",
+    "üslü ifadeleri sıralama",
+    "bilinmeyen bulma",
+    "aynı tabana indirgeme",
+    "üslü ifadeler test çözümü",
+    "maarif matematik",
+    "LGS hazırlık",
+    "8. sınıf konu anlatımı"
   ],
-  "ilk_yorum": "",
+  "ilk_yorum": "Cevap Anahtarı:\n1.C  2.A  3.D  4.B  5.A\n6.C  7.C  8.C  9.C  10.C\n11.B  12.B\n\n📝 Testi çöz → maarifmatematik.com.tr",
   "publish_at": "",
-  "playlist_id": ""
+  "privacy_status": "private",
+  "playlist_id": "PLBC68wtjIKHZOqfxtX7wo7E5e0j51V6A1"
 }
