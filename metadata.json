@@ -1,19 +1,20 @@
 {
-  "kazanim_kodu": "M.8.T1-C05",
-  "youtube_title": "Üslü İfadeler Test 05 Çözümü | Bağlam Temelli Sorular | 8. Sınıf Matematik",
-  "description": "M.8.T1 Üslü İfadeler Test 05 Çözümü — Bağlam Temelli (Gerçek Hayat Uygulamaları)\n\nSorular:\n1. Bakteri her saat 2 katına → 8 saat sonra (D: 256)\n2. Kâğıt 5 kez katlama → kaç tabaka (B: 32)\n3. 1000 TL her yıl 3 katı → 4 yıl sonra (D: 81 000)\n4. 64 takımlı turnuva → kaç tur (B: 6)\n5. 2⁵ sıra × 2³ ağaç → toplam ağaç (C: 256)\n6. Işık hızı 3×10⁸ m/s → 10² saniyede (C: 3×10¹⁰)\n7. Nüfus her 10 yılda 2 katı → 40 yıl sonra (C: 160 milyon)\n8. 1024 bakteri her saat yarıya → 4 saat sonra (B: 64)\n9. 500 TL her yıl 2 katı → 5 yıl sonra (C: 16 000)\n10. 2³ kilobayt → bayta çevirme (D: 8 192)\n11. Deprem 10⁷ joule → 10³ kat güçlüsü (C: 10¹⁰)\n12. 1 kar tanesi 10⁻³ gram → 10⁶ tanesi (C: 1 000)\n\n📌 Cevap Anahtarı: D B D B C C C B C D C C\n\n🧮 Bu videoda:\n• Katlanma: başlangıç × 2ⁿ\n• Azalma: bölmede üsler çıkarılır\n• Üs toplama: 2⁵×2³=2⁸\n• Bilimsel gösterim: 10⁸×10²=10¹⁰\n\n📝 Testi kendin çöz → maarifmatematik.com.tr\n\n#MatematikSoruÇözümü #8SınıfMatematik #ÜslüİfadelerBağlam #MaarifMatematik",
+  "kazanim_kodu": "M.8.T1-C06",
+  "youtube_title": "Üslü İfadeler Test 06 Çözümü | Üslü İfadelerde Çarpma | 8. Sınıf Matematik",
+  "description": "M.8.T1 Üslü İfadeler Test 06 Çözümü — Üslü İfadelerde Çarpma\n\nSorular:\n1. 2³×2⁴=2ⁿ → n=? (B: 7)\n2. 3⁵×3¹ değeri (B: 729)\n3. aⁿ×a³=a⁷ → n=? (C: 4)\n4. (3²)⁴=3ⁿ → n=? (B: 8)\n5. (2×5)³ değeri (D: 1000)\n6. (2×3)³=2ⁿ×3ⁿ → n=? (C: 3)\n7. 2⁴×8³ değeri (D: 8192)\n8. 9¹×27¹=3ⁿ → n=? (A: 5)\n9. (2³)²×2¹ değeri (B: 128)\n10. Üs toplama kuralında yanlış olan (A: 3²×3³=3⁶)\n11. 2ⁿ×2ⁿ⁺¹=2⁷ → n=? (C: 3)\n12. (a×b)ⁿ=aⁿ×bⁿ doğru örnek (D: (2×3)³=8×27)\n\n📌 Cevap Anahtarı: B B C B D C D A B A C D\n\n🧮 Bu videoda:\n• Aynı taban çarpma: aᵐ×aⁿ → üsler toplanır\n• Çarpımın kuvveti: (a×b)ⁿ = aⁿ×bⁿ\n• Üssün üssü: (aᵐ)ⁿ → üsler çarpılır\n\n📝 Testi kendin çöz → maarifmatematik.com.tr\n\n#MatematikSoruÇözümü #8SınıfMatematik #ÜslüİfadelerÇarpma #MaarifMatematik #LGSHazırlık",
   "tags": [
     "üslü ifadeler",
+    "üslü ifadelerde çarpma",
     "8. sınıf matematik",
-    "bağlam temelli sorular",
-    "gerçek hayat matematik",
-    "bilimsel gösterim",
     "üslü ifadeler test çözümü",
+    "aynı taban çarpma",
+    "çarpımın kuvveti",
+    "üssün üssü",
     "maarif matematik",
     "LGS hazırlık",
     "8. sınıf konu anlatımı"
   ],
-  "ilk_yorum": "Cevap Anahtarı:\n1.D  2.B  3.D  4.B  5.C\n6.C  7.C  8.B  9.C  10.D\n11.C  12.C\n\n📝 Testi çöz → maarifmatematik.com.tr",
+  "ilk_yorum": "Cevap Anahtarı:\n1.B  2.B  3.C  4.B  5.D\n6.C  7.D  8.A  9.B  10.A\n11.C  12.D\n\n📝 Testi çöz → maarifmatematik.com.tr",
   "publish_at": "",
   "privacy_status": "private",
   "playlist_id": "PLBC68wtjIKHZOqfxtX7wo7E5e0j51V6A1"
